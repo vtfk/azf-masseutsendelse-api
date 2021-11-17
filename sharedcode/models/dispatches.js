@@ -1,9 +1,6 @@
 const mongoose = require('mongoose')
 
 const dispatchesSchema = new mongoose.Schema ({
-      "_id": {
-        "type": "String" //endre denne 
-      },
       "title": {
         "type": "String"
       },
