@@ -8,7 +8,7 @@
       "methods": [
         "get"
       ],
-      "route": "gettemplates"
+      "route": "templates/get"
     },
     {
       "type": "http",

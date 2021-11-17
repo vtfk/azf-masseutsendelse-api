@@ -8,7 +8,7 @@
       "methods": [
         "put"
       ],
-      "route": "editdispatches/{id}"
+      "route": "dispatches/put/{id}"
     },
     {
       "type": "http",

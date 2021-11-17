@@ -6,10 +6,9 @@
       "direction": "in",
       "name": "req",
       "methods": [
-        "get",
         "post"
       ],
-      "route": "postdispatches"
+      "route": "dispatches/post"
     },
     {
       "type": "http",
