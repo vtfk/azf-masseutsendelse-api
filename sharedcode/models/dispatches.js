@@ -4,7 +4,7 @@ const dispatchesSchema = new mongoose.Schema ({
       "title": {
         "type": "String"
       },
-      "nummer": {
+      "prosjektnr": {
         "type": "Number"
       },
       "status": {
