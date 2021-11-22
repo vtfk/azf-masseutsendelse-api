@@ -8,7 +8,7 @@
       "methods": [
         "delete"
       ],
-      "route": "templates/delete/{id}"
+      "route": "templates/{id}"
     },
     {
       "type": "http",

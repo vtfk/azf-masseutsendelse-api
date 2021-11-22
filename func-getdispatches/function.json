@@ -9,7 +9,7 @@
       "methods": [ 
         "get" 
       ],
-      "route": "dispatches/get"
+      "route": "dispatches"
     },
     {
       "type": "http",
