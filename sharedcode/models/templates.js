@@ -1,49 +1,76 @@
 const mongoose = require('mongoose')
 
 const templateSchema = new mongoose.Schema ({
-  "name": {
-    "type": "String"
+  name: {
+    type: String, 
+    unique: true,
+    required: true
   },
-  "description": {
-    "type": "String"
+  description: {
+    type: String,
+    required: true
   },
-  "enabled": {
-    "type": "Boolean"
+  version: {
+    type: Number,
+    required: true
   },
-  "language": {
-    "type": "String"
+  enabled: {
+    type: Boolean,
+    default: true
   },
-  "documentTemplate": {
-    "id": {
-      "type": "String"
-    },
-    "language": {
-      "type": "String"
-    },
-    "data": {
-      "info": {
-        "our-reference": {
-          "type": "String"
-        }
-      }
+  versions: [
+    {
+      version: {
+        type: Number,
+        required: true
+      },
+      documentDefinitionId: {
+        type: String,
+        required: true
+      },
+      documentData: {
+        type: Object,
+        required: true
+      },
+      template: {
+        type: String,
+        required: true
+      },
+      language: {
+        type: String
+      },
     }
+  ],
+  createdTimestamp: {
+    type: Date,
+    default: new Date,
+    required: true
   },
-  "template": {
-    "type": "String"
+  createdBy: {
+      type: String,
+      default: "André Noen",
+      required: true
   },
-  "data": {},
-  "created_timestamp": {
-    "type": "Date"
+  createdById: {
+      type: String,
+      default: "00000000-0000-0000-0000-000000000000",
+      required: true
   },
-  "modified_timestamp": {
-    "type": "Date"
+  modifiedTimestamp: {
+      type: Date,
+      default: new Date,
+      required: true
   },
-  "created_by": {
-    "type": "String"
+  modifiedBy: {
+      type: String,
+      default: "Noen André",
+      required: true
   },
-  "modified_by": {
-    "type": "String"
-  }  
+  modifiedById: {
+      type: String,
+      default: "00000000-0000-0000-0000-000000000000",
+      required: true
+  }
 })
 
 const Templates = mongoose.model('Templates', templateSchema)

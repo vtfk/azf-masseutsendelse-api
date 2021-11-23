@@ -1,137 +1,205 @@
 const mongoose = require('mongoose')
 
 const dispatchesSchema = new mongoose.Schema ({
-      "title": {
-        "type": "String"
+      title: {
+        type: String,
+        required: true
       },
-      "prosjektnr": {
-        "type": "Number"
+      projectnumber: {
+        type: Number,
+        required: true
       },
-      "status": {
-        "type": "String"
+      status: {
+        type: String,
+        default: "notapproved",
+        enum: ["notapproved", "approved", "inprogress", "completed" ],
+        required: true
       },
-      "body": {
-        "type": "String"
+      template: {
+        version: {
+          type: Number,
+          required: true
+        },
+        name: {
+          type: String,
+          required: true
+        },
+        description: {
+          type: String,
+          required: true
+        },
+        documentData: {
+          type: Object,
+          required: true
+        },
+        data: {
+          type: Object,
+          required: true
+        },
+        template: {
+          type: String,
+          required: true
+        }
       },
-      "template": {
-        "type": "String"
+      templateData: [
+        Object
+      ],
+    stats: {
+      affectedCount: {
+        type: Number,
+        required: true
       },
-    "stats": {
-      "affectedCount": {
-        "type": "Number"
+      area:{
+        type: Number,
+        required: true
       },
-      "totalOwners": {
-        "type": "Number"
+      totalOwners: {
+        type: Number,
+        required: true
       },
-      "privateOwners": {
-        "type": "Number"
+      privateOwners: {
+        type: Number,
+        required: true
       },
-      "businessOwners": {
-        "type": "Number"
-      }
-    },
-    "matrikkelEnheter": {
-      "type": [
-        "Mixed"
+      businessOwners: {
+        type: Number,
+        required: true
+      },
+      units: [
+        Object
       ]
     },
-    "polygon": {
-      "coordinatesystem": {
-        "type": "String"
+    matrikkelEnheter: {
+      required: true,
+      type: [
+        Object
+      ]
+    },
+    polygon: {
+      coordinatesystem: {
+        type: String,
+        required: true
       },
-      "filename": {
-        "type": "String"
+      filename: {
+        type: String,
+        required: true
       },
-      "area": {
-        "type": "Number"
+      area: {
+        type: Number,
+        required: true
       },
-      "vertices": {
-        "type": [
-          "Array"
+      vertices: {
+        required: true,
+        type: [
+          Array
         ]
         },
-      "extremes": {
-        "north": {
-            "type": [
-            "Number"
+      extremes: {
+        required: true,
+        north: {
+            type: [
+            Number,
           ]
         },
-        "west": {
-          "type": [
-            "Number"
+        west: {
+          required: true,
+          type: [
+            Number
             ]
         },
-        "east": {
-          "type": [
-            "Number"
+        east: {
+          required: true,
+          type: [
+            Number
           ]
         },
-        "south": {
-            "type": [
-            "Number"
+        south: {
+          required: true,
+            type: [
+            Number
           ]
         },
-        "center": {
-          "type": [
-            "Number"
+        center: {
+          required: true,
+          type: [
+            Number
             ]
         }
       }
     },
-        "geopolygon": {
-      "coordinateSystem": {
-        "type": "String"
+        geopolygon: {
+          required: true,
+      coordinateSystem: {
+        type: String
         },
-      "vertices": {
-        "type": [
-            "Array"
+      vertices: {
+        required: true,
+        type: [
+            Array
         ]
       },
-      "extremes": {
-        "north": {
-          "type": [
-            "Number"
+      extremes: {
+        required: true,
+        north: {
+          type: [
+            Number
             ]
         },
-        "west": {
-          "type": [
-            "Number"
+        west: {
+          required: true,
+          type: [
+            Number
           ]
         },
-        "east": {
-            "type": [
-            "Number"
+        east: {
+          required: true,
+            type: [
+            Number
           ]
         },
-        "south": {
-          "type": [
-            "Number"
+        south: {
+          required: true,
+          type: [
+            Number
             ]
         },
-        "center": {
-          "type": [
-            "Number"
+        center: {
+          required: true,
+          type: [
+            Number
           ]
         }
       }
     },
-    "createdDate": {
-        "type": "Date"
+    createdTimestamp: {
+        type: Date,
+        default: new Date,
+        required: true
     },
-    "createdBy": {
-        "type": "String"
+    createdBy: {
+        type: String,
+        default: "André Noen",
+        required: true
     },
-    "createdById": {
-        "type": "String"
+    createdById: {
+        type: String,
+        default: "00000000-0000-0000-0000-000000000000",
+        required: true
     },
-    "modifiedDate": {
-        "type": "Date"
+    modifiedTimestamp: {
+        type: Date,
+        default: new Date,
+        required: true
     },
-    "modifiedBy": {
-        "type": "String"
+    modifiedBy: {
+        type: String,
+        default: "Noen André",
+        required: true
     },
-    "modifiedById": {
-        "type": "String"
+    modifiedById: {
+        type: String,
+        default: "00000000-0000-0000-0000-000000000000",
+        required: true
     }
 })
 
