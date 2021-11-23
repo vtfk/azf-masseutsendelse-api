@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const Dispatches = require('../sharedcode/models/dispatches.js')
+const Templates = require('../sharedcode/models/templates.js')
 const getDb = require('../sharedcode/connections/masseutsendelseDB.js')
 
 module.exports = async function (context, req, id) {
@@ -9,11 +9,11 @@ module.exports = async function (context, req, id) {
     if (await loadDatabase) {
         context.log("Mongoose is connected.");
         try {
-            await Dispatches.findByIdAndUpdate(id, req.body, {new: true}).then((editedDispatch) => {
-                if(!editedDispatch){
+            await Templates.findByIdAndUpdate(id, req.body, {new: true}).then((editedTemplates) => {
+                if(!editedTemplates){
                     context.res.status(404).send()
                 }
-                context.res.send(editedDispatch)
+                context.res.send(editedTemplates)
             }).catch(error => {
                 res.status(500).send(error)
             })
