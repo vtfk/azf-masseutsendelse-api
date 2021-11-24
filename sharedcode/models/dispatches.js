@@ -95,8 +95,8 @@ const dispatchesSchema = new mongoose.Schema ({
         ]
         },
       extremes: {
-        required: true,
         north: {
+          required: true,
             type: [
             Number,
           ]
@@ -128,8 +128,8 @@ const dispatchesSchema = new mongoose.Schema ({
       }
     },
         geopolygon: {
-          required: true,
       coordinateSystem: {
+        required: true,
         type: String
         },
       vertices: {
@@ -139,8 +139,8 @@ const dispatchesSchema = new mongoose.Schema ({
         ]
       },
       extremes: {
-        required: true,
         north: {
+          required: true,
           type: [
             Number
             ]

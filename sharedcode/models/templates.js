@@ -12,7 +12,8 @@ const templateSchema = new mongoose.Schema ({
   },
   version: {
     type: Number,
-    required: true
+    required: true,
+    default: 1
   },
   enabled: {
     type: Boolean,
@@ -22,7 +23,9 @@ const templateSchema = new mongoose.Schema ({
     {
       version: {
         type: Number,
-        required: true
+        required: true,
+        default: 1,
+        unique: true
       },
       documentDefinitionId: {
         type: String,
@@ -37,7 +40,8 @@ const templateSchema = new mongoose.Schema ({
         required: true
       },
       language: {
-        type: String
+        type: String,
+        default: "nb"
       },
     }
   ],
