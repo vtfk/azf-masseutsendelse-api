@@ -41,11 +41,9 @@ const dispatchesSchema = new mongoose.Schema ({
         },
         documentData: {
           type: Object,
-          required: true
         },
         data: {
           type: Object,
-          required: true
         },
         template: {
           type: String,

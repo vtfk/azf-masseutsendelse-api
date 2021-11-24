@@ -28,7 +28,6 @@ const templateSchema = new mongoose.Schema ({
   },
   documentData: {
     type: Object,
-    required: true
   },
   template: {
     type: String,
