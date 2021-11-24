@@ -16,6 +16,10 @@ const dispatchesSchema = new mongoose.Schema ({
         required: true
       },
       template: {
+        _id: {
+          type: mongoose.Schema.Types.ObjectId,
+          required: true
+        },
         version: {
           type: Number,
           required: true
