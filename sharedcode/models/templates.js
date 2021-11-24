@@ -1,6 +1,9 @@
 const mongoose = require('mongoose')
 
 const templateSchema = new mongoose.Schema ({
+  _Id: {
+    type: mongoose.Schema.Types.ObjectId
+  },
   name: {
     type: String, 
     unique: true,
