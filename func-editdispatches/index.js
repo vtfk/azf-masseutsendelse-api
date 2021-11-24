@@ -6,11 +6,6 @@ const util = require('util');
 module.exports = async function (context, req, id) {
     var urlId = context.bindingData.id
     id = `${urlId}`
-
-    context.log('=== req.body ===')
-
-    context.log(util.inspect(req.body.template, true, 100, true));
-
     let loadDatabase = await getDb()
     if (await loadDatabase) {
         context.log("Mongoose is connected.");
