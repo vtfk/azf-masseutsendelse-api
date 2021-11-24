@@ -15,39 +15,29 @@ const templateSchema = new mongoose.Schema ({
   },
   version: {
     type: Number,
-    required: true,
-    default: 1
+    default: 1,
+    min: 1
   },
   enabled: {
     type: Boolean,
     default: true
   },
-  versions: [
-    {
-      version: {
-        type: Number,
-        required: true,
-        default: 1,
-        unique: true
-      },
-      documentDefinitionId: {
-        type: String,
-        required: true
-      },
-      documentData: {
-        type: Object,
-        required: true
-      },
-      template: {
-        type: String,
-        required: true
-      },
-      language: {
-        type: String,
-        default: "nb"
-      },
-    }
-  ],
+  documentDefinitionId: {
+    type: String,
+    required: true
+  },
+  documentData: {
+    type: Object,
+    required: true
+  },
+  template: {
+    type: String,
+    required: true
+  },
+  language: {
+    type: String,
+    default: "nb"
+  },
   createdTimestamp: {
     type: Date,
     default: new Date,

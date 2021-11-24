@@ -1,10 +1,14 @@
 const mongoose = require("mongoose");
 const Templates = require('../sharedcode/models/templates.js')
-const getDb = require('../sharedcode/connections/masseutsendelseDB.js')
+const getDb = require('../sharedcode/connections/masseutsendelseDB.js');
+const u = require('util');
 
 module.exports = async function (context, req, id) {
     var urlId = context.bindingData.id
     id = `${urlId}`
+
+    context.log(u.inspect(req.body, true, 100, true));
+
     let loadDatabase = await getDb()
     if (await loadDatabase) {
         context.log("Mongoose is connected.");

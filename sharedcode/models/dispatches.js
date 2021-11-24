@@ -6,7 +6,7 @@ const dispatchesSchema = new mongoose.Schema ({
         required: true
       },
       projectnumber: {
-        type: Number,
+        type: String,
         required: true
       },
       status: {
@@ -31,6 +31,13 @@ const dispatchesSchema = new mongoose.Schema ({
         description: {
           type: String,
           required: true
+        },
+        language: {
+          type: String,
+          default: 'nb'
+        },
+        documentDefinitionId: {
+          type: String
         },
         documentData: {
           type: Object,
