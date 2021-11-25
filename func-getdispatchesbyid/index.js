@@ -1,26 +1,32 @@
 const mongoose = require("mongoose");
 const Dispatches = require('../sharedcode/models/dispatches.js')
 const getDb = require('../sharedcode/connections/masseutsendelseDB.js')
+const utils = require('@vtfk/utilities');
 
 module.exports = async function (context, req, id) {
-    var urlId = context.bindingData.id
-    id = `${urlId}`
-    let loadDatabase = await getDb()
-    if (await loadDatabase) {
+    try {
+        // Get ID from request
+        const id = context.bindingData.id
+
+        // Await the database
+        await getDb()
         context.log("Mongoose is connected.");
-        try {
-            await Dispatches.findById(id, req.body, {new: true}).then((dispatchObject) => {
-                if(!dispatchObject){
-                    context.res.status(404).send()
-                }
-                context.res.send(dispatchObject)
-            }).catch(error => {
-                res.status(500).send(error)
-            })
-        } catch (err) {
-            context.log.error('ERROR', err)
-            throw err
-        } 
+
+        //Find Dispatch by ID
+        let disptach = await Dispatches.findById(id)
+        if(!disptach) { throw new Error(`Disptach with id ${id} could no be found`) }
+        context.log('== Dispatch ==');
+        utils.inspect(disptach);
+
+        //Return the dispatch object 
+        let disptachById = await Dispatches.findById(id, req.body, {new: true})
+        context.res.send(disptachById)
+
+        // Close the database connection
+        mongoose.connection.close();
+    }catch (err) {
+        context.log(err);
+        context.res.status(400).send(err);
+        throw err;
     }
-    mongoose.connection.close()
 }
