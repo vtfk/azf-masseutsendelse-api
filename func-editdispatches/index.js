@@ -15,8 +15,6 @@ module.exports = async function (context, req, id) {
         // Get the existing disptach object 
         let existingDispatch = await Dispatches.findById(id).lean()
         if(!existingDispatch) { throw new Error(`Dispatch with id ${id} could not be found` ) }
-        context.log('== Existing Dispatch ==')
-        utils.inspect(existingDispatch)
 
         // Strip away some fields that should not be set by the request
         req.body = utils.removeKeys(req.body, ['createdTimestamp', 'createdBy', 'modifiedTimestamp', 'modifiedBy']);
