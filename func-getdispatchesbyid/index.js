@@ -15,9 +15,7 @@ module.exports = async function (context, req, id) {
         //Find Dispatch by ID
         let disptach = await Dispatches.findById(id)
         if(!disptach) { throw new Error(`Disptach with id ${id} could no be found`) }
-        context.log('== Dispatch ==');
-        utils.inspect(disptach);
-
+        
         //Return the dispatch object 
         let disptachById = await Dispatches.findById(id, req.body, {new: true})
         context.res.send(disptachById)

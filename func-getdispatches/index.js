@@ -12,8 +12,6 @@ module.exports = async function (context) {
         // Find all disptaches 
         let dispatch = await Dispatches.find({})
         if(!dispatch) { throw new Error('No dispatches found in the database.') }
-        context.log('== Disptaches ==')
-        utils.inspect(dispatch)
 
         // Return the disptaches
         context.res.send(dispatch)

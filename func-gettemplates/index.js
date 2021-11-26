@@ -12,8 +12,6 @@ module.exports = async function (context) {
         // Find all the templates
         let templates = await Templates.find({})
         if(!templates) { throw new Error('No templates found in the databases') }
-        context.log('== Templates ==')
-        utils.inspect(templates)
 
         //Return the Templates
         context.res.send(templates)

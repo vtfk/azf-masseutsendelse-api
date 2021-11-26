@@ -16,8 +16,6 @@ module.exports = async function (context, req, id) {
         //Find Template by ID
         let template = await Templates.findById(id)
         if(!template) { throw new Error(`Template with id ${id} could no be found`) }
-        context.log('== Template ==');
-        utils.inspect(template);
 
         //Return the template object 
         let templateById = await Templates.findById(id, req.body, {new: true})

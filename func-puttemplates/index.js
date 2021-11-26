@@ -17,8 +17,6 @@ module.exports = async function (context, req, id) {
     // Get the existing record
     let existingTemplate = await Templates.findById(id).lean();
     if(!existingTemplate) { throw new Error(`Template with id ${id} could no be found`) }
-    context.log('== Existing template ==');
-    utils.inspect(existingTemplate);
 
     // Strip away some fields that should not be able to be set by the request
     req.body = utils.removeKeys(req.body, ['createdTimestamp', 'createdBy', 'modifiedTimestamp', 'modifiedBy']);
