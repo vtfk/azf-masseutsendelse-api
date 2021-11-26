@@ -1,11 +1,56 @@
 const mongoose = require('mongoose')
 
+/*
+  Subschemas
+*/
+const dispatchTemplateSchema = new mongoose.Schema ({
+  _id: {
+    type: mongoose.Schema.Types.ObjectId,
+    required: true
+  },
+  version: {
+    type: Number,
+    required: true
+  },
+  name: {
+    type: String,
+    required: true
+  },
+  description: {
+    type: String,
+    required: true
+  },
+  language: {
+    type: String,
+    default: 'nb'
+  },
+  documentDefinitionId: {
+    type: String
+  },
+  documentData: {
+    type: Object,
+  },
+  data: {
+    type: Object,
+  },
+  template: {
+    type: String
+  }
+})
+
+/*
+  Model schema
+*/
 const dispatchesSchema = new mongoose.Schema ({
       title: {
         type: String,
         required: true
       },
       projectnumber: {
+        type: String,
+        required: true
+      },
+      archivenumber: {
         type: String,
         required: true
       },
@@ -16,43 +61,11 @@ const dispatchesSchema = new mongoose.Schema ({
         required: true
       },
       template: {
-        _id: {
-          type: mongoose.Schema.Types.ObjectId,
-          required: true
-        },
-        version: {
-          type: Number,
-          required: true
-        },
-        name: {
-          type: String,
-          required: true
-        },
-        description: {
-          type: String,
-          required: true
-        },
-        language: {
-          type: String,
-          default: 'nb'
-        },
-        documentDefinitionId: {
-          type: String
-        },
-        documentData: {
-          type: Object,
-        },
-        data: {
-          type: Object,
-        },
-        template: {
-          type: String,
-          required: true
-        }
+        type: dispatchTemplateSchema
       },
-      templateData: [
+      templateData: {
         Object
-      ],
+      },
     stats: {
       affectedCount: {
         type: Number,
