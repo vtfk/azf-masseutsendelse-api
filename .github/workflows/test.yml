@@ -12,7 +12,7 @@ on:
   #     - main
 
    env:
-      AZURE_FUNCTIONAPP_PACKAGE_PATH: '/'  # set this to the path to your web app project, defaults to the repository root
+      AZURE_FUNCTIONAPP_PACKAGE_PATH: '../'  # set this to the path to your web app project, defaults to the repository root
 
     - name: 'Resolve Project Dependencies Using Npm'
       shell: bash
