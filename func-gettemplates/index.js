@@ -5,7 +5,7 @@ const getDb = require('../sharedcode/connections/masseutsendelseDB.js')
 
 module.exports = async function (context) {
     try {
-        // Await the db connection 
+        // Await the db connection.
         await getDb()
         context.log("Mongoose is connected")
 
