@@ -1,7 +1,11 @@
-- name: Setup Node 14.x Environment
-      uses: actions/setup-node@v2
-      with:
-        node-version: 14.x
+steps:
+- uses: actions/checkout@v2
+- uses: actions/setup-node@v2
+  with:
+    node-version: '14'
+    cache: 'npm'
+- run: npm install
+- run: npm test
 on:
   push:
     branches:
@@ -12,7 +16,7 @@ on:
   #     - main
 
    env:
-      AZURE_FUNCTIONAPP_PACKAGE_PATH: '../'  # set this to the path to your web app project, defaults to the repository root
+      AZURE_FUNCTIONAPP_PACKAGE_PATH: '/'  # set this to the path to your web app project, defaults to the repository root
 
     - name: 'Resolve Project Dependencies Using Npm'
       shell: bash
