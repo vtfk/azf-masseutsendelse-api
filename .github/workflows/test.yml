@@ -10,7 +10,7 @@ on:
   #     - main
 env:
   AZURE_FUNCTIONAPP_NAME: TEST-FUNC-MASSEUTSENDELSE    # set this to your application's name
-  AZURE_FUNCTIONAPP_PACKAGE_PATH: '.'      # set this to the path to your web app project, defaults to the repository root
+  AZURE_FUNCTIONAPP_PACKAGE_PATH: '/'      # set this to the path to your web app project, defaults to the repository root
   NODE_VERSION: '12.x'                     # set this to the node version to use (supports 8.x, 10.x, 12.x)
 
 jobs:
@@ -24,6 +24,7 @@ jobs:
       uses: actions/setup-node@v2
       with:
         node-version: ${{ env.NODE_VERSION }}
+
     - name: 'Resolve Project Dependencies Using Npm'
       shell: bash
       run: |
@@ -34,7 +35,7 @@ jobs:
         popd
     - name: 'Run Azure Functions Action'
       uses: Azure/functions-action@v2
-      id: 6ba1352c-966c-4463-ae8f-ce57158d47d5
+      id: fa
       with:
         app-name: ${{ env.AZURE_FUNCTIONAPP_NAME }}
         package: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
