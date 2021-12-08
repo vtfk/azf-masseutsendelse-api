@@ -16,7 +16,7 @@ module.exports = async function (context) {
         //Return the Templates
         context.res.send(templates)
 
-        // Close the database connection En liten endring her.
+        // Close the database connection.
         mongoose.connection.close()
     } catch (err) {
         context.log(err)
