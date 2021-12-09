@@ -2,6 +2,8 @@ const mongoose = require("mongoose");
 const Dispatches = require('../sharedcode/models/dispatches.js')
 const getDb = require('../sharedcode/connections/masseutsendelseDB.js');
 const utils = require('@vtfk/utilities');
+const HTTPError = require('../sharedcode/vtfk-errors/httperror');
+
 
 module.exports = async function (context, req, id) {
     try {
@@ -14,7 +16,7 @@ module.exports = async function (context, req, id) {
 
         // Get the existing disptach object 
         let existingDispatch = await Dispatches.findById(id).lean()
-        if(!existingDispatch) { throw new Error(`Dispatch with id ${id} could not be found` ) }
+        if(!existingDispatch) { throw new HTTPError(404, `Dispatch with id ${id} could not be found` ) }
 
         // Strip away some fields that should not be set by the request
         req.body = utils.removeKeys(req.body, ['createdTimestamp', 'createdBy', 'modifiedTimestamp', 'modifiedBy']);

@@ -1,6 +1,8 @@
 const mongoose = require("mongoose");
 const Templates = require('../sharedcode/models/templates.js')
 const getDb = require('../sharedcode/connections/masseutsendelseDB.js')
+const HTTPError = require('../sharedcode/vtfk-errors/httperror');
+
 
 module.exports = async function (context) {
     var urlId = context.bindingData.id
@@ -10,9 +12,7 @@ module.exports = async function (context) {
         context.log("Mongoose is connected.");
         try {
             await Templates.findByIdAndDelete(id).then((deletedTemplates) => {
-                if(!deletedTemplates) {
-                    context.res.status(404).send()
-                }
+                if(!deletedTemplates) {throw new HTTPError(404, `No template with ID: ${id} found in the database.`) }
                 context.res.send(deletedTemplates)    
             }).catch(error => {
                 res.status(500).send(error)

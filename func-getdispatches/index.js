@@ -1,7 +1,8 @@
 const mongoose = require("mongoose");
 const Dispatches = require('../sharedcode/models/dispatches.js')
 const getDb = require('../sharedcode/connections/masseutsendelseDB.js')
-const utils = require('@vtfk/utilities');
+const HTTPError = require('../sharedcode/vtfk-errors/httperror');
+
 
 module.exports = async function (context) {
     try {
@@ -11,7 +12,7 @@ module.exports = async function (context) {
 
         // Find all disptaches 
         let dispatch = await Dispatches.find({})
-        if(!dispatch) { throw new Error('No dispatches found in the database.') }
+        if(!dispatch) { throw new HTTPError(404, 'No dispatches found in the database.') }
 
         // Return the disptaches
         context.res.send(dispatch)

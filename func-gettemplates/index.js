@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const Templates = require('../sharedcode/models/templates.js')
 const getDb = require('../sharedcode/connections/masseutsendelseDB.js')
+const HTTPError = require('../sharedcode/vtfk-errors/httperror');
 
 
 module.exports = async function (context) {
@@ -11,7 +12,7 @@ module.exports = async function (context) {
 
         // Find all the templates
         let templates = await Templates.find({})
-        if(!templates) { throw new Error('No templates found in the databases') }
+        if(!templates) { throw new HTTPError(404, 'No templates found in the databases') }
 
         //Return the Templates
         context.res.send(templates)

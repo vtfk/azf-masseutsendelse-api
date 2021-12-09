@@ -1,7 +1,8 @@
 const mongoose = require("mongoose");
 const Dispatches = require('../sharedcode/models/dispatches.js')
 const getDb = require('../sharedcode/connections/masseutsendelseDB.js')
-const utils = require('@vtfk/utilities');
+const HTTPError = require('../sharedcode/vtfk-errors/httperror');
+
 
 module.exports = async function (context, req, id) {
     try {
@@ -14,7 +15,7 @@ module.exports = async function (context, req, id) {
 
         //Find Dispatch by ID
         let disptach = await Dispatches.findById(id)
-        if(!disptach) { throw new Error(`Disptach with id ${id} could no be found`) }
+        if(!disptach) { throw new HTTPError(404, `Disptach with id ${id} could no be found`) }
         
         //Return the dispatch object 
         let disptachById = await Dispatches.findById(id, req.body, {new: true})
