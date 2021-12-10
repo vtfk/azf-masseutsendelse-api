@@ -4,12 +4,15 @@
   "description": "",
   "scripts": {
     "start": "func start",
-    "test": "echo \"No tests yet...\""
+    "test": "jest"
   },
   "dependencies": {
+    "@shelf/jest-mongodb": "^1.0.0",
     "@vtfk/utilities": "^1.0.0",
     "express": "^4.17.1",
     "mongoose": "^6.0.12"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "jest": "^27.4.3"
+  }
 }
