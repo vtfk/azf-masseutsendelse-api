@@ -1,12 +1,14 @@
 const mongoose = require("mongoose");
 const uri =  process.env.MONGODB_ATLAS
 
-let database = null
 module.exports = async function() {
-    if(mongoose.connection.readyState === 1) return;
+  if(mongoose.connection.readyState === 1) return;
+  try {
     const client = await mongoose.connect(uri, {
-            serverSelectionTimeoutMS: 5000  
-        }).catch(err => context.log(err.reason))
-    database = client
-    return database
+      serverSelectionTimeoutMS: 15000  
+    })
+    Promise.resolve(client);
+  } catch (err) {
+    Promise.reject(err);
+  }
 }
