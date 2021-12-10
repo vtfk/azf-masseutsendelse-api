@@ -15,7 +15,7 @@ module.exports = async function (context, req) {
 
         // Default values 
         req.body.status = "notapproved"
-
+        
         // Create a new document using the model
         const dispatch = new Dispatches(req.body)
 

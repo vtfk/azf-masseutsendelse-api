@@ -3,11 +3,8 @@ const mongoose = require('mongoose')
 /*
   Subschemas
 */
+// Dispatch template
 const dispatchTemplateSchema = new mongoose.Schema ({
-  _id: {
-    type: mongoose.Schema.Types.ObjectId,
-    required: true
-  },
   version: {
     type: Number,
     required: true
@@ -36,6 +33,41 @@ const dispatchTemplateSchema = new mongoose.Schema ({
   template: {
     type: String
   }
+})
+
+// Polygon
+const polygonSchema = new mongoose.Schema({
+  EPSG: {
+    type: String,
+    required: true
+  },
+  area: {
+    type: Number,
+    required: true
+  },
+  center: {
+    type: [Number],
+    required: true
+  },
+  extremes: {
+    north: {
+      type: [Number],
+      required: true
+    },
+    west: {
+      type: [Number],
+      required: true
+    },
+    east: {
+      type: [Number],
+      required: true
+    },
+    south: {
+      type: [Number],
+      required: true
+    }
+  },
+  vertices: []
 })
 
 /*
@@ -91,107 +123,52 @@ const dispatchesSchema = new mongoose.Schema ({
         Object
       ]
     },
-    matrikkelEnheter: {
+    owners: {
       required: true,
-      type: [
-        Object
-      ]
+      type: [ Object ]
     },
-    polygon: {
-      coordinatesystem: {
+    excludedOwners: {
+      type: [ Object ]
+    },
+    polygons: {
+      EPSG: {
         type: String,
         required: true
       },
-      filename: {
-        type: String,
-        required: true
-      },
+      // filename: {
+      //   type: String,
+      //   required: true
+      // },
       area: {
         type: Number,
         required: true
       },
-      vertices: {
-        required: true,
-        type: [
-          Array
-        ]
+      center: {
+        type: [Number],
+        required: true
       },
       extremes: {
         north: {
-          required: true,
-            type: [
-            Number,
-          ]
+          type: [Number],
+          required: true
         },
         west: {
-          required: true,
-          type: [
-            Number
-            ]
+          type: [Number],
+          required: true
         },
         east: {
-          required: true,
-          type: [
-            Number
-          ]
+          type: [Number],
+          required: true
         },
         south: {
-          required: true,
-            type: [
-            Number
-          ]
+          type: [Number],
+          required: true
         },
-        center: {
-          required: true,
-          type: [
-            Number
-            ]
-        }
-      }
-    },
-    geopolygon: {
-      coordinateSystem: {
-        required: true,
-        type: String
-        },
-      vertices: {
-        required: true,
-        type: [
-            Array
-        ]
       },
-      extremes: {
-        north: {
-          required: true,
-          type: [
-            Number
-            ]
-        },
-        west: {
-          required: true,
-          type: [
-            Number
-          ]
-        },
-        east: {
-          required: true,
-            type: [
-            Number
-          ]
-        },
-        south: {
-          required: true,
-          type: [
-            Number
-            ]
-        },
-        center: {
-          required: true,
-          type: [
-            Number
-          ]
-        }
-      }
+      polygons: [{
+        type: polygonSchema,
+        validate: [(val) => val.length > 0]
+      }]
     },
     createdTimestamp: {
         type: Date,
