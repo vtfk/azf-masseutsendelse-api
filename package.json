@@ -4,7 +4,7 @@
   "description": "",
   "scripts": {
     "start": "func start",
-    "test": "jest"
+    "test": "No test atm, if you want testing remove everything but: jest"
   },
   "dependencies": {
     "@shelf/jest-mongodb": "^1.0.0",
