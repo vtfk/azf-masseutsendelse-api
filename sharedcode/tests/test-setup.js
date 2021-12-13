@@ -1,21 +1,17 @@
-const mongoose = require('mongoose')
+
+const dbMem = require ('./Memory-DB')
 
 module.exports = {
-    setupDB () {
-      // Connect to Mongoose
-      beforeAll(async () => {
-        const uri = "mongodb+srv://masseutsendelse:32EgOSiUmXMXjgML87JMDDbFrgyGfFk6O@cluster0.jlu5j.azure.mongodb.net/masseutsendelse?retryWrites=true&w=majority"
-        await mongoose.connect(uri, { useNewUrlParser: true })
+  setupDB() {
+    // Connect to the memory DB
+    beforeAll(async () => {
+      await dbMem.connect()
     })
-  
-    //   // Cleans up database between each test
-    //   afterEach(async () => {
-    //     await removeAllCollections()
-    //   })
-  
-      // Disconnect Mongoose
-      afterAll(async () => {
-        await mongoose.connection.close()
-      })
-    }
+
+    // Clear DB & Disconnect from the memory DB
+    afterAll(async () => {
+      await dbMem.clearDatabase()
+      await dbMem.closeDatabase()
+    })
   }
+}
