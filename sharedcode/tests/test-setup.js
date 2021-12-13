@@ -10,7 +10,6 @@ module.exports = {
 
     // Clear DB & Disconnect from the memory DB
     afterAll(async () => {
-      await dbMem.clearDatabase()
       await dbMem.closeDatabase()
     })
   }
