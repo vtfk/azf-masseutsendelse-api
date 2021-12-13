@@ -18,7 +18,7 @@ module.exports = async function (context) {
         context.res.send(dispatch)
 
         // Close the database connection 
-        mongoose.connection.close()
+        // // mongoose.connection.close()
     } catch (err) {
         context.log(err)
         context.res.status(400).send(err)

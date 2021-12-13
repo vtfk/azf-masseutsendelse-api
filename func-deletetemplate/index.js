@@ -22,5 +22,5 @@ module.exports = async function (context) {
             throw err
         } 
     }
-    mongoose.connection.close()
+    // mongoose.connection.close()
 }

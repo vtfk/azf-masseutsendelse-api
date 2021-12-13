@@ -21,12 +21,13 @@ module.exports = async function (context, req) {
 
         // Save the new dispatch to the database 
         const results = await dispatch.save()
+        context.log('Dispatch har been saved');
         
         // Return the results
         context.res.status(201).send(results)
 
         // Close the connection 
-        mongoose.connection.close()
+        // // mongoose.connection.close()
     } catch (err) {
         context.log.error('ERROR', err)
         context.res.status(400).send(dispatch)
