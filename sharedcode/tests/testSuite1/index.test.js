@@ -3,6 +3,7 @@ const Templates = require('../../models/templates')
 const { setupDB } = require('../test-setup')
 
 setupDB('endpoint-testing')
+jest.setTimeout(30000) // Actions failer noen ganger med 5000ms 
 
 const bodyDispatch = {
     title: "Jest Test",
