@@ -13,6 +13,12 @@
     "mongoose": "6.0.15"
   },
   "devDependencies": {
-    "jest": "27.4.4"
+    "jest": "27.4.4",
+    "mongodb-memory-server": "^8.0.4"
+  },
+  "config": {
+    "mongodbMemoryServer": {
+    "version": "4.2.6"
+    }
   }
 }
