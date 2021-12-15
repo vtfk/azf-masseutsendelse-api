@@ -5,7 +5,6 @@ const { ObjectID } = require('mongodb');
 const HTTPError = require('../sharedcode/vtfk-errors/httperror.js');
 const { uploadBlob } = require('../sharedcode/blob-storage.js');
 
-
 module.exports = async function (context, req) {
     try {
         // Await the DB connection
@@ -19,27 +18,32 @@ module.exports = async function (context, req) {
         req.body._id = new ObjectID()
         req.body.status = "notapproved"
         
+        if(req.body.attachments && Array.isArray(req.body.attachments)) {
+            for(let i = 0; i < req.body.attachments.length; i++) {
+                req.body.attachments[i]._id = new ObjectID();
+            }
+        }
+ 
         // Create a new document using the model
         const dispatch = new Dispatches(req.body)
 
+        // Save the new dispatch to the database 
+        const results = await dispatch.save()
+
         // Upload files attached to the dispatch object if files exist.
         if(req.body.attachments || Array.isArray(req.body.attachments)) {
-            for await (const file of req.body.attachments) {
+            for await (let file of req.body.attachments) {
                 if(file.name && file.name.includes('/')) throw new HTTPError(500, 'Illigal character in filname, "/" is not allowed.')
-    
+                
                 const resultsFileUpload = await uploadBlob({
                     dispatchId: req.body._id,
-                    fileName: file.name,
-                    content: file.content
+                    fileName: file._id,
+                    content: file.base64
                 }) 
                 file.fileName = resultsFileUpload.split('/').pop
             }
         }
 
-        // Save the new dispatch to the database 
-        const results = await dispatch.save()
-        context.log('Dispatch har been saved');
-        
         // Return the results
         context.res.status(201).send(results)
 

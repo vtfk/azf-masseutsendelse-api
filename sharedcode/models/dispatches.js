@@ -70,34 +70,50 @@ const polygonSchema = new mongoose.Schema({
   vertices: []
 })
 
+// Attachment
+const attachmentSchema = new mongoose.Schema({
+  _id: {
+    type: mongoose.Schema.ObjectId,
+    required: true
+  },
+  name: {
+    type: String,
+    required: true
+  },
+  type: String,
+  size: Number,
+  lastModified: Number,
+  lastModifiedDate: String
+}, { _id: false })
 /*
   Model schema
 */
 const dispatchesSchema = new mongoose.Schema ({
-      title: {
-        type: String,
-        required: true
-      },
-      projectnumber: {
-        type: String,
-        required: true
-      },
-      archivenumber: {
-        type: String,
-        required: true
-      },
-      status: {
-        type: String,
-        default: "notapproved",
-        enum: ["notapproved", "approved", "inprogress", "completed" ],
-        required: true
-      },
-      template: {
-        type: dispatchTemplateSchema
-      },
-      templateData: {
-        Object
-      },
+    title: {
+      type: String,
+      required: true
+    },
+    projectnumber: {
+      type: String,
+      required: true
+    },
+    archivenumber: {
+      type: String,
+      required: true
+    },
+    status: {
+      type: String,
+      default: "notapproved",
+      enum: ["notapproved", "approved", "inprogress", "completed" ],
+      required: true
+    },
+    template: {
+      type: dispatchTemplateSchema
+    },
+    templateData: {
+      Object
+    },
+    attachments: [ attachmentSchema ],
     stats: {
       affectedCount: {
         type: Number,

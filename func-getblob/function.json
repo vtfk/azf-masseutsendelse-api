@@ -8,7 +8,7 @@
       "methods": [
         "get"
       ],
-      "route": "blob/{id}/{fileName}"
+      "route": "blobs/{id}/{fileName}"
     },
     {
       "type": "http",

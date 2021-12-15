@@ -34,8 +34,8 @@ const uploadBlob = async options => {
 // Download blob from blob storage 
 async function downloadBlob (options) {
     if(!options.dispatchId) throw new Error('The dispatchId must be provided for downloading files')
-    // const blobName = `${options.dispatchId}/` + (options.fileName || uuid())
-    const blobName = options.fileName
+    const blobName = `${options.dispatchId}/` + (options.fileName || uuid())
+    // const blobName = options.fileName
     const containerClient = getBlobContainer()
     console.log(blobName)
 
