@@ -1,7 +1,6 @@
 const { BlobServiceClient } = require('@azure/storage-blob')
 
 const { v4: uuid } = require('uuid')
-// const connectionString = "DefaultEndpointsProtocol=https;AccountName=blobmasseutsendelse;AccountKey=2UQErDd9lobCpAvmN8tkFaYiRFxfexzETuau7VJM4fiBcwvG6fB/tvJdfaC4gkawUKuidYUPTdUIMYcseXcrBQ==;EndpointSuffix=core.windows.net"
 const getBlobContainer = () => {
     const blobServiceClient = BlobServiceClient.fromConnectionString(process.env.STORAGE_ACCOUNT_CONNECTIONSTRING)
     return blobServiceClient.getContainerClient(process.env.STORAGE_ACCOUNT_BLOB_NAME)

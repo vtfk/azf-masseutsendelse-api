@@ -1,9 +1,16 @@
 const Dispatches = require('../../models/dispatches')
 const Templates = require('../../models/templates')
-const { setupDB } = require('../test-setup')
+const { ObjectID } = require('mongodb');
+const { setupDB } = require('../test-setup');
+const { downloadBlob } = require('../../blob-storage');
 
 setupDB('endpoint-testing')
 jest.setTimeout(30000) // Actions failer noen ganger med 5000ms 
+
+const attachmentSchema = {
+    _id: new ObjectID(),
+    name: "test",
+}
 
 const bodyDispatch = {
     title: "Jest Test",
@@ -34,6 +41,7 @@ const bodyDispatch = {
         area: "1",
         EPSG: "asde"
     },
+    attachments: [ attachmentSchema ],
     geopolygon: {
         coordinateSystem: "a123sd",
         vertices: [],
@@ -57,6 +65,7 @@ const bodyTemplates = {
 
 let templateId = ""
 let dispatchId = ""
+let attachments = ""
 // Post a template objevt to the database
 it('Should post a template to the database', async () => {
     // Create a new document using the model 
@@ -83,6 +92,7 @@ it('Should return all dispatches from the database', async () => {
     Dispatches.find({}).lean().exec(function(error, records) {
         records.forEach(function(record) {
             dispatchId = record._id
+            attachments = record.attachments
         });
     });
     expect(dispatch).toBeTruthy()
@@ -135,3 +145,11 @@ it('Should edit one template with the given ID from the database', async () => {
     
     expect(updatedTemplate.modifiedTimestamp).not.toBe(existingTemplate.modifiedTimestamp)
 })
+// Check if attachments dosen't exist
+it('Should return an attachment from the database', async () => {
+    expect(attachments).toBeTruthy()
+})
+
+    
+
+    
