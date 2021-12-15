@@ -38,7 +38,7 @@ module.exports = async function (context, req) {
                 const resultsFileUpload = await uploadBlob({
                     dispatchId: req.body._id,
                     fileName: file._id,
-                    content: file.base64
+                    content: file.dataUrl
                 }) 
                 file.fileName = resultsFileUpload.split('/').pop
             }
