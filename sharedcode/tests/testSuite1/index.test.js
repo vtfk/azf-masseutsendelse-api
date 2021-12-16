@@ -3,15 +3,19 @@ const Templates = require('../../models/templates')
 const { ObjectID } = require('mongodb');
 const { setupDB } = require('../test-setup');
 const { downloadBlob } = require('../../blob-storage');
+const axios = require('axios')
 
 setupDB('endpoint-testing')
+jest.mock('axios')
 jest.setTimeout(30000) // Actions failer noen ganger med 5000ms 
 
+// Attachment Schema
 const attachmentSchema = {
     _id: new ObjectID(),
     name: "test",
 }
 
+// Dispatch object
 const bodyDispatch = {
     title: "Jest Test",
     projectnumber: "12",
@@ -22,6 +26,11 @@ const bodyDispatch = {
         totalOwners: "1",
         privateOwners: "1",
         businessOwners: "1", 
+    },
+    template: { 
+        version: "1",
+        name: "jest test",
+        description: "jest test",
     },
     matrikkelEnheter: [],
     polygon: {
@@ -39,7 +48,18 @@ const bodyDispatch = {
     },
     polygons: {
         area: "1",
-        EPSG: "asde"
+        EPSG: "asde",
+        polygons: [{
+            EPSG: "jest test",
+            area: "1",
+            center: ["1", "2", "3"],
+            extremes: {
+                north: ["1", "2", "3"],
+                west: ["1", "2", "3"],
+                east: ["1", "2", "3"],
+                south: ["1", "2", "3"]
+            }
+        }]
     },
     attachments: [ attachmentSchema ],
     geopolygon: {
@@ -55,6 +75,7 @@ const bodyDispatch = {
     },
 }
 
+// Template Object
 const bodyTemplates = {
     name: "JEst test",
     description: "jest testing",
@@ -63,10 +84,11 @@ const bodyTemplates = {
     
 }
 
+// Variables
 let templateId = ""
 let dispatchId = ""
 let attachments = ""
-// Post a template objevt to the database
+
 it('Should post a template to the database', async () => {
     // Create a new document using the model 
     const template = new Templates(bodyTemplates)
@@ -76,7 +98,7 @@ it('Should post a template to the database', async () => {
 
     expect(results).toBeTruthy()
 })
-// Post a dispatch object to the database 
+
 it('Should post a dispatch object to the database', async () => {
     // Create a new document using the model 
     const dispatch = new Dispatches(bodyDispatch)
@@ -86,7 +108,7 @@ it('Should post a dispatch object to the database', async () => {
 
     expect(results).toBeTruthy()
 })
-// Return all dispatches from the database
+
 it('Should return all dispatches from the database', async () => {
     let dispatch = await Dispatches.find({}).lean()
     Dispatches.find({}).lean().exec(function(error, records) {
@@ -97,7 +119,7 @@ it('Should return all dispatches from the database', async () => {
     });
     expect(dispatch).toBeTruthy()
 })
-// Return all templates from the database
+
 it('Should return all templates from the database', async () => {
     let templates = await Templates.find({}).lean()
     Templates.find({}).lean().exec(function(error, records) {
@@ -107,19 +129,17 @@ it('Should return all templates from the database', async () => {
     });
     expect(templates).toBeTruthy()
 })
-// Return a dispatch object with the given id from the database
 
 it('Should return a disptach object with the given id from the database', async () => {
     let dispatch = await Dispatches.findById(dispatchId)
     expect(dispatch).toBeTruthy()
 })
-// Return a template object with the given id from the database
 
 it('Should return a template with the given id from the database', async () => {
     let template = await Templates.findById(templateId)
     expect(template).toBeTruthy()
 })
-// Edit a disptach object with the given id from the database
+
 it('Should edit one dispatch with the given ID from the database', async () => {
     // Get the existing disptach object 
     let existingDispatch = await Dispatches.findById(dispatchId).lean()
@@ -132,7 +152,7 @@ it('Should edit one dispatch with the given ID from the database', async () => {
     
     expect(updatedDispatch.modifiedTimestamp).not.toBe(existingDispatch.modifiedTimestamp)
 })
-// Edit a template object with the given id from the database
+
 it('Should edit one template with the given ID from the database', async () => {
     // Get the existing disptach object 
     let existingTemplate = await Templates.findById(templateId).lean()
@@ -145,11 +165,37 @@ it('Should edit one template with the given ID from the database', async () => {
     
     expect(updatedTemplate.modifiedTimestamp).not.toBe(existingTemplate.modifiedTimestamp)
 })
-// Check if attachments dosen't exist
+
 it('Should return an attachment from the database', async () => {
     expect(attachments).toBeTruthy()
 })
 
-    
+it('Should post a file dand return that it succeeded', async () => {
+    const id = new ObjectID()
+    const postFile = [{dispatchId: id, fileName: "test jest"}];
 
+    const resp = {data: postFile}
+    axios.post.mockResolvedValue(resp)
+    
+    axios.post.mockImplementation(() => Promise.resolve(resp))
+})
+
+it('Should get a file and return that it succeeded', async () => {
+    const id = new ObjectID()
+    const getFile = [{dispatchId: id, fileName: "test jest"}];
+
+    const resp = {data: getFile}
+    axios.get.mockResolvedValue(resp)
+    
+    axios.get.mockImplementation(() => Promise.resolve(resp))
+})
+
+it('Should delete a file and return that it succeeded', async () => {
+    const getFile = [{fileName: "test jest"}];
+
+    const resp = {data: getFile}
+    axios.delete.mockResolvedValue(resp)
+    
+    axios.delete.mockImplementation(() => Promise.resolve(resp))
+})
     
