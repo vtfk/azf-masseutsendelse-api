@@ -2,7 +2,6 @@ const Dispatches = require('../../models/dispatches')
 const Templates = require('../../models/templates')
 const { ObjectID } = require('mongodb');
 const { setupDB } = require('../test-setup');
-const { downloadBlob } = require('../../blob-storage');
 const axios = require('axios')
 
 setupDB('endpoint-testing')
