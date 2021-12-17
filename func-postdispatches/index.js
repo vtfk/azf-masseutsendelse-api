@@ -21,6 +21,7 @@ module.exports = async function (context, req) {
         if(req.body.attachments && Array.isArray(req.body.attachments)) {
             for(let i = 0; i < req.body.attachments.length; i++) {
                 req.body.attachments[i]._id = new ObjectID();
+                if(!req.body.attachments[i].name) req.body.attachments[i].name = req.body.attachments[i]._id;
             }
         }
  
@@ -34,13 +35,14 @@ module.exports = async function (context, req) {
         if(req.body.attachments || Array.isArray(req.body.attachments)) {
             for await (let file of req.body.attachments) {
                 if(file.name && file.name.includes('/')) throw new HTTPError(500, 'Illigal character in filname, "/" is not allowed.')
+                if(!file.name) file.name = file._id;
                 
                 const resultsFileUpload = await uploadBlob({
                     dispatchId: req.body._id,
-                    fileName: file._id,
+                    name: file.name,
                     content: file.dataUrl
                 }) 
-                file.fileName = resultsFileUpload.split('/').pop
+                file.name = resultsFileUpload.split('/').pop
             }
         }
 

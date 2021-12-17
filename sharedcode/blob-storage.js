@@ -22,7 +22,7 @@ async function streamToBuffer (readableStream) {
 // Upload content to blob storage
 const uploadBlob = async options => {
     if(!options.dispatchId) throw new Error('The dispatchId must be provided for uploading files')
-    const blobName = `${options.dispatchId}/` + (options.fileName || uuid())
+    const blobName = `${options.dispatchId}/` + (options.name || uuid())
     const containerClient = getBlobContainer()
 
     const blockBlobClient = containerClient.getBlockBlobClient(blobName)
@@ -33,23 +33,24 @@ const uploadBlob = async options => {
 // Download blob from blob storage 
 async function downloadBlob (options) {
     if(!options.dispatchId) throw new Error('The dispatchId must be provided for downloading files')
-    const blobName = `${options.dispatchId}/` + (options.fileName || uuid())
-    // const blobName = options.fileName
+    const blobName = `${options.dispatchId}/` + options.name;
     const containerClient = getBlobContainer()
-    console.log(blobName)
 
     const blobClient = containerClient.getBlobClient(blobName)
     const downloadResponse = await blobClient.download()
 
     let content = (await streamToBuffer(downloadResponse.readableStreamBody)).toString()
 
-    return {fileName: blobName.split('/').pop(), content}
+    let extension = '';
+    if(options.name.includes('.') && options.name.lastIndexOf('.') !== options.name.length) extension = options.name.substring(options.name.lastIndexOf('.') + 1);
+
+    return { name: blobName.split('/').pop(), extension, content}
 }
 
 // Delete blob from blob storage
 async function deleteBlob (options) {
-    if(!options.fileName) throw new Error('The filename must be provided for the file you want to delete.')
-    const blobName = options.fileName
+    if(!options.name) throw new Error('The name must be provided for the file you want to delete.')
+    const blobName = options.name
 
     const containerClient = getBlobContainer()
 
