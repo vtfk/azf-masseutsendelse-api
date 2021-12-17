@@ -9,6 +9,9 @@ module.exports = async function (context, req, id) {
     try {
         // Get the ID from the request 
         const id = context.bindingData.id
+        
+        // Validate dispatch against schenarios that cannot be described by schema
+        validate(req.body);
 
         // Await the Db conection 
         await getDb()
@@ -27,6 +30,9 @@ module.exports = async function (context, req, id) {
 
         // Update the dispatch 
         const updatedDispatch = await Dispatches.findByIdAndUpdate(id, req.body, {new: true})
+        
+        // Handle attachments
+        // Check if n
 
         // Return the dispatch 
         context.res.status(200).send(updatedDispatch)

@@ -4,9 +4,13 @@ const utils = require('@vtfk/utilities');
 const { ObjectID } = require('mongodb');
 const HTTPError = require('../sharedcode/vtfk-errors/httperror.js');
 const { uploadBlob } = require('../sharedcode/blob-storage.js');
+const validate = require('../sharedcode/validators/dispatches').validate;
 
 module.exports = async function (context, req) {
     try {
+        // Validate dispatch against schenarios that cannot be described by schema
+        validate(req.body);
+        
         // Await the DB connection
         await getDb()
         context.log("Mongoose is connected.")
