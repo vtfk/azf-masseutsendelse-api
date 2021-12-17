@@ -74,13 +74,182 @@ const bodyDispatch = {
     },
 }
 
+// Dispatch object with no template and np attachment
+const bodyDispatchNoTemplateNoAttachment = {
+    title: "Jest Test",
+    projectnumber: "12",
+    archivenumber: "1",
+    stats: {
+        affectedCount: "1",
+        area: "1",
+        totalOwners: "1",
+        privateOwners: "1",
+        businessOwners: "1", 
+    },
+    attachments: [],
+    matrikkelEnheter: [],
+    polygon: {
+        coordinatesystem: "asd",
+        filename: "qsd",
+        area: "12",
+        vertices: [],
+        extremes: {
+            north: "1",
+            west: "1",
+            east: "1",
+            south: "1",
+            center: "1",
+        }
+    },
+    polygons: {
+        area: "1",
+        EPSG: "asde",
+        polygons: [{
+            EPSG: "jest test",
+            area: "1",
+            center: ["1", "2", "3"],
+            extremes: {
+                north: ["1", "2", "3"],
+                west: ["1", "2", "3"],
+                east: ["1", "2", "3"],
+                south: ["1", "2", "3"]
+            }
+        }]
+    },
+    geopolygon: {
+        coordinateSystem: "a123sd",
+        vertices: [],
+        extremes: {
+            north: "1",
+            west: "1",
+            east: "1",
+            south: "1",
+            center: "1",
+        }
+    },
+}
+
+// Dispatch object with no template and np attachment
+const bodyDispatchNoTemplate = {
+    title: "Jest Test",
+    projectnumber: "12",
+    archivenumber: "1",
+    stats: {
+        affectedCount: "1",
+        area: "1",
+        totalOwners: "1",
+        privateOwners: "1",
+        businessOwners: "1", 
+    },
+    attachments: [ attachmentSchema ],
+    matrikkelEnheter: [],
+    polygon: {
+        coordinatesystem: "asd",
+        filename: "qsd",
+        area: "12",
+        vertices: [],
+        extremes: {
+            north: "1",
+            west: "1",
+            east: "1",
+            south: "1",
+            center: "1",
+        }
+    },
+    polygons: {
+        area: "1",
+        EPSG: "asde",
+        polygons: [{
+            EPSG: "jest test",
+            area: "1",
+            center: ["1", "2", "3"],
+            extremes: {
+                north: ["1", "2", "3"],
+                west: ["1", "2", "3"],
+                east: ["1", "2", "3"],
+                south: ["1", "2", "3"]
+            }
+        }]
+    },
+    geopolygon: {
+        coordinateSystem: "a123sd",
+        vertices: [],
+        extremes: {
+            north: "1",
+            west: "1",
+            east: "1",
+            south: "1",
+            center: "1",
+        }
+    },
+}
+
+// Dispatch object with no attachment
+const bodyDispatchNoAttachment = {
+    title: "Jest Test",
+    projectnumber: "12",
+    archivenumber: "1",
+    stats: {
+        affectedCount: "1",
+        area: "1",
+        totalOwners: "1",
+        privateOwners: "1",
+        businessOwners: "1", 
+    },
+    attachments: [],
+    matrikkelEnheter: [],
+    polygon: {
+        coordinatesystem: "asd",
+        filename: "qsd",
+        area: "12",
+        vertices: [],
+        extremes: {
+            north: "1",
+            west: "1",
+            east: "1",
+            south: "1",
+            center: "1",
+        }
+    },
+    template: { 
+        version: "1",
+        name: "jest test",
+        description: "jest test",
+    },
+    polygons: {
+        area: "1",
+        EPSG: "asde",
+        polygons: [{
+            EPSG: "jest test",
+            area: "1",
+            center: ["1", "2", "3"],
+            extremes: {
+                north: ["1", "2", "3"],
+                west: ["1", "2", "3"],
+                east: ["1", "2", "3"],
+                south: ["1", "2", "3"]
+            }
+        }]
+    },
+    geopolygon: {
+        coordinateSystem: "a123sd",
+        vertices: [],
+        extremes: {
+            north: "1",
+            west: "1",
+            east: "1",
+            south: "1",
+            center: "1",
+        }
+    },
+}
+
 // Template Object
 const bodyTemplates = {
-    name: "JEst test",
+    name: "Jest test",
     description: "jest testing",
     documentDefinitionId: "asd123e1",
     template: "noe",
-    
 }
 
 // Variables
@@ -95,7 +264,7 @@ it('Should post a template to the database', async () => {
     // Save the new dispatch object to the database
     const results = await template.save()
 
-    expect(results).toBeTruthy()
+    expect(results).resolves
 })
 
 it('Should post a dispatch object to the database', async () => {
@@ -105,7 +274,7 @@ it('Should post a dispatch object to the database', async () => {
     // Save the new dispatch object to the database
     const results = await dispatch.save()
 
-    expect(results).toBeTruthy()
+    expect(results).resolves
 })
 
 it('Should return all dispatches from the database', async () => {
@@ -116,7 +285,7 @@ it('Should return all dispatches from the database', async () => {
             attachments = record.attachments
         });
     });
-    expect(dispatch).toBeTruthy()
+    expect([dispatch]).toContainEqual(dispatch)
 })
 
 it('Should return all templates from the database', async () => {
@@ -126,17 +295,17 @@ it('Should return all templates from the database', async () => {
             templateId = record._id
         });
     });
-    expect(templates).toBeTruthy()
+    expect([templates]).toContainEqual(templates)
 })
 
 it('Should return a disptach object with the given id from the database', async () => {
     let dispatch = await Dispatches.findById(dispatchId)
-    expect(dispatch).toBeTruthy()
+    expect(dispatch).toMatchObject(dispatch)
 })
 
 it('Should return a template with the given id from the database', async () => {
     let template = await Templates.findById(templateId)
-    expect(template).toBeTruthy()
+    expect(template).toMatchObject(template)
 })
 
 it('Should edit one dispatch with the given ID from the database', async () => {
@@ -169,7 +338,7 @@ it('Should return an attachment from the database', async () => {
     expect(attachments).toBeTruthy()
 })
 
-it('Should post a file dand return that it succeeded', async () => {
+it('Should post a file and return that it succeeded', async () => {
     const id = new ObjectID()
     const postFile = [{dispatchId: id, fileName: "test jest"}];
 
@@ -197,4 +366,36 @@ it('Should delete a file and return that it succeeded', async () => {
     
     axios.delete.mockImplementation(() => Promise.resolve(resp))
 })
+
+it('Should reject the post of a dispatch object due to the lack of template or attachments', async () => {
+    // Create a new document using the model 
+    const dispatch = new Dispatches(bodyDispatchNoTemplateNoAttachment)
+
+    // Save the new dispatch object to the database
+    const results = await dispatch.save()
+
+    expect(results.attachments || results.template).rejects
+})
+
+it('Should resolve the post of a dispatch object to the database since it contains a template', async () => {
+    // Create a new document using the model 
+    const dispatch = new Dispatches(bodyDispatchNoAttachment)
+
+    // Save the new dispatch object to the database
+    const results = await dispatch.save()
+
+    expect(results.attachments || results.template).resolve
+})
+
+it('Should resolve the post of a dispatch object to the database since it contains an attachment', async () => {
+    // Create a new document using the model 
+    const dispatch = new Dispatches(bodyDispatchNoTemplate)
+
+    // Save the new dispatch object to the database
+    const results = await dispatch.save()
+
+    expect(results.attachments || results.template).resolve
+})
+
+
     
