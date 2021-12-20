@@ -16,7 +16,7 @@ module.exports = async function (context, req) {
         context.log("Mongoose is connected.")
 
         // Strip away som fields that should not bed set by the request.
-        req.body = utils.removeKeys(req.body, ['createdTimestamp', 'createdBy', 'modifiedTimestamp', 'modifiedBy'])
+        req.body = utils.removeKeys(req.body, ['createdTimestamp', 'createdBy', 'modifiedTimestamp', 'modifiedBy']);
 
         // Default values 
         req.body._id = new ObjectID()
