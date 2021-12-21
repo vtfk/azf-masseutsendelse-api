@@ -4,7 +4,7 @@ const getDb = require('../sharedcode/connections/masseutsendelseDB.js')
 const HTTPError = require('../sharedcode/vtfk-errors/httperror');
 
 
-module.exports = async function (context, req, id) {
+module.exports = async function (context, req) {
     try {
         // Get ID from request
         const id = context.bindingData.id
@@ -23,7 +23,7 @@ module.exports = async function (context, req, id) {
 
         // Close the database connection
         // mongoose.connection.close();
-    }catch (err) {
+    } catch (err) {
         context.log(err);
         context.res.status(400).send(err);
         throw err;

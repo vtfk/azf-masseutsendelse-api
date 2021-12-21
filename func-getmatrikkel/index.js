@@ -1,13 +1,31 @@
+/*
+  Import dependencies
+*/
+const axios = require('axios');
+const HTTPError = require('../sharedcode/vtfk-errors/httperror');
+
 module.exports = async function (context, req) {
-    context.log('JavaScript HTTP trigger function processed a request.');
+  try {
+    // Input validation
+    if(!process.env.MATRIKKELPROXY_BASEURL) throw new HTTPError(400, 'The MatrikkelProxyAPI connection is not configured');
+    if(!process.env.MATRIKKELPROXY_APIKEY) throw new HTTPError(400, 'The MatrikkelProxyAPI connection is missing the APIKey');
+    // Get ID from request
+    const endpoint = decodeURIComponent(context.bindingData.endpoint);
 
-    const name = (req.query.name || (req.body && req.body.name));
-    const responseMessage = name
-        ? "Hello, " + name + ". This HTTP triggered function executed successfully."
-        : "This HTTP triggered function executed successfully. Pass a name in the query string or in the request body for a personalized response.";
+    let request = {
+      method: 'post',
+      url: `${process.env.MATRIKKELPROXY_BASEURL}${endpoint}`,
+      headers: {
+        'X-API-KEY': process.env.MATRIKKELPROXY_APIKEY
+      },
+      data: req.body
+    }
 
-    context.res = {
-        // status: 200, /* Defaults to 200 */
-        body: responseMessage
-    };
+    response = await axios.request(request);
+    context.res.send(response.data);
+  } catch (err) {
+    context.log(err);
+    context.res.status(400).send(err);
+    throw err;
+  }
 }
