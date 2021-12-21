@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const uri =  process.env.MONGODB_ATLAS
+const uri =  process.env.MONGODB_CONNECTIONSTRING
 
 module.exports = async function() {
   if(mongoose.connection.readyState === 1) return;
