@@ -1,4 +1,3 @@
-const mongoose = require("mongoose");
 const Dispatches = require('../sharedcode/models/dispatches.js')
 const getDb = require('../sharedcode/connections/masseutsendelseDB.js')
 const HTTPError = require('../sharedcode/vtfk-errors/httperror');
@@ -16,9 +15,6 @@ module.exports = async function (context) {
 
         // Return the disptaches
         context.res.send(dispatch)
-
-        // Close the database connection 
-        // // mongoose.connection.close()
     } catch (err) {
         context.log(err)
         context.res.status(400).send(err)
