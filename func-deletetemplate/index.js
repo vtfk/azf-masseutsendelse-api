@@ -4,7 +4,7 @@ const getDb = require('../sharedcode/connections/masseutsendelseDB.js')
 const HTTPError = require('../sharedcode/vtfk-errors/httperror');
 
 
-module.exports = async function (context) {
+module.exports = async function (context, req) {
   try {
     // Authentication / Authorization
     if(req.headers.authorization) await require('../sharedcode/auth/azuread').validate(req.headers.authorization);

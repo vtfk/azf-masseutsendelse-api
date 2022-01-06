@@ -5,13 +5,13 @@ const HTTPError = require('../sharedcode/vtfk-errors/httperror');
 
 
 
-module.exports = async function (context, req, id) {
+module.exports = async function (context, req) {
     try {
         // Authentication / Authorization
         if(req.headers.authorization) await require('../sharedcode/auth/azuread').validate(req.headers.authorization);
         else if(req.headers['x-api-key']) require('../sharedcode/auth/apikey')(req.headers['x-api-key']);
         else throw new HTTPError(401, 'No authentication token provided');
-        
+
         // Get ID from request
         const id = context.bindingData.id
 
