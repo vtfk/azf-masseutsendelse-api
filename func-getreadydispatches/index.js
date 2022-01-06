@@ -23,7 +23,7 @@ module.exports = async function (context) {
         
         testObj = {
             system: 'Masseutsendelse',
-            tasks: [{System: 'p360'}, {System:'svarut'}] 
+            tasks: [{system: 'p360'}, {system:'svarut'}] 
         }
 
         for(let i = 0; i < dispatch.length; i++) {
