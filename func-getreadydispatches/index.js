@@ -22,7 +22,7 @@ module.exports = async function (context) {
         if(!dispatch) { throw new HTTPError(404, 'No dispatches with the status approved/godkjent found in the database.') }
         
         testObj = {
-            projectId: '1',
+            projectId: 1,
             system: 'Masseutsendelse',
             tasks: [{ system: 'p360', method: 'updateperson' }, { system:'svarut', method: 'send' }]
             
