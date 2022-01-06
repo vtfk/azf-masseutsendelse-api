@@ -21,16 +21,29 @@ module.exports = async function (context) {
         let dispatch = await Dispatches.find({'status': 'approved'})
         if(!dispatch) { throw new HTTPError(404, 'No dispatches with the status approved/godkjent found in the database.') }
         
+        testObj = {
+            system: 'Masseutsendelse',
+            tasks: ['p360', 'svarut'] 
+        }
+
+        // let test = Object.assign(dispatch, testObj)
+
+        for(let i = 0; i < dispatch.length; i++) {
+            Object.assign(dispatch[i], testObj)
+        }
+        
+        for(let i = 0; i < dispatch.length; i++) {
+            arr.push(pick(dispatch[i], '_id', 'system', 'tasks', 'archivenumber', 'attachments', 'owners' ))
+        }
+
         // for(let i = 0; i < dispatch.length; i++) {
         //     dispatch[i] = Object.assign( {
         //         system: 'Masseutsendelse',
         //         tasks: ['p360', 'svarut'] 
         //     },  dispatch[i])
         // }
-              
-        for(let i = 0; i < dispatch.length; i++) {
-            arr.push(pick(dispatch[i], '_id', 'system', 'tasks', 'archivenumber', 'attachments', 'owners' ))
-        }
+        
+        console.log(dispatch)
 
         // TODO Legg till system=masseutsendelse, tasks = p360 og svarut
     
