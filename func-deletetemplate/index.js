@@ -5,22 +5,25 @@ const HTTPError = require('../sharedcode/vtfk-errors/httperror');
 
 
 module.exports = async function (context) {
-    var urlId = context.bindingData.id
-    id = `${urlId}`
-    let loadDatabase = await getDb()
-    if (await loadDatabase) {
-        context.log("Mongoose is connected.");
-        try {
-            await Templates.findByIdAndDelete(id).then((deletedTemplates) => {
-                if(!deletedTemplates) {throw new HTTPError(404, `No template with ID: ${id} found in the database.`) }
-                context.res.send(deletedTemplates)    
-            }).catch(error => {
-                res.status(500).send(error)
-            })
-        }catch (err) {
-            context.log.error('ERROR', err)
-            throw err
-        } 
-    }
-    // mongoose.connection.close()
+  try {
+    // Authentication / Authorization
+    if(req.headers.authorization) await require('../sharedcode/auth/azuread').validate(req.headers.authorization);
+    else if(req.headers['x-api-key']) require('../sharedcode/auth/apikey')(req.headers['x-api-key']);
+    else throw new HTTPError(401, 'No authentication token provided');
+
+    // Await the database
+    await getDb()
+    context.log("Mongoose is connected.");
+
+    // Delete the template, if it fails it probably means that it is already deleted
+    try { await Templates.findByIdAndDelete(context.bindingData.id); }
+    catch { context.res.send(); }
+    
+    context.res.send();
+
+  } catch (err) {
+    context.log(err);
+    context.res.status(400).send(err);
+    throw err;
+  }
 }

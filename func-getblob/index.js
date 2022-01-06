@@ -3,6 +3,11 @@ const blobClient = require('@vtfk/azure-blob-client');
 
 module.exports = async function (context) {
     try {
+        // Authentication / Authorization
+        if(req.headers.authorization) await require('../sharedcode/auth/azuread').validate(req.headers.authorization);
+        else if(req.headers['x-api-key']) require('../sharedcode/auth/apikey')(req.headers['x-api-key']);
+        else throw new HTTPError(401, 'No authentication token provided');
+        
         // Input validation
         if(!context.bindingData.id) throw new HTTPError(400, 'dispatchId must be specified');
         if(!context.bindingData.name) throw new HTTPError(400, 'name must be specified');

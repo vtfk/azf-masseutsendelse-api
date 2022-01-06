@@ -4,7 +4,6 @@ const HTTPError = require('../sharedcode/vtfk-errors/httperror');
 
 module.exports = async function (context, req) {
     try {
-        console.log(req.headers);
         // Authentication / Authorization
         if(req.headers.authorization) await require('../sharedcode/auth/azuread').validate(req.headers.authorization);
         else if(req.headers['x-api-key']) require('../sharedcode/auth/apikey')(req.headers['x-api-key']);

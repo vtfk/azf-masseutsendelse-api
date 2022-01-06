@@ -5,7 +5,12 @@ const utils = require('@vtfk/utilities');
 
 module.exports = async function (context, req) {
   try {
-        // Await database connection
+      // Authentication / Authorization
+      if(req.headers.authorization) await require('../sharedcode/auth/azuread').validate(req.headers.authorization);
+      else if(req.headers['x-api-key']) require('../sharedcode/auth/apikey')(req.headers['x-api-key']);
+      else throw new HTTPError(401, 'No authentication token provided');
+
+      // Await database connection
       await getDb()
       context.log("Mongoose is connected.");
 
