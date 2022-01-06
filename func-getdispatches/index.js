@@ -1,13 +1,14 @@
 const Dispatches = require('../sharedcode/models/dispatches.js')
 const getDb = require('../sharedcode/connections/masseutsendelseDB.js')
 const HTTPError = require('../sharedcode/vtfk-errors/httperror');
-const { validate } = require('../sharedcode/auth/azuread');
-
 
 module.exports = async function (context, req) {
     try {
-        // Auth
-        await validate(req.headers.authorization)
+        console.log(req.headers);
+        // Authentication / Authorization
+        if(req.headers.authorization) await require('../sharedcode/auth/azuread').validate(req.headers.authorization);
+        else if(req.headers['x-api-key']) require('../sharedcode/auth/apikey')(req.headers['x-api-key']);
+        else throw new HTTPError(401, 'No authentication token provided');
 
         // Await the DB connection 
         await getDb()
