@@ -23,10 +23,8 @@ module.exports = async function (context) {
         
         testObj = {
             system: 'Masseutsendelse',
-            tasks: ['p360', 'svarut'] 
+            tasks: [{System: 'p360'}, {System:'svarut'}] 
         }
-
-        // let test = Object.assign(dispatch, testObj)
 
         for(let i = 0; i < dispatch.length; i++) {
             Object.assign(dispatch[i], testObj)
@@ -36,18 +34,6 @@ module.exports = async function (context) {
             arr.push(pick(dispatch[i], '_id', 'system', 'tasks', 'archivenumber', 'attachments', 'owners' ))
         }
 
-        // for(let i = 0; i < dispatch.length; i++) {
-        //     dispatch[i] = Object.assign( {
-        //         system: 'Masseutsendelse',
-        //         tasks: ['p360', 'svarut'] 
-        //     },  dispatch[i])
-        // }
-        
-        console.log(dispatch)
-
-        // TODO Legg till system=masseutsendelse, tasks = p360 og svarut
-    
-       
         context.res.send(arr)
         
         arr = []
