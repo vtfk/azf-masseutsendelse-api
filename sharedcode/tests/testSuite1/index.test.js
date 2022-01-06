@@ -74,6 +74,67 @@ const bodyDispatch = {
     },
 }
 
+// Disptach object with status approved 
+const bodyDispatchApproved = {
+    title: "Jest Test",
+    status: "approved",
+    projectnumber: "12",
+    archivenumber: "1",
+    stats: {
+        affectedCount: "1",
+        area: "1",
+        totalOwners: "1",
+        privateOwners: "1",
+        businessOwners: "1", 
+    },
+    template: { 
+        version: "1",
+        name: "jest test",
+        description: "jest test",
+    },
+    matrikkelEnheter: [],
+    polygon: {
+        coordinatesystem: "asd",
+        filename: "qsd",
+        area: "12",
+        vertices: [],
+        extremes: {
+            north: "1",
+            west: "1",
+            east: "1",
+            south: "1",
+            center: "1",
+        }
+    },
+    polygons: {
+        area: "1",
+        EPSG: "asde",
+        polygons: [{
+            EPSG: "jest test",
+            area: "1",
+            center: ["1", "2", "3"],
+            extremes: {
+                north: ["1", "2", "3"],
+                west: ["1", "2", "3"],
+                east: ["1", "2", "3"],
+                south: ["1", "2", "3"]
+            }
+        }]
+    },
+    attachments: [ attachmentSchema ],
+    geopolygon: {
+        coordinateSystem: "a123sd",
+        vertices: [],
+        extremes: {
+            north: "1",
+            west: "1",
+            east: "1",
+            south: "1",
+            center: "1",
+        }
+    },
+}
+
 // Dispatch object with no template and np attachment
 const bodyDispatchNoTemplateNoAttachment = {
     title: "Jest Test",
@@ -277,6 +338,16 @@ it('Should post a dispatch object to the database', async () => {
     expect(results).resolves
 })
 
+it('Should post a dispatch object to the database with status approved', async () => {
+    // Create a new document using the model 
+    const dispatch = new Dispatches(bodyDispatchApproved)
+
+    // Save the new dispatch object to the database
+    const results = await dispatch.save()
+
+    expect(results).resolves
+})
+
 it('Should return all dispatches from the database', async () => {
     let dispatch = await Dispatches.find({}).lean()
     Dispatches.find({}).lean().exec(function(error, records) {
@@ -286,6 +357,17 @@ it('Should return all dispatches from the database', async () => {
         });
     });
     expect([dispatch]).toContainEqual(dispatch)
+})
+
+it('Should return all dispatches from the database with the status approved', async () => {
+    let dispatch = await Dispatches.find({'status': 'approved'}).lean()
+    Dispatches.find({}).lean().exec(function(error, records) {
+        records.forEach(function(record) {
+            dispatchId = record._id
+            attachments = record.attachments
+        });
+    });
+    expect(dispatch[0].status).toEqual('approved')
 })
 
 it('Should return all templates from the database', async () => {

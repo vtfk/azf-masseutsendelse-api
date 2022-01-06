@@ -182,6 +182,9 @@ const dispatchesSchema = new mongoose.Schema ({
         validate: [(val) => val.length > 0]
       }]
     },
+    e18Id: {
+      type: String,
+    },
     createdTimestamp: {
         type: Date,
         default: new Date,
