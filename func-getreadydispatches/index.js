@@ -22,8 +22,10 @@ module.exports = async function (context) {
         if(!dispatch) { throw new HTTPError(404, 'No dispatches with the status approved/godkjent found in the database.') }
         
         testObj = {
+            projectId: '1',
             system: 'Masseutsendelse',
-            tasks: [{ system: 'p360', method: 'updateperson' }, { system:'svarut', method: 'send' }] 
+            tasks: [{ system: 'p360', method: 'updateperson' }, { system:'svarut', method: 'send' }]
+            
         }
 
         for(let i = 0; i < dispatch.length; i++) {
@@ -31,7 +33,7 @@ module.exports = async function (context) {
         }
         
         for(let i = 0; i < dispatch.length; i++) {
-            arr.push(pick(dispatch[i], '_id', 'system', 'tasks', 'archivenumber', 'attachments', 'owners' ))
+            arr.push(pick(dispatch[i], '_id', 'system', 'projectId', 'tasks', 'archivenumber', 'attachments', 'owners' ))
         }
 
         context.res.send(arr)
