@@ -2,6 +2,14 @@ const Dispatches = require('../sharedcode/models/dispatches.js')
 const getDb = require('../sharedcode/connections/masseutsendelseDB.js')
 const HTTPError = require('../sharedcode/vtfk-errors/httperror');
 
+let arr = []
+
+function pick(obj, ...props) {
+    return props.reduce(function(result, prop) {
+      result[prop] = obj[prop];
+      return result;
+    }, {});
+}
 
 module.exports = async function (context) {
     try {
@@ -12,10 +20,24 @@ module.exports = async function (context) {
         // Find all disptaches 
         let dispatch = await Dispatches.find({'status': 'approved'})
         if(!dispatch) { throw new HTTPError(404, 'No dispatches with the status approved/godkjent found in the database.') }
+        
+        // for(let i = 0; i < dispatch.length; i++) {
+        //     dispatch[i] = Object.assign( {
+        //         system: 'Masseutsendelse',
+        //         tasks: ['p360', 'svarut'] 
+        //     },  dispatch[i])
+        // }
+              
+        for(let i = 0; i < dispatch.length; i++) {
+            arr.push(pick(dispatch[i], '_id', 'system', 'tasks', 'archivenumber', 'attachments', 'owners' ))
+        }
 
-        // Return the disptaches
-        context.res.send(dispatch)
-
+        // TODO Legg till system=masseutsendelse, tasks = p360 og svarut
+    
+       
+        context.res.send(arr)
+        
+        arr = []
     } catch (err) {
         context.log(err)
         context.res.status(400).send(err)
