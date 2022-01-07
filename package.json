@@ -17,7 +17,7 @@
     "mongoose": "6.0.15"
   },
   "devDependencies": {
-    "jest": "27.4.5",
+    "jest": "27.4.7",
     "mongodb-memory-server": "8.1.0"
   },
   "config": {
