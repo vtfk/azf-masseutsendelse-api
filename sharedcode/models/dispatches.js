@@ -197,6 +197,7 @@ const dispatchesSchema = new mongoose.Schema ({
     },
     createdById: {
       type: String,
+      default: "00000000-0000-0000-0000-000000000000",
       required: true
     },
     modifiedTimestamp: {
@@ -211,6 +212,7 @@ const dispatchesSchema = new mongoose.Schema ({
     },
     modifiedById: {
       type: String,
+      default: "00000000-0000-0000-0000-000000000000",
       required: true
     },
     approvedTimestamp: {

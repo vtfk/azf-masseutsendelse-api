@@ -20,7 +20,7 @@ module.exports = async function (context, req) {
             if(token && token.oid) requestorId = token.oid;
         } else if(req.headers['x-api-key']) {
             require('../sharedcode/auth/apikey')(req.headers['x-api-key']);
-            requestorName = 'apikey';
+            requestorName, requestorId = 'apikey';
         } 
         else throw new HTTPError(401, 'No authentication token provided');
 
