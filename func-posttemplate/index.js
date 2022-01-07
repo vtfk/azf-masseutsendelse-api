@@ -1,24 +1,35 @@
-const mongoose = require("mongoose");
 const Templates = require('../sharedcode/models/templates.js')
 const getDb = require('../sharedcode/connections/masseutsendelseDB.js')
 const utils = require('@vtfk/utilities');
 
 module.exports = async function (context, req) {
   try {
-      // Authentication / Authorization
-      if(req.headers.authorization) await require('../sharedcode/auth/azuread').validate(req.headers.authorization);
-      else if(req.headers['x-api-key']) require('../sharedcode/auth/apikey')(req.headers['x-api-key']);
-      else throw new HTTPError(401, 'No authentication token provided');
+      // Strip away some fields that should not be able to be set by the request
+      req.body = utils.removeKeys(req.body, ['createdTimestamp', 'createdBy', 'createdById', 'modifiedTimestamp', 'modifiedBy', 'modifiedById']);
 
+      // Authentication / Authorization
+      let requestorName = undefined;
+      let requestorId = undefined;
+      if(req.headers.authorization) {
+        token = await require('../sharedcode/auth/azuread').validate(req.headers.authorization);
+        if(token && token.name) requestorName = token.name;
+        if(token && token.oid) requestorId = token.oid;
+      } else if(req.headers['x-api-key']) {
+        require('../sharedcode/auth/apikey')(req.headers['x-api-key']);
+        requestorName = 'apikey';
+      } 
+      else throw new HTTPError(401, 'No authentication token provided');
+      
       // Await database connection
       await getDb()
       context.log("Mongoose is connected.");
 
-      // Strip away some fields that should not be able to be set by the request
-      req.body = utils.removeKeys(req.body, ['createdTimestamp', 'createdBy', 'modifiedTimestamp', 'modifiedBy']);
-      
       // Set some default values
       req.body.version = 1;
+      req.body.createdBy = requestorName
+      req.body.modifiedBy = requestorName
+      req.body.createdById = requestorId
+      req.body.modifiedById = requestorId
 
       // Create a new document from model
       const template = new Templates(req.body)

@@ -7,10 +7,26 @@ const HTTPError = require('../sharedcode/vtfk-errors/httperror');
 
 module.exports = async function (context, req) {
   try {
+    // Strip away som fields that should not bed set by the request.
+    req.body = utils.removeKeys(req.body, ['createdTimestamp', 'createdBy', 'createdById', 'modifiedTimestamp', 'modifiedBy', 'modifiedById']);
+
     // Authentication / Authorization
-    if(req.headers.authorization) await require('../sharedcode/auth/azuread').validate(req.headers.authorization);
-    else if(req.headers['x-api-key']) require('../sharedcode/auth/apikey')(req.headers['x-api-key']);
+    let requestorName = undefined;
+    let requestorId = undefined;
+    if(req.headers.authorization) {
+        token = await require('../sharedcode/auth/azuread').validate(req.headers.authorization);
+        if(token && token.name) requestorName = token.name;
+        if(token && token.oid) requestorId = token.oid;
+    } else if(req.headers['x-api-key']) {
+        require('../sharedcode/auth/apikey')(req.headers['x-api-key']);
+        requestorName = 'apikey';
+    } 
     else throw new HTTPError(401, 'No authentication token provided');
+
+    // Update modified by
+    req.body.modifiedBy = requestorName
+    req.body.modifiedById = requestorId
+    req.body.modifiedTimestamp = new Date();
 
     // Get the ID from the request
     const id = context.bindingData.id
@@ -23,22 +39,14 @@ module.exports = async function (context, req) {
     let existingTemplate = await Templates.findById(id).lean();
     if(!existingTemplate) { throw new HTTPError(`Template with id ${id} could no be found`) }
 
-    // Strip away some fields that should not be able to be set by the request
-    req.body = utils.removeKeys(req.body, ['createdTimestamp', 'createdBy', 'modifiedTimestamp', 'modifiedBy']);
-
-    // Update values if applicable
+    // Increment the version number
     req.body.version = existingTemplate.version + 1;
-    req.modifiedTimestamp = new Date();
-    // TODO: Oppdatert modifiedBy
 
     // Update the template
     const updatedTemplate = await Templates.findByIdAndUpdate(id, req.body, {new: true})
 
     // Return the updated template
     context.res.status(200).send(updatedTemplate)
-
-    // Close the database connection
-    // mongoose.connection.close();
   } catch (err) {
     context.log(err);
     context.res.status(400).send(err);

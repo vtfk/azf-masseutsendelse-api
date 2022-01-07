@@ -186,34 +186,41 @@ const dispatchesSchema = new mongoose.Schema ({
       type: String,
     },
     createdTimestamp: {
-        type: Date,
-        default: new Date,
-        required: true
+      type: Date,
+      default: new Date,
+      required: true
     },
     createdBy: {
-        type: String,
-        default: "André Noen",
-        required: true
+      type: String,
+      default: "André Noen",
+      required: true
     },
     createdById: {
-        type: String,
-        default: "00000000-0000-0000-0000-000000000000",
-        required: true
+      type: String,
+      required: true
     },
     modifiedTimestamp: {
-        type: Date,
-        default: new Date,
-        required: true
+      type: Date,
+      default: new Date,
+      required: true
     },
     modifiedBy: {
-        type: String,
-        default: "Noen André",
-        required: true
+      type: String,
+      default: "Noen André",
+      required: true
     },
     modifiedById: {
-        type: String,
-        default: "00000000-0000-0000-0000-000000000000",
-        required: true
+      type: String,
+      required: true
+    },
+    approvedTimestamp: {
+      type: Date,
+    },
+    approvedBy: {
+      type: String,
+    },
+    approvedById: {
+      type: String,
     }
 })
 

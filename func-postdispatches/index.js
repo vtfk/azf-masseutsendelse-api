@@ -8,10 +8,29 @@ const blobClient = require('@vtfk/azure-blob-client');
 
 module.exports = async function (context, req) {
     try {
+        // Strip away som fields that should not bed set by the request.
+        req.body = utils.removeKeys(req.body, ['createdTimestamp', 'createdBy', 'createdById', 'modifiedTimestamp', 'modifiedBy', 'modifiedById']);
+
         // Authentication / Authorization
-        if(req.headers.authorization) await require('../sharedcode/auth/azuread').validate(req.headers.authorization);
-        else if(req.headers['x-api-key']) require('../sharedcode/auth/apikey')(req.headers['x-api-key']);
+        let requestorName = undefined;
+        let requestorId = undefined;
+        if(req.headers.authorization) {
+            token = await require('../sharedcode/auth/azuread').validate(req.headers.authorization);
+            if(token && token.name) requestorName = token.name;
+            if(token && token.oid) requestorId = token.oid;
+        } else if(req.headers['x-api-key']) {
+            require('../sharedcode/auth/apikey')(req.headers['x-api-key']);
+            requestorName = 'apikey';
+        } 
         else throw new HTTPError(401, 'No authentication token provided');
+
+        // Set values
+        req.body._id = new ObjectID()
+        req.body.status = "notapproved"
+        req.body.createdBy = requestorName
+        req.body.modifiedBy = requestorName
+        req.body.createdById = requestorId
+        req.body.modifiedById = requestorId
         
         // Validate dispatch against schenarios that cannot be described by schema
         validate(req.body);
@@ -19,13 +38,6 @@ module.exports = async function (context, req) {
         // Await the DB connection
         await getDb()
         context.log("Mongoose is connected.")
-
-        // Strip away som fields that should not bed set by the request.
-        req.body = utils.removeKeys(req.body, ['createdTimestamp', 'createdBy', 'modifiedTimestamp', 'modifiedBy']);
-
-        // Default values 
-        req.body._id = new ObjectID()
-        req.body.status = "notapproved"
         
         // Check if the attachments contains any invalid characters
         if(req.body.attachments && Array.isArray(req.body.attachments) && req.body.attachments.length > 0) {

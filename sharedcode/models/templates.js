@@ -44,7 +44,7 @@ const templateSchema = new mongoose.Schema ({
   },
   createdBy: {
       type: String,
-      default: "André Noen",
+      default: "unknown",
       required: true
   },
   createdById: {
@@ -59,7 +59,7 @@ const templateSchema = new mongoose.Schema ({
   },
   modifiedBy: {
       type: String,
-      default: "Noen André",
+      default: "unknown",
       required: true
   },
   modifiedById: {

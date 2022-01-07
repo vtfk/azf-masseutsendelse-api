@@ -8,10 +8,26 @@
 
   module.exports = async function (context, req) {
   try {
+    // Strip away som fields that should not bed set by the request.
+    req.body = utils.removeKeys(req.body, ['createdTimestamp', 'createdBy', 'createdById', 'modifiedTimestamp', 'modifiedBy', 'modifiedById']);
+
     // Authentication / Authorization
-    if(req.headers.authorization) await require('../sharedcode/auth/azuread').validate(req.headers.authorization);
-    else if(req.headers['x-api-key']) require('../sharedcode/auth/apikey')(req.headers['x-api-key']);
+    let requestorName = undefined;
+    let requestorId = undefined;
+    if(req.headers.authorization) {
+        token = await require('../sharedcode/auth/azuread').validate(req.headers.authorization);
+        if(token && token.name) requestorName = token.name;
+        if(token && token.oid) requestorId = token.oid;
+    } else if(req.headers['x-api-key']) {
+        require('../sharedcode/auth/apikey')(req.headers['x-api-key']);
+        requestorName = 'apikey';
+    } 
     else throw new HTTPError(401, 'No authentication token provided');
+
+    // Update modified by
+    req.body.modifiedBy = requestorName
+    req.body.modifiedById = requestorId
+    req.body.modifiedTimestamp = new Date();
 
     // Get the ID from the request 
     const id = context.bindingData.id
@@ -27,13 +43,18 @@
     let existingDispatch = await Dispatches.findById(id).lean()
     if(!existingDispatch) { throw new HTTPError(404, `Dispatch with id ${id} could not be found` ) }
 
-    // Strip away some fields that should not be set by the request
-    req.body = utils.removeKeys(req.body, ['createdTimestamp', 'createdBy', 'modifiedTimestamp', 'modifiedBy']);
+    // Set approval information
+    if(existingDispatch.status !== 'approved' && req.body.status === 'approved') {
+      req.body.approvedBy = requestorName;
+      req.body.approvedById = requestorId;
+      req.body.approvedTimestamp = new Date();
+    }
+    if(req.body.status !== 'approved') {
+      req.body.approvedBy = '';
+      req.body.approvedById = '';
+      req.body.approvedTimestamp = '';
+    }
 
-    // Update default values 
-    req.modifiedTimestamp = new Date()
-    // TODO - Oppdater modifiedBy 
-    
     // Validate attachments
     if(req.body.attachments && Array.isArray(req.body.attachments) && req.body.attachments.length > 0) {
       req.body.attachments.forEach((i) => {
