@@ -17,9 +17,9 @@ module.exports = async function (context, req) {
         
         // Return the file
         context.res.send(file)
-    }catch (err) {
+    } catch (err) {
         context.log(err)
-        context.res.status(400).send(err)
+        context.res.status(400).send(JSON.stringify(err, Object.getOwnPropertyNames(err)))
         throw err
     }
 }

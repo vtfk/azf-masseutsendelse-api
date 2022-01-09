@@ -32,7 +32,7 @@ module.exports = async function (context, req) {
     context.res.send(response.data);
   } catch (err) {
     context.log(err);
-    context.res.status(400).send(err);
+    context.res.status(400).send(JSON.stringify(err, Object.getOwnPropertyNames(err)))
     throw err;
   }
 }

@@ -17,14 +17,11 @@ module.exports = async function (context, req) {
         let dispatch = await Dispatches.find({})
         if(!dispatch) { throw new HTTPError(404, 'No dispatches found in the database.') }
 
-
         // Return the disptaches
         context.res.send(dispatch)
     } catch (err) {
         context.log(err)
-        context.res.status(400).send(err)
+        context.res.status(400).send(JSON.stringify(err, Object.getOwnPropertyNames(err)))
         throw err
     }
 }
-
-

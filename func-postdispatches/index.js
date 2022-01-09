@@ -68,7 +68,7 @@ module.exports = async function (context, req) {
         context.res.status(201).send(results)
     } catch (err) {
         context.log.error('ERROR', err)
-        context.res.status(400).send(dispatch)
+        context.res.status(400).send(JSON.stringify(err, Object.getOwnPropertyNames(err)))
         throw err
     }
 }

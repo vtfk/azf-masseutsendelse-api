@@ -44,7 +44,7 @@ module.exports = async function (context, req) {
       // mongoose.connection.close()
     } catch (err) {
       context.log.error('ERROR', err)
-      context.res.status(400).send(template)
+      context.res.status(400).send(JSON.stringify(err, Object.getOwnPropertyNames(err)))
       throw err
     };
     
