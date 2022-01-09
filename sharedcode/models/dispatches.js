@@ -19,7 +19,6 @@ const dispatchTemplateSchema = new mongoose.Schema ({
   },
   language: {
     type: String,
-    default: 'nb'
   },
   documentDefinitionId: {
     type: String
@@ -147,10 +146,6 @@ const dispatchesSchema = new mongoose.Schema ({
         type: String,
         required: true
       },
-      // filename: {
-      //   type: String,
-      //   required: true
-      // },
       area: {
         type: Number,
         required: true
@@ -192,7 +187,6 @@ const dispatchesSchema = new mongoose.Schema ({
     },
     createdBy: {
       type: String,
-      default: "André Noen",
       required: true
     },
     createdById: {

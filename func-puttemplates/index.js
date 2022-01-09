@@ -1,4 +1,3 @@
-const mongoose = require("mongoose");
 const Templates = require('../sharedcode/models/templates.js')
 const getDb = require('../sharedcode/connections/masseutsendelseDB.js');
 const utils = require('@vtfk/utilities');

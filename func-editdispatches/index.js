@@ -29,6 +29,12 @@
     req.body.modifiedById = requestorId
     req.body.modifiedTimestamp = new Date();
 
+    // Figure out if any items should be unset
+    let unsets = {};
+    if(!req.body.template) unsets.template = 1;
+    console.log('UNsets');
+    console.log(unsets);
+
     // Get the ID from the request 
     const id = context.bindingData.id
     
@@ -65,7 +71,7 @@
     }
 
     // Update the dispatch 
-    const updatedDispatch = await Dispatches.findByIdAndUpdate(id, req.body, {new: true})
+    const updatedDispatch = await Dispatches.findByIdAndUpdate(id, { ...req.body, $unset: unsets }, { new: true})
     
     // Handle attachments
     if(existingDispatch.attachments) {
