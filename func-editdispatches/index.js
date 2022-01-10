@@ -74,7 +74,7 @@
     const updatedDispatch = await Dispatches.findByIdAndUpdate(id, { ...req.body, $unset: unsets }, { new: true})
     
     // Handle attachments
-    if(existingDispatch.attachments) {
+    if(existingDispatch.attachments && existingDispatch.attachments.lenght > 1) {
       let attachmentsToRemove = [];
       let attachmentsToAdd = [];
       const existingNames = existingDispatch.attachments.map((i) => i.name);
