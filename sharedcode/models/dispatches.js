@@ -116,7 +116,7 @@ const dispatchesSchema = new mongoose.Schema ({
       },
       area:{
         type: Number,
-        required: true
+        required: false
       },
       totalOwners: {
         type: Number,
