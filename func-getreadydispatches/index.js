@@ -3,6 +3,18 @@ const getDb = require('../sharedcode/connections/masseutsendelseDB.js')
 const HTTPError = require('../sharedcode/vtfk-errors/httperror');
 
 let arr = []
+let ownersArray = []
+
+let postAdresse = {
+    adresse: "",
+    postNummer: "",
+    postSted: "",
+}
+let ownerSimplified = {
+    navn: "",
+    nummer: "",
+    postAdresse: "",
+}
 
 function pick(obj, ...props) {
     return props.reduce(function(result, prop) {
@@ -41,8 +53,58 @@ module.exports = async function (context, req) {
             arr.push(pick(dispatch[i], '_id', 'system', 'projectId', 'tasks', 'archivenumber', 'attachments', 'template', 'owners' ))
         }
 
+        let owners = arr.map(x => x.owners)
+
+        for(let i = 0; i < owners.length; i++) {
+            for(let j = 0; j < owners[i].length; j++) {
+                if (owners[i][j]._type === "FysiskPerson") { 
+                    postAdresse = {}
+                    ownerSimplified = {}
+                    Object.assign(ownerSimplified, { navn: owners[i][j].dsf.NAVN } )
+                    Object.assign(ownerSimplified, { nummer: owners[i][j].dsf.INR } )
+
+                    Object.assign(postAdresse, { adresse: owners[i][j].dsf.ADR } )
+                    Object.assign(postAdresse, { postNummer: owners[i][j].dsf.POSTN } )
+                    Object.assign(postAdresse, { postSted: owners[i][j].dsf.POSTS } )
+
+                    Object.assign(ownerSimplified, { postAdresse: postAdresse } )
+                    
+                }
+                else if (owners[i][j]._type === "JuridiskPerson") {
+                    postAdresse = {}
+                    ownerSimplified = {}
+                    if (owners[i][j].brreg.forretningsadresse === undefined) {
+                        Object.assign(ownerSimplified, { navn: owners[i][j].navn } )
+                        Object.assign(ownerSimplified, { nummer: owners[i][j].nummer } )
+
+                        Object.assign(postAdresse, { adresse: "" } )
+                        Object.assign(postAdresse, { postNummer: "" } )
+                        Object.assign(postAdresse, { postSted: "" } )
+                        console.log(` ${owners[i][j].navn } was skipped. No brreg information on the company/person`)
+                    } else {
+                        Object.assign(ownerSimplified, { navn: owners[i][j].navn } )
+                        Object.assign(ownerSimplified, { nummer: owners[i][j].nummer } )
+
+                        Object.assign(postAdresse, { adresse: owners[i][j].brreg.forretningsadresse.adresse } )
+                        Object.assign(postAdresse, { postNummer: owners[i][j].brreg.forretningsadresse.postnummer } )
+                        Object.assign(postAdresse, { postSted: owners[i][j].brreg.forretningsadresse.poststed } )
+
+                        Object.assign(ownerSimplified, { postAdresse: postAdresse } )   
+                    }
+                }
+                ownersArray.push(ownerSimplified)
+            }
+        }
+
+        for( let i = 0; i < owners.length; i++) {
+            delete arr[i].owners
+        }
+        if(ownersArray.length > 1) {
+            arr.push({ ownersArray })
+        }
         context.res.send(arr)
-        
+
+        ownersArray = []
         arr = []
     } catch (err) {
         context.log(err)
