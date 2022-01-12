@@ -99,8 +99,9 @@ module.exports = async function (context, req) {
         for( let i = 0; i < owners.length; i++) {
             delete arr[i].owners
         }
-
-        arr.push({ ownersArray })
+        if(ownersArray.length > 1) {
+            arr.push({ ownersArray })
+        }
         context.res.send(arr)
 
         ownersArray = []
