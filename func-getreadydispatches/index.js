@@ -37,15 +37,16 @@ module.exports = async function (context, req) {
         // Find all disptaches 
         let dispatch = await Dispatches.find({'status': 'approved'})
         if(!dispatch) { throw new HTTPError(404, 'No dispatches with the status approved/godkjent found in the database.') }
-        
-        testObj = {
-            projectId: 30,
-            system: 'Masseutsendelse',
-            tasks: [{ system: 'p360', method: 'updateperson' }, { system:'svarut', method: 'send' }]
-            
-        }
+    
 
         for(let i = 0; i < dispatch.length; i++) {
+            testObj = {
+                projectId: 30,
+                system: 'Masseutsendelse',
+                tasks: [{ system: 'p360', method: 'updateperson' }, { system:'svarut', method: 'send' }]
+                
+            }
+
             Object.assign(dispatch[i], testObj)
         }
         
@@ -73,7 +74,8 @@ module.exports = async function (context, req) {
                 else if (owners[i][j]._type === "JuridiskPerson") {
                     postAdresse = {}
                     ownerSimplified = {}
-                    if (owners[i][j].brreg.forretningsadresse === undefined) {
+                    
+                    if (owners[i][j].brreg === undefined || owners[i][j].brreg.forretningsadresse === undefined ) {
                         Object.assign(ownerSimplified, { navn: owners[i][j].navn } )
                         Object.assign(ownerSimplified, { nummer: owners[i][j].nummer } )
 
