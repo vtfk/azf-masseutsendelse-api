@@ -106,11 +106,10 @@ module.exports = async function (context, req) {
         }
         if(ownersArray.length > 1) {
             arr.push({ ownersArray })
+            context.res.send(arr)
+            ownersArray = []
+            arr = []
         }
-        context.res.send(arr)
-
-        ownersArray = []
-        arr = []
     } catch (err) {
         context.log(err)
         context.res.status(400).send(JSON.stringify(err, Object.getOwnPropertyNames(err)))
