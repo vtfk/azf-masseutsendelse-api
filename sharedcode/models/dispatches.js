@@ -141,6 +141,9 @@ const dispatchesSchema = new mongoose.Schema ({
     excludedOwners: {
       type: [ Object ]
     },
+    matrikkelUnitsWithoutOwners: {
+      type: [ Object ]
+    },
     polygons: {
       EPSG: {
         type: String,
