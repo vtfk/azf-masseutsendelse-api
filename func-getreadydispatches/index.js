@@ -58,18 +58,21 @@ module.exports = async function (context, req) {
 
         for(let i = 0; i < owners.length; i++) {
             for(let j = 0; j < owners[i].length; j++) {
-                if (owners[i][j]._type === "FysiskPerson") { 
-                    postAdresse = {}
-                    ownerSimplified = {}
-                    Object.assign(ownerSimplified, { navn: owners[i][j].dsf.NAVN } )
-                    Object.assign(ownerSimplified, { nummer: owners[i][j].dsf.INR } )
+                if (owners[i][j]._type === "FysiskPerson") {
+                    if (owners[i][j].dsf === undefined || owners[i][j].dsf.NAVN === undefined) {
+                        console.log(` ${owners[i][j].navn } was skipped. No brreg information on the company/person`)
+                    } else {
+                        postAdresse = {}
+                        ownerSimplified = {}
+                        Object.assign(ownerSimplified, { navn: owners[i][j].dsf.NAVN } )
+                        Object.assign(ownerSimplified, { nummer: owners[i][j].dsf.INR } )
 
-                    Object.assign(postAdresse, { adresse: owners[i][j].dsf.ADR } )
-                    Object.assign(postAdresse, { postNummer: owners[i][j].dsf.POSTN } )
-                    Object.assign(postAdresse, { postSted: owners[i][j].dsf.POSTS } )
+                        Object.assign(postAdresse, { adresse: owners[i][j].dsf.ADR } )
+                        Object.assign(postAdresse, { postNummer: owners[i][j].dsf.POSTN } )
+                        Object.assign(postAdresse, { postSted: owners[i][j].dsf.POSTS } )
 
-                    Object.assign(ownerSimplified, { postAdresse: postAdresse } )
-                    
+                        Object.assign(ownerSimplified, { postAdresse: postAdresse } )
+                    }
                 }
                 else if (owners[i][j]._type === "JuridiskPerson") {
                     postAdresse = {}
