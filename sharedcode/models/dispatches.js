@@ -129,10 +129,7 @@ const dispatchesSchema = new mongoose.Schema ({
       businessOwners: {
         type: Number,
         required: true
-      },
-      units: [
-        Object
-      ]
+      }
     },
     owners: {
       required: true,
