@@ -84,33 +84,18 @@
     // Update the dispatch 
     const updatedDispatch = await Dispatches.findByIdAndUpdate(id, { ...req.body, $unset: unsets }, { new: true})
 
-    // Handle attachments
-    let attachmentsToAdd = [];
-    let attachmentsToRemove = [];
+    // Figure out the names of existing and requested attachments
+    const existingNames = existingDispatch.attachments ? existingDispatch.attachments.map((i) => i.name) : [];
+    const requestNames = req.body.attachments ? req.body.attachments.map((i) => i.name) : [];
 
-    if(!req.body.attachments || req.body.attachments.length === 0) {
-      console.log('All attachments should be removed');
-      attachmentsToRemove = existingDispatch.attachments.map((i) => i.name);
-    } else {
-      console.log('There is a mix that should be edited');
-      const existingNames = existingDispatch.attachments.map((i) => i.name);
-      const requestNames = req.body.attachments.map((i) => i.name);
-
-      // Check for attachments to add
-      attachmentsToAdd = req.body.attachments.filter((i) => !existingNames.includes(i.name) || i.data);
-      attachmentsToRemove = existingNames.filter((i) => !requestNames.includes(i));
-    }
+    // Check for attachments to add
+    const attachmentsToAdd = req.body.attachments.filter((i) => !existingNames.includes(i.name) || i.data);
+    const attachmentsToRemove = existingNames.filter((i) => !requestNames.includes(i));
 
     // Upload attachments if applicable
-    attachmentsToAdd.forEach(async (i) => {
-      console.log('Adding attachment: ' + i.name);
-      await blobClient.save(`${id}/${i.name}`, i.data);
-    })
+    attachmentsToAdd.forEach(async (i) => { await blobClient.save(`${id}/${i.name}`, i.data); })
     // Remove attachments if applicable
-    attachmentsToRemove.forEach(async (i) => {
-      console.log('Removing attachment:' + i);
-      await blobClient.remove(`${id}/${i}`);
-    })
+    attachmentsToRemove.forEach(async (i) => { await blobClient.remove(`${id}/${i}`); })
 
     // Return the dispatch
     return context.res.status(201).send(updatedDispatch)
