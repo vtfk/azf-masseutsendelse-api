@@ -10,7 +10,7 @@ const config = require('../config');
 module.exports = async function (context, req) {
     try {
         // Strip away som fields that should not bed set by the request.
-        req.body = utils.removeKeys(req.body, ['createdTimestamp', 'createdBy', 'createdById', 'modifiedTimestamp', 'modifiedBy', 'modifiedById']);
+        req.body = utils.removeKeys(req.body, ['_id', 'createdTimestamp', 'createdBy', 'createdById', 'modifiedTimestamp', 'modifiedBy', 'modifiedById']);
 
         // Authentication / Authorization
         let requestorName = undefined;
@@ -21,7 +21,8 @@ module.exports = async function (context, req) {
             if(token && token.oid) requestorId = token.oid;
         } else if(req.headers['x-api-key']) {
             require('../sharedcode/auth/apikey')(req.headers['x-api-key']);
-            requestorName, requestorId = 'apikey';
+            requestorName = 'apikey';
+            requestorId = 'apikey';
         } 
         else throw new HTTPError(401, 'No authentication token provided');
 

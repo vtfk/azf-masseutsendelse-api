@@ -519,5 +519,4 @@ it('Should resolve the post of a dispatch object to the database since it contai
     expect(results.attachments || results.template).resolve
 })
 
-
     

@@ -9,7 +9,7 @@
   module.exports = async function (context, req) {
   try {
     // Strip away som fields that should not bed set by the request.
-    req.body = utils.removeKeys(req.body, ['createdTimestamp', 'createdBy', 'createdById', 'modifiedTimestamp', 'modifiedBy', 'modifiedById']);
+    req.body = utils.removeKeys(req.body, ['_id', 'createdTimestamp', 'createdBy', 'createdById', 'modifiedTimestamp', 'modifiedBy', 'modifiedById']);
 
     // Authentication / Authorization
     let requestorName = undefined;
@@ -32,22 +32,29 @@
     // Figure out if any items should be unset
     let unsets = {};
     if(!req.body.template) unsets.template = 1;
-    console.log('UNsets');
-    console.log(unsets);
 
     // Get the ID from the request 
     const id = context.bindingData.id
     
-    // Validate dispatch against schenarios that cannot be described by schema
-    validate(req.body);
-
     // Await the Db conection 
     await getDb()
-    context.log("Mongoose is connected")
-
+    
     // Get the existing disptach object 
     let existingDispatch = await Dispatches.findById(id).lean()
     if(!existingDispatch) { throw new HTTPError(404, `Dispatch with id ${id} could not be found` ) }
+    // If the status is running or completed, only status is allowed to be updated
+    if(existingDispatch.status === 'inprogress' && req.body.status !== 'completed') throw new HTTPError(400, 'No changes can be done to a running dispatch except setting it to completed');
+    if(existingDispatch.status === 'inprogress' && req.body.status === 'completed') {
+      const result = await Dispatches.findByIdAndUpdate(id, { status: 'completed' }, { new: true});
+      return context.res.status(201).send(result)
+    }
+    // Failsafe
+    if(existingDispatch.status === 'inprogress' || existingDispatch.status === 'completed') throw new HTTPError(400, 'No changes can be done to running or completed dispatches');
+
+    // Update fields
+    req.body.modifiedBy = requestorName;
+    req.body.modifiedById = requestorId
+    req.body.modifiedTimestamp = new Date();
 
     // Set approval information
     if(existingDispatch.status !== 'approved' && req.body.status === 'approved') {
@@ -61,6 +68,10 @@
       req.body.approvedTimestamp = '';
     }
 
+    // Validate dispatch against schenarios that cannot be described by schema
+    const toValidate = {...existingDispatch, ...req.body}
+    validate(toValidate);
+
     // Validate attachments
     if(req.body.attachments && Array.isArray(req.body.attachments) && req.body.attachments.length > 0) {
       req.body.attachments.forEach((i) => {
@@ -72,7 +83,7 @@
 
     // Update the dispatch 
     const updatedDispatch = await Dispatches.findByIdAndUpdate(id, { ...req.body, $unset: unsets }, { new: true})
-    
+
     // Handle attachments
     if(existingDispatch.attachments && existingDispatch.attachments.lenght > 1) {
       let attachmentsToRemove = [];
@@ -97,9 +108,8 @@
       })
     }
 
-    // Return the dispatch 
-    context.res.status(200).send(updatedDispatch)
-
+    // Return the dispatch
+    return context.res.status(201).send(updatedDispatch)
   } catch (err) {
     context.log(err)
     context.res.status(400).send(JSON.stringify(err, Object.getOwnPropertyNames(err)))
