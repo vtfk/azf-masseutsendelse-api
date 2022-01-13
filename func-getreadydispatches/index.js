@@ -46,12 +46,11 @@ module.exports = async function (context, req) {
                 tasks: [{ system: 'p360', method: 'updateperson' }, { system:'svarut', method: 'send' }]
                 
             }
-
             Object.assign(dispatch[i], testObj)
         }
         
         for(let i = 0; i < dispatch.length; i++) {
-            arr.push(pick(dispatch[i], '_id', 'system', 'projectId', 'tasks', 'archivenumber', 'attachments', 'template', 'owners' ))
+            arr.push(pick(dispatch[i], 'owners'))
         }
 
         let owners = arr.map(x => x.owners)
@@ -98,18 +97,20 @@ module.exports = async function (context, req) {
                     }
                 }
                 ownersArray.push(ownerSimplified)
+                Object.assign(dispatch[i], {owners: ownersArray})
             }
-        }
-
-        for( let i = 0; i < owners.length; i++) {
-            delete arr[i].owners
-        }
-        if(ownersArray.length > 1) {
-            arr.push({ ownersArray })
-            context.res.send(arr)
             ownersArray = []
-            arr = []
         }
+        
+        arr = []
+
+        for(let i = 0; i < dispatch.length; i++) {
+            arr.push(pick(dispatch[i], '_id', 'system', 'projectId', 'tasks', 'archivenumber', 'attachments', 'template', 'owners'))
+        }
+      
+        context.res.send(arr)
+        ownersArray = []
+        arr = []
     } catch (err) {
         context.log(err)
         context.res.status(400).send(JSON.stringify(err, Object.getOwnPropertyNames(err)))
