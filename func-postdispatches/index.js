@@ -5,6 +5,7 @@ const { ObjectID } = require('mongodb');
 const HTTPError = require('../sharedcode/vtfk-errors/httperror.js');
 const validate = require('../sharedcode/validators/dispatches').validate;
 const blobClient = require('@vtfk/azure-blob-client');
+const config = require('../config');
 
 module.exports = async function (context, req) {
     try {
@@ -41,6 +42,7 @@ module.exports = async function (context, req) {
         
         // Check if the attachments contains any invalid characters
         if(req.body.attachments && Array.isArray(req.body.attachments) && req.body.attachments.length > 0) {
+            if(!config.AZURE_BLOB_CONNECTIONSTRING || !config.AZURE_BLOB_CONTAINERNAME) { throw new HTTPError(500, 'Cannot upload attachments when azure blob storage is not configured'); }
             for(const blob of req.body.attachments) {
                 for(const char of blobClient.unallowedPathCharacters) {
                     if(blob.name.includes(char)) throw new HTTPError(400, `${blob.name} contains the illegal character ${char}`)
