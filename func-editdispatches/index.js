@@ -38,7 +38,7 @@
     
     // Await the Db conection 
     await getDb()
-    
+
     // Get the existing disptach object 
     let existingDispatch = await Dispatches.findById(id).lean()
     if(!existingDispatch) { throw new HTTPError(404, `Dispatch with id ${id} could not be found` ) }
@@ -85,28 +85,32 @@
     const updatedDispatch = await Dispatches.findByIdAndUpdate(id, { ...req.body, $unset: unsets }, { new: true})
 
     // Handle attachments
-    if(existingDispatch.attachments && existingDispatch.attachments.lenght > 1) {
-      let attachmentsToRemove = [];
-      let attachmentsToAdd = [];
+    let attachmentsToAdd = [];
+    let attachmentsToRemove = [];
+
+    if(!req.body.attachments || req.body.attachments.length === 0) {
+      console.log('All attachments should be removed');
+      attachmentsToRemove = existingDispatch.attachments.map((i) => i.name);
+    } else {
+      console.log('There is a mix that should be edited');
       const existingNames = existingDispatch.attachments.map((i) => i.name);
-      const updatedNames = req.body.attachments.map((i) => i.name);
+      const requestNames = req.body.attachments.map((i) => i.name);
 
       // Check for attachments to add
-      attachmentsToAdd = updatedNames.filter((i) => !existingNames.includes(i));
-      attachmentsToRemove = existingNames.filter((i) => !updatedNames.includes(i));
-      req.body.attachments.forEach((i) => {
-        if(i.data && !attachmentsToAdd.includes(i)) attachmentsToAdd.push(i.name);
-      })
-
-      attachmentsToAdd.forEach(async (i) => {
-        const attachment = req.body.attachments.find((x) => x.name === i);
-        await blobClient.save(`${id}/${i}`, attachment.data);
-      })
-
-      attachmentsToRemove.forEach(async (i) => {
-        await blobClient.remove(`${id}/${i}`);
-      })
+      attachmentsToAdd = req.body.attachments.filter((i) => !existingNames.includes(i.name) || i.data);
+      attachmentsToRemove = existingNames.filter((i) => !requestNames.includes(i));
     }
+
+    // Upload attachments if applicable
+    attachmentsToAdd.forEach(async (i) => {
+      console.log('Adding attachment: ' + i.name);
+      await blobClient.save(`${id}/${i.name}`, i.data);
+    })
+    // Remove attachments if applicable
+    attachmentsToRemove.forEach(async (i) => {
+      console.log('Removing attachment:' + i);
+      await blobClient.remove(`${id}/${i}`);
+    })
 
     // Return the dispatch
     return context.res.status(201).send(updatedDispatch)

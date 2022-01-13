@@ -9,10 +9,6 @@ module.exports = async function (context, req) {
         else if(req.headers['x-api-key']) require('../sharedcode/auth/apikey')(req.headers['x-api-key']);
         else throw new HTTPError(401, 'No authentication token provided');
 
-        // Determine if all or partial information should be retreived
-        console.log('Query params');
-        console.log(req.query);
-
         // Await the DB connection 
         await getDb()
         context.log("Mongoose is connected")
