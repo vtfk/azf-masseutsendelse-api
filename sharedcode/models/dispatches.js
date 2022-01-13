@@ -96,6 +96,9 @@ const dispatchesSchema = new mongoose.Schema ({
       type: String,
       required: true
     },
+    archiveUrl: {
+      type: String,
+    },
     status: {
       type: String,
       default: "notapproved",
