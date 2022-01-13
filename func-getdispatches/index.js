@@ -20,7 +20,7 @@ module.exports = async function (context, req) {
         // Find all disptaches
         let dispatches = [];
         if(req.query.full === true || req.query.full === 'true') dispatches = await Dispatches.find({})
-        else dispatches = await Dispatches.find({}).select('-template -templateData -owners -excludedOwners -matrikkelUnitsWithoutOwners')
+        else dispatches = await Dispatches.find({}).select('-owners -excludedOwners -matrikkelUnitsWithoutOwners')
 
         if(!dispatches) { throw new HTTPError(404, 'No dispatches found in the database.') }
 
