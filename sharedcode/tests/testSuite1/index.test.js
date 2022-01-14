@@ -18,6 +18,7 @@ const attachmentSchema = {
 const bodyDispatch = {
     title: "Jest Test",
     projectnumber: "12",
+    caseworker: 'Noen André',
     archivenumber: "1",
     stats: {
         affectedCount: "1",
@@ -87,6 +88,7 @@ const bodyDispatchApproved = {
     title: "Jest Test",
     status: "approved",
     projectnumber: "12",
+    caseworker: 'Noen André',
     archivenumber: "1",
     stats: {
         affectedCount: "1",
@@ -155,6 +157,7 @@ const bodyDispatchApproved = {
 const bodyDispatchNoTemplateNoAttachment = {
     title: "Jest Test",
     projectnumber: "12",
+    caseworker: 'Noen André',
     archivenumber: "1",
     stats: {
         affectedCount: "1",
@@ -218,6 +221,7 @@ const bodyDispatchNoTemplateNoAttachment = {
 const bodyDispatchNoTemplate = {
     title: "Jest Test",
     projectnumber: "12",
+    caseworker: 'Noen André',
     archivenumber: "1",
     stats: {
         affectedCount: "1",
@@ -281,6 +285,7 @@ const bodyDispatchNoTemplate = {
 const bodyDispatchNoAttachment = {
     title: "Jest Test",
     projectnumber: "12",
+    caseworker: 'Noen André',
     archivenumber: "1",
     stats: {
         affectedCount: "1",
