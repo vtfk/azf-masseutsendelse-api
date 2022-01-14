@@ -29,7 +29,9 @@ let requestData = {
 let request = {
     url: "",
     method: '',
-    data: "",
+    data: {
+        attachments: "",
+    },
 }
 
 function pick(obj, ...props) {
@@ -71,22 +73,25 @@ module.exports = async function (context, req) {
             request = {}
             
             // Get the template data from the dispatch object and assign it to the requestData object.
-            if(!dispatch[i].template.template) {
-            console.log(`No template found for dispatch object with id ${dispatch[i]._id}`)
+            if(dispatch[i].template.template === undefined) {
+                console.log(`No template found for dispatch object with id ${dispatch[i]._id}`)
             } else {
                 requestData.template = dispatch[i].template.template
                 requestData.documentDefinitionId = dispatch[i].template.documentDefinitionId
                 requestData.data = dispatch[i].template.data
                 if(dispatch[i].attachments && Array.isArray(dispatch[i].attachments) && dispatch[i].attachments.length > 0) {
-                    requestData.data = dispatch[i].attachments
+                    requestData.data.attachments = dispatch[i].attachments
                 }
                 // Push the requestData object to the requestDataArr
                 requestDataArr.push(requestData)
             }
+            
             // Define the request 
             request.url = process.env.PDF_GENERATEV2
             request.method = 'post'
             request.data = requestDataArr[i]
+
+            console.log(requestDataArr[i])
             
             // Make the request to the pdf endpoint
             try {
