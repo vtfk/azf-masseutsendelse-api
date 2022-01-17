@@ -19,6 +19,7 @@ async function validate(authHeader) {
     const validatedToken = await verify(bearerToken.replace('Bearer ', ''), config.AZUREAD_TOKEN_CONFIG);
     if(!validatedToken) throw new HTTPError(401, 'Could not validate authentication token');
     if(!validatedToken.groups || validatedToken.groups.length === 0) throw new HTTPError(401, 'No groups could be found in authentication token');
+    if(!validatedToken.department) throw new HTTPError(401, 'Could not find the users company department in the authentication token');
 
     // If allowed groups
     if(config.AZUREAD_ALLOWEDGROUPS) {

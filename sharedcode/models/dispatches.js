@@ -201,6 +201,10 @@ const dispatchesSchema = new mongoose.Schema ({
       default: "00000000-0000-0000-0000-000000000000",
       required: true
     },
+    createdByDepartment: {
+      type: String,
+      required: true
+    },
     modifiedTimestamp: {
       type: Date,
       default: new Date,
@@ -209,6 +213,10 @@ const dispatchesSchema = new mongoose.Schema ({
     modifiedBy: {
       type: String,
       default: "Noen André",
+      required: true
+    },
+    modifiedByDepartment: {
+      type: String,
       required: true
     },
     modifiedById: {
@@ -224,7 +232,10 @@ const dispatchesSchema = new mongoose.Schema ({
     },
     approvedById: {
       type: String,
-    }
+    },
+    approvedByDepartment: {
+      type: String,
+    },
 })
 
 const Dispatches = mongoose.model('Dispatches', dispatchesSchema)

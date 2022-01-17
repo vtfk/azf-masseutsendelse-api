@@ -18,9 +18,11 @@
         token = await require('../sharedcode/auth/azuread').validate(req.headers.authorization);
         if(token && token.name) requestorName = token.name;
         if(token && token.oid) requestorId = token.oid;
+        if(token && token.department) requestorDepartment = token.department;
     } else if(req.headers['x-api-key']) {
         require('../sharedcode/auth/apikey')(req.headers['x-api-key']);
         requestorName, requestorId = 'apikey';
+        requestorDepartment = 'apikey';
     } 
     else throw new HTTPError(401, 'No authentication token provided');
 
@@ -28,6 +30,7 @@
     req.body.modifiedBy = requestorName
     req.body.modifiedById = requestorId
     req.body.modifiedTimestamp = new Date();
+    req.body.modifiedByDepartment = requestorDepartment
 
     // Figure out if any items should be unset
     let unsets = {};
