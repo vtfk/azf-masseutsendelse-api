@@ -92,10 +92,6 @@ const dispatchesSchema = new mongoose.Schema ({
       type: String,
       required: true
     },
-    caseworker: {
-      type: String,
-      required: true
-    },
     archivenumber: {
       type: String,
       required: true

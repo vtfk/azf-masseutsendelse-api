@@ -18,7 +18,6 @@ const attachmentSchema = {
 const bodyDispatch = {
     title: "Jest Test",
     projectnumber: "12",
-    caseworker: 'Noen André',
     archivenumber: "1",
     stats: {
         affectedCount: "1",
@@ -73,14 +72,15 @@ const bodyDispatch = {
             center: "1",
         }
     },
-    createdBy:"André Noen",
+    createdBy:"TEST",
     createdById: "00000000-0000-0000-0000-000000000000",
-    modifiedTimestamp: "2022-01-09T15:41:52.337+00:00",
-    modifiedBy:"Karl-Einar Bergstrøm",
-    modifiedById:"ae34b275-ee14-4ece-b4a0-a03e7dc96313",
+    createdByDepartment: 'Test department',
+    modifiedBy:"TEST",
+    modifiedById:"00000000-0000-0000-0000-000000000000",
+    modifiedByDepartment: 'Test department',
     approvedBy: "",
     approvedById: "",
-    approvedTimestamp: null
+    approvedTimestamp: new Date()
 }
 
 // Disptach object with status approved 
@@ -143,14 +143,16 @@ const bodyDispatchApproved = {
             center: "1",
         }
     },
-    createdBy:"André Noen",
+    createdBy:"TEST",
     createdById: "00000000-0000-0000-0000-000000000000",
-    modifiedTimestamp: "2022-01-09T15:41:52.337+00:00",
-    modifiedBy:"Karl-Einar Bergstrøm",
-    modifiedById:"ae34b275-ee14-4ece-b4a0-a03e7dc96313",
+    createdByDepartment: 'Test department',
+    modifiedTimestamp: new Date(),
+    modifiedBy:"TEST",
+    modifiedById:"00000000-0000-0000-0000-000000000000",
+    modifiedByDepartment: 'Test department',
     approvedBy: "",
     approvedById: "",
-    approvedTimestamp: null
+    approvedTimestamp: new Date(),
 }
 
 // Dispatch object with no template and np attachment
@@ -207,14 +209,16 @@ const bodyDispatchNoTemplateNoAttachment = {
             center: "1",
         }
     },
-    createdBy:"André Noen",
+    createdBy:"TEST",
     createdById: "00000000-0000-0000-0000-000000000000",
-    modifiedTimestamp: "2022-01-09T15:41:52.337+00:00",
-    modifiedBy:"Karl-Einar Bergstrøm",
-    modifiedById:"ae34b275-ee14-4ece-b4a0-a03e7dc96313",
+    createdByDepartment: 'Test department',
+    modifiedTimestamp: new Date(),
+    modifiedBy:"TEST",
+    modifiedById:"00000000-0000-0000-0000-000000000000",
+    modifiedByDepartment: 'Test department',
     approvedBy: "",
     approvedById: "",
-    approvedTimestamp: null
+    approvedTimestamp: new Date(),
 }
 
 // Dispatch object with no template and np attachment
@@ -271,14 +275,16 @@ const bodyDispatchNoTemplate = {
             center: "1",
         }
     },
-    createdBy:"André Noen",
+    createdBy:"TEST",
     createdById: "00000000-0000-0000-0000-000000000000",
-    modifiedTimestamp: "2022-01-09T15:41:52.337+00:00",
-    modifiedBy:"Karl-Einar Bergstrøm",
-    modifiedById:"ae34b275-ee14-4ece-b4a0-a03e7dc96313",
+    createdByDepartment: 'Test department',
+    modifiedTimestamp: new Date(),
+    modifiedBy:"TEST",
+    modifiedById:"00000000-0000-0000-0000-000000000000",
+    modifiedByDepartment: 'Test department',
     approvedBy: "",
     approvedById: "",
-    approvedTimestamp: null
+    approvedTimestamp: new Date(),
 }
 
 // Dispatch object with no attachment
@@ -340,14 +346,16 @@ const bodyDispatchNoAttachment = {
             center: "1",
         }
     },
-    createdBy:"André Noen",
+    createdBy:"TEST",
     createdById: "00000000-0000-0000-0000-000000000000",
-    modifiedTimestamp: "2022-01-09T15:41:52.337+00:00",
-    modifiedBy:"Karl-Einar Bergstrøm",
-    modifiedById:"ae34b275-ee14-4ece-b4a0-a03e7dc96313",
+    createdByDepartment: 'Test department',
+    modifiedTimestamp: new Date(),
+    modifiedBy:"TEST",
+    modifiedById:"00000000-0000-0000-0000-000000000000",
+    modifiedByDepartment: 'Test department',
     approvedBy: "",
     approvedById: "",
-    approvedTimestamp: null
+    approvedTimestamp: new Date(),
 }
 
 // Template Object
