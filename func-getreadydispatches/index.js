@@ -4,29 +4,32 @@ const HTTPError = require('../sharedcode/vtfk-errors/httperror');
 const blobClient = require('@vtfk/azure-blob-client');
 const axios = require('axios');
 
+// Arrays
 let arr = []
 let ownersArray = []
 let requestDataArr = []
 
+// Object to structure the adresses
 let postAdresse = {
     adresse: "",
     postNummer: "",
     postSted: "",
 }
+// Object to structure the owners
 let ownerSimplified = {
     navn: "",
     _type: "",
     nummer: "",
     postAdresse: "",
 }
-
+// Object to structure the request data
 let requestData = {
     _id: "",
     template: undefined,
     documentDefinitionId: "",
     data: "",
 }
-
+// Object to structure the reqest sendt to the endpoint. 
 let request = {
     url: "",
     method: '',
@@ -36,6 +39,7 @@ let request = {
     },
 }
 
+// Function used to pick selected props from an object
 function pick(obj, ...props) {
     return props.reduce(function(result, prop) {
       result[prop] = obj[prop];
@@ -143,15 +147,15 @@ module.exports = async function (context, req) {
                     } else {
                         postAdresse = {}
                         ownerSimplified = {}
-                        Object.assign(ownerSimplified, { navn: owners[i][j].dsf.NAVN } )
-                        Object.assign(ownerSimplified, { _type: owners[i][j]._type } )
-                        Object.assign(ownerSimplified, { nummer: owners[i][j].dsf.INR } )
+                        ownerSimplified.navn = owners[i][j].dsf.NAVN
+                        ownerSimplified._type = owners[i][j]._type
+                        ownerSimplified.nummer = owners[i][j].dsf.INR
 
-                        Object.assign(postAdresse, { adresse: owners[i][j].dsf.ADR } )
-                        Object.assign(postAdresse, { postNummer: owners[i][j].dsf.POSTN } )
-                        Object.assign(postAdresse, { postSted: owners[i][j].dsf.POSTS } )
+                        postAdresse.adresse = owners[i][j].dsf.ADR
+                        postAdresse.postNummer = owners[i][j].dsf.POSTN
+                        postAdresse.postSted = owners[i][j].dsf.POSTS
 
-                        Object.assign(ownerSimplified, { postAdresse: postAdresse } )
+                        ownerSimplified.postAdresse = postAdresse
                     }
                 }
                 // Business owners
@@ -159,24 +163,24 @@ module.exports = async function (context, req) {
                     postAdresse = {}
                     ownerSimplified = {}
                     if (owners[i][j].brreg === undefined || owners[i][j].brreg.forretningsadresse === undefined ) {
-                        Object.assign(ownerSimplified, { navn: owners[i][j].navn } )
-                        Object.assign(ownerSimplified, { _type: owners[i][j]._type } )
-                        Object.assign(ownerSimplified, { nummer: owners[i][j].nummer } )
+                        ownerSimplified.navn = owners[i][j].navn
+                        ownerSimplified._type = owners[i][j]._type
+                        ownerSimplified.nummer = owners[i][j].nummer
 
-                        Object.assign(postAdresse, { adresse: "" } )
-                        Object.assign(postAdresse, { postNummer: "" } )
-                        Object.assign(postAdresse, { postSted: "" } )
+                        postAdresse.adresse = ""
+                        postAdresse.postNummer = "" 
+                        postAdresse.postSted = ""
                         console.log(` ${owners[i][j].navn } was skipped. No brreg information on the company/person`)
                     } else {
-                        Object.assign(ownerSimplified, { navn: owners[i][j].navn } )
-                        Object.assign(ownerSimplified, { _type: owners[i][j]._type } )
-                        Object.assign(ownerSimplified, { nummer: owners[i][j].nummer } )
+                        ownerSimplified.navn = owners[i][j].navn
+                        ownerSimplified._type = owners[i][j]._type
+                        ownerSimplified.nummer = owners[i][j].nummer
 
-                        Object.assign(postAdresse, { adresse: owners[i][j].brreg.forretningsadresse.adresse } )
-                        Object.assign(postAdresse, { postNummer: owners[i][j].brreg.forretningsadresse.postnummer } )
-                        Object.assign(postAdresse, { postSted: owners[i][j].brreg.forretningsadresse.poststed } )
+                        postAdresse.adresse = owners[i][j].brreg.forretningsadresse.adresse
+                        postAdresse.postNummer = owners[i][j].brreg.forretningsadresse.postnummer
+                        postAdresse.postSted = owners[i][j].brreg.forretningsadresse.poststed
 
-                        Object.assign(ownerSimplified, { postAdresse: postAdresse } )   
+                        ownerSimplified.postAdresse = postAdresse   
                     }
                 }
                 // Push the ownerSimplified object (that includes the adress of the owner) to the ownersArray.
