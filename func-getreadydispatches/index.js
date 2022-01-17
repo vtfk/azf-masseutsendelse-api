@@ -35,7 +35,11 @@ module.exports = async function (context, req) {
       if (dispatch.template?.template) {
         let data = dispatch.template.data;
         if (dispatch.attachments && Array.isArray(dispatch.attachments) && dispatch.attachments.length > 0) data.attachments = dispatch.attachments
-        if(dispatch.caseworker) data.caseworker = dispatch.caseworker
+        data.info = {
+          'sector': req.createdByDepartment,
+          'our-reference': dispatch.archivenumber,
+          'our-caseworker': dispatch.createdBy
+        }
 
         const generatePDFRequest = {
           url: process.env.PDF_GENERATEV2,
