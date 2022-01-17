@@ -52,6 +52,9 @@ const templateSchema = new mongoose.Schema ({
       default: "00000000-0000-0000-0000-000000000000",
       required: true
   },
+  createdByDepartment: {
+    type: String
+  },
   modifiedTimestamp: {
       type: Date,
       default: new Date,
@@ -66,6 +69,9 @@ const templateSchema = new mongoose.Schema ({
       type: String,
       default: "00000000-0000-0000-0000-000000000000",
       required: true
+  },
+  modifiedByDepartment: {
+    type: String
   }
 })
 

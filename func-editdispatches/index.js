@@ -9,7 +9,7 @@
   module.exports = async function (context, req) {
   try {
     // Strip away som fields that should not bed set by the request.
-    req.body = utils.removeKeys(req.body, ['_id', 'createdTimestamp', 'createdBy', 'createdById', 'modifiedTimestamp', 'modifiedBy', 'modifiedById']);
+    req.body = utils.removeKeys(req.body, ['createdTimestamp', 'createdBy', 'createdById', 'createdByDepartment', 'modifiedTimestamp', 'modifiedBy', 'modifiedById', 'modifiedByDepartment']);
 
     // Authentication / Authorization
     let requestorName = undefined;

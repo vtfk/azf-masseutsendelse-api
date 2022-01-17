@@ -5,7 +5,7 @@ const utils = require('@vtfk/utilities');
 module.exports = async function (context, req) {
   try {
       // Strip away some fields that should not be able to be set by the request
-      req.body = utils.removeKeys(req.body, ['createdTimestamp', 'createdBy', 'createdById', 'modifiedTimestamp', 'modifiedBy', 'modifiedById']);
+      req.body = utils.removeKeys(req.body, ['createdTimestamp', 'createdBy', 'createdById', 'createdByDepartment', 'modifiedTimestamp', 'modifiedBy', 'modifiedById', 'modifiedByDepartment']);
 
       // Authentication / Authorization
       let requestorName = undefined;
@@ -14,9 +14,10 @@ module.exports = async function (context, req) {
         token = await require('../sharedcode/auth/azuread').validate(req.headers.authorization);
         if(token && token.name) requestorName = token.name;
         if(token && token.oid) requestorId = token.oid;
+        if(token && token.department) requestorDepartment = token.department;
       } else if(req.headers['x-api-key']) {
         require('../sharedcode/auth/apikey')(req.headers['x-api-key']);
-        requestorName, requestorId = 'apikey';
+        requestorName, requestorId, requestorDepartment = 'apikey';
       } 
       else throw new HTTPError(401, 'No authentication token provided');
       
@@ -27,9 +28,11 @@ module.exports = async function (context, req) {
       // Set some default values
       req.body.version = 1;
       req.body.createdBy = requestorName
-      req.body.modifiedBy = requestorName
       req.body.createdById = requestorId
+      req.body.createdByDepartment = requestorDepartment
+      req.body.modifiedBy = requestorName
       req.body.modifiedById = requestorId
+      req.body.modifiedByDepartment = requestorDepartment
 
       // Create a new document from model
       const template = new Templates(req.body)

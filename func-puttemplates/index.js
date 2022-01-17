@@ -16,9 +16,10 @@ module.exports = async function (context, req) {
         token = await require('../sharedcode/auth/azuread').validate(req.headers.authorization);
         if(token && token.name) requestorName = token.name;
         if(token && token.oid) requestorId = token.oid;
+        if(token && token.department) requestorDepartment = token.department;
     } else if(req.headers['x-api-key']) {
         require('../sharedcode/auth/apikey')(req.headers['x-api-key']);
-        requestorName, requestorId = 'apikey';
+        requestorName, requestorId, requestorDepartment = 'apikey';
     } 
     else throw new HTTPError(401, 'No authentication token provided');
 
@@ -26,6 +27,7 @@ module.exports = async function (context, req) {
     req.body.modifiedBy = requestorName
     req.body.modifiedById = requestorId
     req.body.modifiedTimestamp = new Date();
+    req.body.modifiedByDepartment = requestorDepartment;
 
     // Get the ID from the request
     const id = context.bindingData.id
