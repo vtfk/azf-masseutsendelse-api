@@ -72,8 +72,10 @@
     }
 
     // Validate dispatch against schenarios that cannot be described by schema
-    const toValidate = {...existingDispatch, ...req.body}
-    validate(toValidate);
+    if(req.headers['x-api-key'] !== process.env.FLOWPUTKEY) {
+      const toValidate = {...existingDispatch, ...req.body}
+      validate(toValidate);
+    }
 
     // Validate attachments
     if(req.body.attachments && Array.isArray(req.body.attachments) && req.body.attachments.length > 0) {
