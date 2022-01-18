@@ -153,7 +153,7 @@ module.exports = async function (context, req) {
         }
       });
 
-      e18Jobs.push({_id: dispatch._id, data: e18Job });
+      e18Jobs.push({_id: dispatch._id, system: 'masseutsendelse', data: e18Job });
     }
 
     context.res.send(e18Jobs)
