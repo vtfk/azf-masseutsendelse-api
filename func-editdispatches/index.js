@@ -85,26 +85,26 @@
           })
         })
       }
+
+      // Update the dispatch 
+      const updatedDispatch = await Dispatches.findByIdAndUpdate(id, { ...req.body, $unset: unsets }, { new: true})
+
+      // Figure out the names of existing and requested attachments
+      const existingNames = existingDispatch.attachments ? existingDispatch.attachments.map((i) => i.name) : [];
+      const requestNames = req.body.attachments ? req.body.attachments.map((i) => i.name) : [];
+
+      // Check for attachments to add
+      const attachmentsToAdd = req.body.attachments.filter((i) => !existingNames.includes(i.name) || i.data);
+      const attachmentsToRemove = existingNames.filter((i) => !requestNames.includes(i));
+
+      // Upload attachments if applicable
+      attachmentsToAdd.forEach(async (i) => { await blobClient.save(`${id}/${i.name}`, i.data); })
+      // Remove attachments if applicable
+      attachmentsToRemove.forEach(async (i) => { await blobClient.remove(`${id}/${i}`); })
+
+      // Return the dispatch
+      return context.res.status(201).send(updatedDispatch)
     }
-
-    // Update the dispatch 
-    const updatedDispatch = await Dispatches.findByIdAndUpdate(id, { ...req.body, $unset: unsets }, { new: true})
-
-    // Figure out the names of existing and requested attachments
-    const existingNames = existingDispatch.attachments ? existingDispatch.attachments.map((i) => i.name) : [];
-    const requestNames = req.body.attachments ? req.body.attachments.map((i) => i.name) : [];
-
-    // Check for attachments to add
-    const attachmentsToAdd = req.body.attachments.filter((i) => !existingNames.includes(i.name) || i.data);
-    const attachmentsToRemove = existingNames.filter((i) => !requestNames.includes(i));
-
-    // Upload attachments if applicable
-    attachmentsToAdd.forEach(async (i) => { await blobClient.save(`${id}/${i.name}`, i.data); })
-    // Remove attachments if applicable
-    attachmentsToRemove.forEach(async (i) => { await blobClient.remove(`${id}/${i}`); })
-
-    // Return the dispatch
-    return context.res.status(201).send(updatedDispatch)
   } catch (err) {
     context.log(err)
     context.res.status(400).send(JSON.stringify(err, Object.getOwnPropertyNames(err)))
