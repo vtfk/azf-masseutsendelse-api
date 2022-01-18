@@ -25,9 +25,9 @@ module.exports = async function (context, req) {
     for(const dispatch of dispatches) {
       let e18Files = [];  // Stores all files that should be registrered to E18
       let e18Job = {
-        projectId: 30,
-        system: 'masseutsendelse',
-        parallel: true,
+        // projectId: 30,
+        // system: 'masseutsendelse',
+        // parallel: true,
         tasks: []
       }
 
@@ -153,7 +153,7 @@ module.exports = async function (context, req) {
         }
       });
 
-      e18Jobs.push({_id: dispatch._id, system: 'masseutsendelse', data: e18Job });
+      e18Jobs.push({_id: dispatch._id, system: 'masseutsendelse', projectId: 30, parallel: true,  data: e18Job });
     }
 
     context.res.send(e18Jobs)
