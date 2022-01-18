@@ -72,39 +72,40 @@
     }
 
     // Validate dispatch against schenarios that cannot be described by schema
-    if(req.headers['x-api-key'] !== process.env.FLOWPUTKEY) {
-      const toValidate = {...existingDispatch, ...req.body}
-      validate(toValidate);
+    const toValidate = {...existingDispatch, ...req.body}
+    validate(toValidate);
     
 
-      // Validate attachments
-      if(req.body.attachments && Array.isArray(req.body.attachments) && req.body.attachments.length > 0) {
-        req.body.attachments.forEach((i) => {
-          blobClient.unallowedPathCharacters.forEach((char) => {
-            if(i.name.includes(char)) throw new HTTPError(400, `${i} cannot contain illegal character ${char}`);
-          })
+    // Validate attachments
+    if(req.body.attachments && Array.isArray(req.body.attachments) && req.body.attachments.length > 0) {
+      req.body.attachments.forEach((i) => {
+        blobClient.unallowedPathCharacters.forEach((char) => {
+          if(i.name.includes(char)) throw new HTTPError(400, `${i} cannot contain illegal character ${char}`);
         })
-      }
+      })
+    }
 
-      // Update the dispatch 
-      const updatedDispatch = await Dispatches.findByIdAndUpdate(id, { ...req.body, $unset: unsets }, { new: true})
+    // Update the dispatch 
+    const updatedDispatch = await Dispatches.findByIdAndUpdate(id, { ...req.body, $unset: unsets }, { new: true})
 
-      // Figure out the names of existing and requested attachments
-      const existingNames = existingDispatch.attachments ? existingDispatch.attachments.map((i) => i.name) : [];
-      const requestNames = req.body.attachments ? req.body.attachments.map((i) => i.name) : [];
+    // Figure out the names of existing and requested attachments
+    const existingNames = existingDispatch.attachments ? existingDispatch.attachments.map((i) => i.name) : [];
+    const requestNames = req.body.attachments ? req.body.attachments.map((i) => i.name) : [];
 
-      // Check for attachments to add
+    // Check for attachments to add
+    if(req.body.attachments) {
       const attachmentsToAdd = req.body.attachments.filter((i) => !existingNames.includes(i.name) || i.data);
       const attachmentsToRemove = existingNames.filter((i) => !requestNames.includes(i));
-
+    
       // Upload attachments if applicable
       attachmentsToAdd.forEach(async (i) => { await blobClient.save(`${id}/${i.name}`, i.data); })
       // Remove attachments if applicable
       attachmentsToRemove.forEach(async (i) => { await blobClient.remove(`${id}/${i}`); })
-
-      // Return the dispatch
-      return context.res.status(201).send(updatedDispatch)
     }
+
+    // Return the dispatch
+    return context.res.status(201).send(updatedDispatch)
+
   } catch (err) {
     context.log(err)
     context.res.status(400).send(JSON.stringify(err, Object.getOwnPropertyNames(err)))
