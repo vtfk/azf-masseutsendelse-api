@@ -152,8 +152,7 @@ module.exports = async function (context, req) {
           }
         }
       });
-
-      e18Jobs.push({_id: dispatch._id, system: 'masseutsendelse', projectId: 30, parallel: true, tasks: e18Job });
+      e18Jobs.push({_id: dispatch._id, system: 'masseutsendelse', projectId: 30, parallel: true, tasks: e18Job.tasks });
     }
 
     context.res.send(e18Jobs)
