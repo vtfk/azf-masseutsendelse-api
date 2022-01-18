@@ -75,15 +75,16 @@
     if(req.headers['x-api-key'] !== process.env.FLOWPUTKEY) {
       const toValidate = {...existingDispatch, ...req.body}
       validate(toValidate);
-    }
+    
 
-    // Validate attachments
-    if(req.body.attachments && Array.isArray(req.body.attachments) && req.body.attachments.length > 0) {
-      req.body.attachments.forEach((i) => {
-        blobClient.unallowedPathCharacters.forEach((char) => {
-          if(i.name.includes(char)) throw new HTTPError(400, `${i} cannot contain illegal character ${char}`);
+      // Validate attachments
+      if(req.body.attachments && Array.isArray(req.body.attachments) && req.body.attachments.length > 0) {
+        req.body.attachments.forEach((i) => {
+          blobClient.unallowedPathCharacters.forEach((char) => {
+            if(i.name.includes(char)) throw new HTTPError(400, `${i} cannot contain illegal character ${char}`);
+          })
         })
-      })
+      }
     }
 
     // Update the dispatch 
