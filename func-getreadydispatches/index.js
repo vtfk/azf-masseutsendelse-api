@@ -157,6 +157,8 @@ module.exports = async function (context, req) {
     }
 
     context.res.send(e18Jobs)
+    // Clear the e18Jobs Array
+    e18Jobs = []
   } catch (err) {
     context.log(err)
     context.res.status(400).send(JSON.stringify(err, Object.getOwnPropertyNames(err)))
