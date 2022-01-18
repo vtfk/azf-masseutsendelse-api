@@ -72,7 +72,7 @@
     }
 
     // Validate dispatch against schenarios that cannot be described by schema
-    if(req.headers['x-api-key'] === process.env.FLOWPUTKEY) {
+    if(req.headers['x-api-key'] !== process.env.FLOWPUTKEY) {
       const toValidate = {...existingDispatch, ...req.body}
       validate(toValidate);
     
