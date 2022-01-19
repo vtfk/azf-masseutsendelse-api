@@ -112,6 +112,8 @@ module.exports = async function (context, req) {
             title: dispatch.title,
             caseNumber: dispatch.archivenumber,
             date: new Date().toISOString(),
+            contacts: dispatch.owners.map((o) => {return { ssn: o.nummer, role: 'Mottaker' }}),
+            attachments: e18Files,
             accessCode: "U",                    // U = Alle
             accessGroup: "Alle",                // No access restriction
             paragraph: "",                      // No paragraph
