@@ -1,4 +1,3 @@
-
 const { verify } = require('azure-ad-verify-token');
 const HTTPError = require('../vtfk-errors/httperror');
 const config = require('../../config');

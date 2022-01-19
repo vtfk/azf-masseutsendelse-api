@@ -1,4 +1,3 @@
-const mongoose = require("mongoose");
 const Templates = require('../sharedcode/models/templates.js')
 const getDb = require('../sharedcode/connections/masseutsendelseDB.js')
 const HTTPError = require('../sharedcode/vtfk-errors/httperror');
@@ -22,8 +21,6 @@ module.exports = async function (context, req) {
         //Return the Templates
         context.res.send(templates)
 
-        // Close the database connection.
-        // // mongoose.connection.close()
     } catch (err) {
         context.log(err)
         context.res.status(400).send(JSON.stringify(err, Object.getOwnPropertyNames(err)))

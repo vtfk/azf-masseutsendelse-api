@@ -25,9 +25,6 @@ module.exports = async function (context, req) {
     for(const dispatch of dispatches) {
       let e18Files = [];  // Stores all files that should be registrered to E18
       let e18Job = {
-        // projectId: 30,
-        // system: 'masseutsendelse',
-        // parallel: true,
         tasks: []
       }
 
