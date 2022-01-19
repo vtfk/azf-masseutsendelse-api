@@ -60,7 +60,6 @@ module.exports = async function (context, req) {
           if (!file) { throw new HTTPError(404, 'No files found, check if you passed the right filename and/or the right dispatchId') }
           if(file.data.startsWith('data:') && file.data.includes(',')) file.data = file.data.substring(file.data.indexOf(',') + 1);
           if(file.name.includes('.')) file.name = file.name.substring(0, file.name.indexOf('.'));
-          // TODO: Følger extension med i file.name? i såfall må det strippes bort
           e18Files.push({title: file.name, format: file.extension, base64: file.data});
         }
       }
@@ -100,36 +99,23 @@ module.exports = async function (context, req) {
         });
       })
       
-      // Create the case-folder
+      // Upload attachments to the archive document
       e18Job.tasks.push({
         system: 'p360',
         method: 'archive',
-        dependencyTag: 'createFolder',
+        dependencyTag: 'uploadDocuments',
         dependencies: ['sync'],
         data: {
           system: 'masseutsendelse',
           template: 'utsendelsessak',
           parameter: {
             title: dispatch.title,
-            accessCode: '',
-            accessGroup: '',
-            responsiblePersonEmail: ''
-          }
-        }
-      });
-
-      // Upload the files (Trenger recno/saksnummer fra forrige steg)
-      e18Job.tasks.push({
-        system: 'p360',
-        method: 'archive',
-        dependencies: ['createFolder'],
-        data: {
-          system: 'masseutsendelse',
-          template: 'utsendelsesdokument',
-          parameter: {
-            title: dispatch.title,
-            contacts: dispatch.owners.map((o) => {return { ssn: o.nummer, role: 'Mottaker' }}),
-            attachments: e18Files
+            caseNumber: dispatch.archivenumber,
+            date: new Date().toISOString(),
+            accessCode: "U",                    // U = Alle
+            accessGroup: "Alle",                // No access restriction
+            paragraph: "",                      // No paragraph
+            responsibleEnterpriseRecno: 506,    // TODO: Hva skal det stå her?
           }
         }
       });
@@ -138,17 +124,15 @@ module.exports = async function (context, req) {
       e18Job.tasks.push({
         system: 'p360',
         method: 'archive',
-        dependencies: ['createFolder'],
+        dependencies: ['uploadDocuments'],
+        dataMapping: "{'parameter': { 'Documents': [ { 'DocumentNumber': '{{DocumentNumber}}' } ]}}",
         data: {
           method: "DispatchDocuments",
           service: "DocumentService",
-          parameter: {
-            Documents: [{
-              DocumentNumber: 'DocumentNumber fra den forrige'
-            }]
-          }
         }
       });
+
+      // Add the job to the e18 jobs array
       e18Jobs.push({_id: dispatch._id, system: 'masseutsendelse', projectId: 30, parallel: true, tasks: e18Job.tasks });
     }
 
