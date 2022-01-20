@@ -10,7 +10,7 @@ const config = require('../config');
 module.exports = async function (context, req) {
   try {
     // Strip away som fields that should not bed set by the request.
-    req.body = utils.removeKeys(req.body, ['_id', 'createdTimestamp', 'createdBy', 'createdById', 'modifiedTimestamp', 'modifiedBy', 'modifiedById']);
+    req.body = utils.removeKeys(req.body, ['_id', 'validatedArchivenumber', 'createdTimestamp', 'createdBy', 'createdById', 'modifiedTimestamp', 'modifiedBy', 'modifiedById']);
 
     // Authentication / Authorization
     let requestorName = undefined;
@@ -40,7 +40,8 @@ module.exports = async function (context, req) {
     req.body.modifiedByDepartment = requestorDepartment
 
     // Validate dispatch against schenarios that cannot be described by schema
-    validate(req.body);
+    await validate(req.body);
+    req.body.validatedArchivenumber = req.body.archivenumber;
 
     // Await the DB connection
     await getDb()

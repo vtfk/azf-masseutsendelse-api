@@ -96,6 +96,10 @@ const dispatchesSchema = new mongoose.Schema ({
       type: String,
       required: true
     },
+    validatedArchivenumber: {
+      type: String,
+      required: true
+    },
     archiveUrl: {
       type: String,
     },
