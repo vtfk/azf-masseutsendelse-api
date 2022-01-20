@@ -9,7 +9,7 @@
   module.exports = async function (context, req) {
   try {
     // Strip away som fields that should not bed set by the request.
-    req.body = utils.removeKeys(req.body, ['createdTimestamp', 'createdBy', 'createdById', 'createdByDepartment', 'modifiedTimestamp', 'modifiedBy', 'modifiedById', 'modifiedByDepartment']);
+    req.body = utils.removeKeys(req.body, ['_id', 'validatedArchivenumber', 'createdTimestamp', 'createdBy', 'createdById', 'createdByDepartment', 'modifiedTimestamp', 'modifiedBy', 'modifiedById', 'modifiedByDepartment']);
 
     // Authentication / Authorization
     let requestorName = undefined;
@@ -58,6 +58,7 @@
     req.body.modifiedBy = requestorName;
     req.body.modifiedById = requestorId
     req.body.modifiedTimestamp = new Date();
+    req.body.validatedArchivenumber = existingDispatch.validatedArchivenumber;
 
     // Set approval information
     if(existingDispatch.status !== 'approved' && req.body.status === 'approved') {
@@ -73,8 +74,8 @@
 
     // Validate dispatch against schenarios that cannot be described by schema
     const toValidate = {...existingDispatch, ...req.body}
-    validate(toValidate);
-    
+    await validate(toValidate);
+    req.body.validatedArchivenumber = req.body.archivenumber;
 
     // Validate attachments
     if(req.body.attachments && Array.isArray(req.body.attachments) && req.body.attachments.length > 0) {
