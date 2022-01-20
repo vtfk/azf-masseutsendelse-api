@@ -19,6 +19,7 @@ const bodyDispatch = {
     title: "Jest Test",
     projectnumber: "12",
     archivenumber: "1",
+    validatedArchivenumber: "1",
     stats: {
         affectedCount: "1",
         area: "1",
@@ -90,6 +91,7 @@ const bodyDispatchApproved = {
     projectnumber: "12",
     caseworker: 'Noen André',
     archivenumber: "1",
+    validatedArchivenumber: "1",
     stats: {
         affectedCount: "1",
         area: "1",
@@ -161,6 +163,7 @@ const bodyDispatchNoTemplateNoAttachment = {
     projectnumber: "12",
     caseworker: 'Noen André',
     archivenumber: "1",
+    validatedArchivenumber: "1",
     stats: {
         affectedCount: "1",
         area: "1",
@@ -227,6 +230,7 @@ const bodyDispatchNoTemplate = {
     projectnumber: "12",
     caseworker: 'Noen André',
     archivenumber: "1",
+    validatedArchivenumber: "1",
     stats: {
         affectedCount: "1",
         area: "1",
@@ -293,6 +297,7 @@ const bodyDispatchNoAttachment = {
     projectnumber: "12",
     caseworker: 'Noen André',
     archivenumber: "1",
+    validatedArchivenumber: "1",
     stats: {
         affectedCount: "1",
         area: "1",
