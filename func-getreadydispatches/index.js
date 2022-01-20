@@ -36,7 +36,7 @@ module.exports = async function (context, req) {
         let data = dispatch.template.data;
         if (dispatch.attachments && Array.isArray(dispatch.attachments) && dispatch.attachments.length > 0) data.attachments = dispatch.attachments
         data.info = {
-          'sector': req.createdByDepartment,
+          'sector': dispatch.createdByDepartment,
           'our-reference': dispatch.archivenumber,
           'our-caseworker': dispatch.createdBy
         }
@@ -130,7 +130,7 @@ module.exports = async function (context, req) {
         system: 'p360',
         method: 'archive',
         dependencies: ['uploadDocuments'],
-        dataMapping: "{'parameter': { 'Documents': [ { 'DocumentNumber': '{{DocumentNumber}}' } ]}}",
+        dataMapping: "{\"parameter\": { \"Documents\": [ { \"DocumentNumber\": \"{{DocumentNumber}}\" }]}}",
         data: {
           method: "DispatchDocuments",
           service: "DocumentService",
