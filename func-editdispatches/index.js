@@ -70,7 +70,7 @@
       req.body.approvedByEmail = requestorEmail;
       req.body.approvedTimestamp = new Date();
     }
-    if(req.body.status !== 'approved') {
+    if(req.body.status === 'notapproved') {
       req.body.approvedBy = '';
       req.body.approvedById = '';
       req.body.approvedTimestamp = '';
