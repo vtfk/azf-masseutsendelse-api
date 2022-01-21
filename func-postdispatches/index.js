@@ -20,11 +20,13 @@ module.exports = async function (context, req) {
       if (token && token.name) requestorName = token.name;
       if (token && token.oid) requestorId = token.oid;
       if (token && token.department) requestorDepartment = token.department;
+      if (token && token.upn) requestorEmail = token.upn;
     } else if (req.headers['x-api-key']) {
       require('../sharedcode/auth/apikey')(req.headers['x-api-key']);
       requestorName = 'apikey';
       requestorId = 'apikey';
       requestorDepartment = 'apikey';
+      requestorEmail = 'apikey@vtfk.no'
     }
     else throw new HTTPError(401, 'No authentication token provided');
 
@@ -34,9 +36,11 @@ module.exports = async function (context, req) {
 
     req.body.createdBy = requestorName
     req.body.createdById = requestorId
+    req.body.createdByEmail = requestorEmail;
     req.body.createdByDepartment = requestorDepartment
     req.body.modifiedById = requestorId
     req.body.modifiedBy = requestorName
+    req.body.modifiedByEmail = requestorEmail;
     req.body.modifiedByDepartment = requestorDepartment
 
     // Validate dispatch against schenarios that cannot be described by schema

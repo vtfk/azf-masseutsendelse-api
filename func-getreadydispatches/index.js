@@ -110,7 +110,7 @@ module.exports = async function (context, req) {
         dependencies: ['sync'],
         data: {
           system: 'masseutsendelse',
-          template: 'utsendelsessak',
+          template: 'utsendelsesdokument',
           parameter: {
             title: dispatch.title,
             caseNumber: dispatch.archivenumber,
@@ -121,6 +121,7 @@ module.exports = async function (context, req) {
             accessGroup: "Alle",                // No access restriction
             paragraph: "",                      // No paragraph
             responsibleEnterpriseRecno: 506,    // TODO: Hva skal det stå her?
+            responsiblePersonEmail: dispatch.createdByEmail
           }
         }
       });

@@ -196,6 +196,10 @@ const dispatchesSchema = new mongoose.Schema ({
       type: String,
       required: true
     },
+    createdByEmail: {
+      type: String,
+      required: true
+    },
     createdById: {
       type: String,
       default: "00000000-0000-0000-0000-000000000000",
@@ -215,6 +219,10 @@ const dispatchesSchema = new mongoose.Schema ({
       default: "Noen André",
       required: true
     },
+    modifiedByEmail: {
+      type: String,
+      required: true
+    },
     modifiedByDepartment: {
       type: String,
       required: true
@@ -231,6 +239,9 @@ const dispatchesSchema = new mongoose.Schema ({
       type: String,
     },
     approvedById: {
+      type: String,
+    },
+    approvedByEmail: {
       type: String,
     },
     approvedByDepartment: {

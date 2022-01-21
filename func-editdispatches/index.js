@@ -19,10 +19,12 @@
         if(token && token.name) requestorName = token.name;
         if(token && token.oid) requestorId = token.oid;
         if(token && token.department) requestorDepartment = token.department;
+        if(token && token.upn) requestorEmail = token.upn;
     } else if(req.headers['x-api-key']) {
         require('../sharedcode/auth/apikey')(req.headers['x-api-key']);
         requestorName, requestorId = 'apikey';
         requestorDepartment = 'apikey';
+        requestorEmail = 'apikey@vtfk.no';
     } 
     else throw new HTTPError(401, 'No authentication token provided');
 
@@ -30,11 +32,12 @@
     req.body.modifiedBy = requestorName
     req.body.modifiedById = requestorId
     req.body.modifiedTimestamp = new Date();
+    req.body.modifiedByEmail = requestorEmail;
     req.body.modifiedByDepartment = requestorDepartment
 
     // Figure out if any items should be unset
     let unsets = {};
-    if(!req.body.template) unsets.template = 1;
+    if(Object.keys(req.body).length === 2 && !req.body.template) unsets.template = 1;
 
     // Get the ID from the request 
     const id = context.bindingData.id
@@ -64,6 +67,7 @@
     if(existingDispatch.status !== 'approved' && req.body.status === 'approved') {
       req.body.approvedBy = requestorName;
       req.body.approvedById = requestorId;
+      req.body.approvedByEmail = requestorEmail;
       req.body.approvedTimestamp = new Date();
     }
     if(req.body.status !== 'approved') {
