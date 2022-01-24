@@ -1,4 +1,4 @@
-name: Masseutsendelse API
+name: Masseutsendelse-Prod API
 
 on:
   push:
