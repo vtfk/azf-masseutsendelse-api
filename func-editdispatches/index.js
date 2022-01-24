@@ -22,7 +22,8 @@
         if(token && token.upn) requestorEmail = token.upn;
     } else if(req.headers['x-api-key']) {
         require('../sharedcode/auth/apikey')(req.headers['x-api-key']);
-        requestorName, requestorId = 'apikey';
+        requestorName = 'apikey';
+        requestorId = 'apikey';
         requestorDepartment = 'apikey';
         requestorEmail = 'apikey@vtfk.no';
     } 
