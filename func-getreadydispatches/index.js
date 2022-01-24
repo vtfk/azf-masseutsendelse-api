@@ -50,9 +50,9 @@ module.exports = async function (context, req) {
             data: data
           }
         }
-
+        const legalFilename = dispatch.title.replace(/[/\\?%*:|"<>;¤]/g, '');
         const response = await axios.request(generatePDFRequest);
-        if(response.data) e18Files.push({ title: 'hoveddokument', format: 'pdf', base64: response.data.base64});
+        if(response.data) e18Files.push({ title: legalFilename, format: 'pdf', base64: response.data.base64});
         else throw new HTTPError(404, `Could not genereate PDF for dispatch ${dispatch.title}`)
       }
 
@@ -120,7 +120,6 @@ module.exports = async function (context, req) {
             accessCode: "U",                    // U = Alle
             accessGroup: "Alle",                // No access restriction
             paragraph: "",                      // No paragraph
-            responsibleEnterpriseRecno: 506,    // TODO: Hva skal det stå her?
             responsiblePersonEmail: dispatch.createdByEmail
           }
         }

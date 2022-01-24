@@ -21,6 +21,7 @@ module.exports.validate = async (dispatch, req) => {
     if(dispatch.archivenumber !== dispatch.validatedArchivenumber) {
       const p360Case = await getCase(dispatch.archivenumber);
       if(!p360Case) throw new HTTPError('400', 'Could not find a valid case in the archive system');
+      if(p360Case.URL) dispatch.archiveUrl = p360Case.URL;
     }
 
   } catch (err) {

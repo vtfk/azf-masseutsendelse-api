@@ -65,7 +65,7 @@
     req.body.validatedArchivenumber = existingDispatch.validatedArchivenumber;
 
     // Set approval information
-    if(existingDispatch.status !== 'approved' && req.body.status === 'approved') {
+    if(existingDispatch.status === 'notapproved' && req.body.status === 'approved') {
       req.body.approvedBy = requestorName;
       req.body.approvedById = requestorId;
       req.body.approvedByEmail = requestorEmail;
