@@ -52,7 +52,7 @@ module.exports = async function (context, req) {
         }
         const legalFilename = dispatch.title.replace(/[/\\?%*:|"<>;¤]/g, '');
         const response = await axios.request(generatePDFRequest);
-        if(response.data) e18Files.push({ title: legalFilename, format: 'pdf', base64: response.data.base64});
+        if(response.data) e18Files.push({ title: legalFilename, format: 'pdf', base64: response.data.base64, versionFormat: 'A'});
         else throw new HTTPError(404, `Could not genereate PDF for dispatch ${dispatch.title}`)
       }
 
