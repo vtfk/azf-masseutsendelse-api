@@ -50,7 +50,7 @@ module.exports = async function (context, req) {
         }
 
         const generatePDFRequest = {
-          url: process.env.PDF_GENERATEV2,
+          url: config.VTFK_PDFGENERATOR_ENDPOINT,
           method: 'post',
           data: {
             template: dispatch.template.template,

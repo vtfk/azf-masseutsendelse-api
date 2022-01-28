@@ -35,9 +35,9 @@ module.exports = async function (context, req) {
 
     let request = {
       method: 'post',
-      url: `${config.MATRIKKELPROXY_BASEURL}${endpoint}`,
+      url: `${config.VTFK_MATRIKKELPROXY_BASEURL}${endpoint}`,
       headers: {
-        'X-API-KEY': config.MATRIKKELPROXY_APIKEY
+        'X-API-KEY': config.VTFK_MATRIKKELPROXY_APIKEY
       },
       data: req.body
     }
