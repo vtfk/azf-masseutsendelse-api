@@ -1,8 +1,13 @@
 const Templates = require('../sharedcode/models/templates.js')
 const getDb = require('../sharedcode/connections/masseutsendelseDB.js')
 const utils = require('@vtfk/utilities');
+const { logConfig, logger } = require('@vtfk/logger')
 
 module.exports = async function (context, req) {
+  logConfig({
+    azure: { context }
+  })
+
   try {
       // Strip away some fields that should not be able to be set by the request
       req.body = utils.removeKeys(req.body, ['createdTimestamp', 'createdBy', 'createdById', 'createdByDepartment', 'modifiedTimestamp', 'modifiedBy', 'modifiedById', 'modifiedByDepartment']);
@@ -19,7 +24,10 @@ module.exports = async function (context, req) {
         require('../sharedcode/auth/apikey')(req.headers['x-api-key']);
         requestorName, requestorId, requestorDepartment = 'apikey';
       } 
-      else throw new HTTPError(401, 'No authentication token provided');
+      else {
+        logger('error', ['No authentication token provided'])
+        throw new HTTPError(401, 'No authentication token provided');
+      }
       
       // Await database connection
       await getDb()
@@ -45,6 +53,7 @@ module.exports = async function (context, req) {
 
     } catch (err) {
       context.log.error('ERROR', err)
+      logger('error', [err])
       context.res.status(400).send(JSON.stringify(err, Object.getOwnPropertyNames(err)))
       throw err
     };

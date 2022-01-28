@@ -2,9 +2,13 @@ const Templates = require('../sharedcode/models/templates.js')
 const getDb = require('../sharedcode/connections/masseutsendelseDB.js');
 const utils = require('@vtfk/utilities');
 const HTTPError = require('../sharedcode/vtfk-errors/httperror');
-
+const { logConfig, logger } = require('@vtfk/logger')
 
 module.exports = async function (context, req) {
+  logConfig({
+    azure: { context }
+  })
+
   try {
     // Strip away som fields that should not bed set by the request.
     req.body = utils.removeKeys(req.body, ['createdTimestamp', 'createdBy', 'createdById', 'modifiedTimestamp', 'modifiedBy', 'modifiedById']);
@@ -21,7 +25,10 @@ module.exports = async function (context, req) {
         require('../sharedcode/auth/apikey')(req.headers['x-api-key']);
         requestorName, requestorId, requestorDepartment = 'apikey';
     } 
-    else throw new HTTPError(401, 'No authentication token provided');
+    else {
+      logger('error', ['No authentication token provided'])
+      throw new HTTPError(401, 'No authentication token provided');
+    }
 
     // Update modified by
     req.body.modifiedBy = requestorName
@@ -38,7 +45,10 @@ module.exports = async function (context, req) {
 
     // Get the existing record
     let existingTemplate = await Templates.findById(id).lean();
-    if(!existingTemplate) { throw new HTTPError(`Template with id ${id} could no be found`) }
+    if(!existingTemplate) { 
+      logger('error', [`Template with id ${id} could no be found`])
+      throw new HTTPError(`Template with id ${id} could no be found`) 
+    }
 
     // Increment the version number
     req.body.version = existingTemplate.version + 1;
@@ -50,6 +60,7 @@ module.exports = async function (context, req) {
     context.res.status(200).send(updatedTemplate)
   } catch (err) {
     context.log(err);
+    logger('error', [err])
     context.res.status(400).send(JSON.stringify(err, Object.getOwnPropertyNames(err)))
     throw err;
   }

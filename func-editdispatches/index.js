@@ -4,10 +4,15 @@
   const HTTPError = require('../sharedcode/vtfk-errors/httperror');
   const validate = require('../sharedcode/validators/dispatches').validate;
   const blobClient = require('@vtfk/azure-blob-client');
+  const HTTPError = require("../sharedcode/vtfk-errors/httperror")
 
 
   module.exports = async function (context, req) {
   try {
+    logConfig({
+      azure: { context }
+    })
+
     // Strip away som fields that should not bed set by the request.
     req.body = utils.removeKeys(req.body, ['_id', 'validatedArchivenumber', 'createdTimestamp', 'createdBy', 'createdById', 'createdByDepartment', 'modifiedTimestamp', 'modifiedBy', 'modifiedById', 'modifiedByDepartment']);
 
@@ -27,7 +32,10 @@
         requestorDepartment = 'apikey';
         requestorEmail = 'apikey@vtfk.no';
     } 
-    else throw new HTTPError(401, 'No authentication token provided');
+    else {
+      logger('error', ['No authentication token provided'])
+      throw new HTTPError(401, 'No authentication token provided');
+    }
 
     // Update modified by
     req.body.modifiedBy = requestorName
@@ -48,15 +56,24 @@
 
     // Get the existing disptach object 
     let existingDispatch = await Dispatches.findById(id).lean()
-    if(!existingDispatch) { throw new HTTPError(404, `Dispatch with id ${id} could not be found` ) }
+    if(!existingDispatch) { 
+      logger('error', [`Dispatch with id ${id} could not be found`]) 
+      throw new HTTPError(404, `Dispatch with id ${id} could not be found` )
+    }
     // If the status is running or completed, only status is allowed to be updated
-    if(existingDispatch.status === 'inprogress' && req.body.status !== 'completed') throw new HTTPError(400, 'No changes can be done to a running dispatch except setting it to completed');
+    if(existingDispatch.status === 'inprogress' && req.body.status !== 'completed') {
+      logger('error', ['No changes can be done to a running dispatch except setting it to completed']) 
+      throw new HTTPError(400, 'No changes can be done to a running dispatch except setting it to completed');
+    }
     if(existingDispatch.status === 'inprogress' && req.body.status === 'completed') {
       const result = await Dispatches.findByIdAndUpdate(id, { status: 'completed' }, { new: true});
       return context.res.status(201).send(result)
     }
     // Failsafe
-    if(existingDispatch.status === 'inprogress' || existingDispatch.status === 'completed') throw new HTTPError(400, 'No changes can be done to running or completed dispatches');
+    if(existingDispatch.status === 'inprogress' || existingDispatch.status === 'completed') {
+      logger('error', ['No changes can be done to a running dispatch except setting it to completed'])
+      throw new HTTPError(400, 'No changes can be done to running or completed dispatches');
+    }
 
     // Update fields
     req.body.modifiedBy = requestorName;
@@ -86,7 +103,10 @@
     if(req.body.attachments && Array.isArray(req.body.attachments) && req.body.attachments.length > 0) {
       req.body.attachments.forEach((i) => {
         blobClient.unallowedPathCharacters.forEach((char) => {
-          if(i.name.includes(char)) throw new HTTPError(400, `${i} cannot contain illegal character ${char}`);
+          if(i.name.includes(char)) {
+            logger('error', [`${i} cannot contain illegal character ${char}`])
+            throw new HTTPError(400, `${i} cannot contain illegal character ${char}`);
+          }
         })
       })
     }
@@ -114,6 +134,7 @@
 
   } catch (err) {
     context.log(err)
+    logger('error', [err])
     context.res.status(400).send(JSON.stringify(err, Object.getOwnPropertyNames(err)))
     throw err
   }

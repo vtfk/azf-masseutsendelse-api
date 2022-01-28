@@ -6,8 +6,13 @@ const HTTPError = require('../sharedcode/vtfk-errors/httperror.js');
 const validate = require('../sharedcode/validators/dispatches').validate;
 const blobClient = require('@vtfk/azure-blob-client');
 const config = require('../config');
+const { logConfig, logger } = require('@vtfk/logger')
 
 module.exports = async function (context, req) {
+  logConfig({
+    azure: { context }
+  })
+
   try {
     // Strip away som fields that should not bed set by the request.
     req.body = utils.removeKeys(req.body, ['_id', 'validatedArchivenumber', 'createdTimestamp', 'createdBy', 'createdById', 'modifiedTimestamp', 'modifiedBy', 'modifiedById']);
@@ -28,7 +33,10 @@ module.exports = async function (context, req) {
       requestorDepartment = 'apikey';
       requestorEmail = 'apikey@vtfk.no'
     }
-    else throw new HTTPError(401, 'No authentication token provided');
+    else {
+      logger('error', ['No authentication token provided'])
+      throw new HTTPError(401, 'No authentication token provided');
+    }
 
     // Set values
     req.body._id = new ObjectID()
@@ -53,10 +61,15 @@ module.exports = async function (context, req) {
 
     // Check if the attachments contains any invalid characters
     if (req.body.attachments && Array.isArray(req.body.attachments) && req.body.attachments.length > 0) {
-      if (!config.AZURE_BLOB_CONNECTIONSTRING || !config.AZURE_BLOB_CONTAINERNAME) { throw new HTTPError(500, 'Cannot upload attachments when azure blob storage is not configured'); }
+      if (!config.AZURE_BLOB_CONNECTIONSTRING || !config.AZURE_BLOB_CONTAINERNAME) {
+        logger('error', ['Cannot upload attachments when azure blob storage is not configured']) 
+        throw new HTTPError(500, 'Cannot upload attachments when azure blob storage is not configured'); 
+      }
       for (const blob of req.body.attachments) {
         for (const char of blobClient.unallowedPathCharacters) {
-          if (blob.name.includes(char)) throw new HTTPError(400, `${blob.name} contains the illegal character ${char}`)
+          if (blob.name.includes(char)) {
+            logger('error', [`${blob.name} contains the illegal character ${char}`])
+            throw new HTTPError(400, `${blob.name} contains the illegal character ${char}`)}
         }
       }
     }
@@ -70,7 +83,10 @@ module.exports = async function (context, req) {
     // Upload files attached to the dispatch object if files exist.
     if (req.body.attachments || Array.isArray(req.body.attachments)) {
       for await (let file of req.body.attachments) {
-        if (file.name && file.name.includes('/')) throw new HTTPError(400, 'Illigal character in filname, "/" is not allowed.')
+        if (file.name && file.name.includes('/')) {
+          logger('error', ['Illigal character in filname, "/" is not allowed.'])
+          throw new HTTPError(400, 'Illigal character in filname, "/" is not allowed.')
+        }
         if (!file.name) file.name = file._id;
 
         await blobClient.save(`${req.body._id}/${file.name}`, file.data)
@@ -81,6 +97,7 @@ module.exports = async function (context, req) {
     context.res.status(201).send(results)
   } catch (err) {
     context.log.error('ERROR', err)
+    logger('error', [err])
     context.res.status(400).send(JSON.stringify(err, Object.getOwnPropertyNames(err)))
     throw err
   }

@@ -3,16 +3,24 @@ const getDb = require('../sharedcode/connections/masseutsendelseDB.js')
 const HTTPError = require('../sharedcode/vtfk-errors/httperror');
 const blobClient = require('@vtfk/azure-blob-client');
 const axios = require('axios');
+const { logConfig, logger } = require('@vtfk/logger')
 
 // Arrays
 let e18Jobs = [];
 
 module.exports = async function (context, req) {
+  logConfig({
+    azure: { context }
+  })
+
   try {
     // Authentication / Authorization
     if (req.headers.authorization) await require('../sharedcode/auth/azuread').validate(req.headers.authorization);
     else if (req.headers['x-api-key']) require('../sharedcode/auth/apikey')(req.headers['x-api-key']);
-    else throw new HTTPError(401, 'No authentication token provided');
+    else {
+      logger('error', ['No authentication token provided'])
+      throw new HTTPError(401, 'No authentication token provided');
+    }
 
     // Await the DB connection 
     await getDb()
@@ -53,14 +61,20 @@ module.exports = async function (context, req) {
         const legalFilename = dispatch.title.replace(/[/\\?%*:|"<>;¤]/g, '');
         const response = await axios.request(generatePDFRequest);
         if(response.data) e18Files.push({ title: legalFilename, format: 'pdf', base64: response.data.base64});
-        else throw new HTTPError(404, `Could not genereate PDF for dispatch ${dispatch.title}`)
+        else {
+          logger('error', [`Could not genereate PDF for dispatch ${dispatch.title}`])
+          throw new HTTPError(404, `Could not genereate PDF for dispatch ${dispatch.title}`)
+        }
       }
 
       // Retreive any attachments if applicable
       if (dispatch.attachments && Array.isArray(dispatch.attachments) && dispatch.attachments.length > 0) {
         for(const attachment of dispatch.attachments) {
           let file = await blobClient.get(`${dispatch._id}/${attachment.name}`)
-          if (!file) { throw new HTTPError(404, 'No files found, check if you passed the right filename and/or the right dispatchId') }
+          if (!file) {
+            logger('error', ['No files found, check if you passed the right filename and/or the right dispatchId']) 
+            throw new HTTPError(404, 'No files found, check if you passed the right filename and/or the right dispatchId')
+           }
           if(file.data.startsWith('data:') && file.data.includes(',')) file.data = file.data.substring(file.data.indexOf(',') + 1);
           if(file.name.includes('.')) file.name = file.name.substring(0, file.name.indexOf('.'));
           e18Files.push({title: file.name, format: file.extension, base64: file.data});
@@ -146,6 +160,7 @@ module.exports = async function (context, req) {
     e18Jobs = []
   } catch (err) {
     context.log(err)
+    logger('error', [err])
     context.res.status(400).send(JSON.stringify(err, Object.getOwnPropertyNames(err)))
     throw err
   }
