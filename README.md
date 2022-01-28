@@ -1,5 +1,5 @@
-# azf-test-masseutsendelse-api
-Test api for masseutsendelse
+# azf-masseutsendelse-api
+Api for masseutsendelse
 
 # Environment variables
 | Variabel | Description | Example |
