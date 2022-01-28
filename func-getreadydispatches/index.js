@@ -3,6 +3,7 @@ const getDb = require('../sharedcode/connections/masseutsendelseDB.js')
 const HTTPError = require('../sharedcode/vtfk-errors/httperror');
 const blobClient = require('@vtfk/azure-blob-client');
 const axios = require('axios');
+const config = require('../config')
 
 // Arrays
 let e18Jobs = [];
@@ -42,7 +43,7 @@ module.exports = async function (context, req) {
         }
 
         const generatePDFRequest = {
-          url: process.env.PDF_GENERATEV2,
+          url: config.VTFK_PDFGENERATOR_ENDPOINT,
           method: 'post',
           data: {
             template: dispatch.template.template,

@@ -13,17 +13,17 @@ module.exports = async function (context, req) {
     else throw new HTTPError(401, 'No authentication token provided');
 
     // Input validation
-    if(!config.MATRIKKELPROXY_BASEURL) throw new HTTPError(400, 'The MatrikkelProxyAPI connection is not configured');
-    if(!config.MATRIKKELPROXY_APIKEY) throw new HTTPError(400, 'The MatrikkelProxyAPI connection is missing the APIKey');
+    if(!config.VTFK_MATRIKKELPROXY_BASEURL) throw new HTTPError(400, 'The MatrikkelProxyAPI connection is not configured');
+    if(!config.VTFK_MATRIKKELPROXY_APIKEY) throw new HTTPError(400, 'The MatrikkelProxyAPI connection is missing the APIKey');
     
     // Get ID from request
     const endpoint = decodeURIComponent(context.bindingData.endpoint);
 
     let request = {
       method: 'post',
-      url: `${config.MATRIKKELPROXY_BASEURL}${endpoint}`,
+      url: `${config.VTFK_MATRIKKELPROXY_BASEURL}${endpoint}`,
       headers: {
-        'X-API-KEY': config.MATRIKKELPROXY_APIKEY
+        'X-API-KEY': config.VTFK_MATRIKKELPROXY_APIKEY
       },
       data: req.body
     }
