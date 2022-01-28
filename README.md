@@ -16,3 +16,5 @@ Api for masseutsendelse
 | VTFK_PDFGENERATOR_ENDPOINT | The endpoint url for azf-pdfgenerator v2 endpoint
 | VTFK_P360_ARCHIVE_ENDPOINT | VTFK azf-archive endpoint | https://[FQDN]/archive/v1/
 | VTFK_P360_ARCHIVE_SUBSCRIPTION_KEY | APIM subscription key | [GUID]
+| PAPERTRAIL_HOST | URL to the papertrail log | papertrail.example.com/v1/log |
+| PAPERTRAIL_TOKEN | Token to the papertrail log | TOKEN |
