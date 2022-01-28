@@ -9,7 +9,7 @@
   "dependencies": {
     "@azure/storage-blob": "12.8.0",
     "@shelf/jest-mongodb": "2.2.0",
-    "@vtfk/azure-blob-client": "0.0.4",
+    "@vtfk/azure-blob-client": "0.1.0",
     "@vtfk/logger": "4.1.2",
     "@vtfk/utilities": "1.0.0",
     "axios": "0.24.0",
