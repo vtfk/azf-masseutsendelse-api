@@ -3,6 +3,7 @@ const getDb = require('../sharedcode/connections/masseutsendelseDB.js')
 const HTTPError = require('../sharedcode/vtfk-errors/httperror');
 const blobClient = require('@vtfk/azure-blob-client');
 const axios = require('axios');
+const config = require('../config');
 const { logConfig, logger } = require('@vtfk/logger')
 
 // Arrays

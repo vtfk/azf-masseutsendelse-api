@@ -135,6 +135,5 @@
     context.log(err)
     logger('error', [err])
     context.res.status(400).send(JSON.stringify(err, Object.getOwnPropertyNames(err)))
-    throw err
   }
 }
