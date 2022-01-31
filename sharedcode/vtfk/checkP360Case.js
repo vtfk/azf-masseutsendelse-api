@@ -17,7 +17,7 @@ module.exports.getCase = async function getCase (casenumber) {
   // Build the request
   const request = {
     method: 'post',
-    url: config.VTFK_P360_ARCHIVE_ENDPOINT + 'archive/',
+    url: config.VTFK_P360_ARCHIVE_ENDPOINT + 'archive',
     headers: {
       'Ocp-Apim-Subscription-Key': config.VTFK_P360_ARCHIVE_SUBSCRIPTION_KEY
     },

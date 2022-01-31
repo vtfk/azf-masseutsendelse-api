@@ -4,6 +4,7 @@
   const HTTPError = require('../sharedcode/vtfk-errors/httperror');
   const validate = require('../sharedcode/validators/dispatches').validate;
   const blobClient = require('@vtfk/azure-blob-client');
+  const { logConfig, logger } = require('@vtfk/logger');
 
   module.exports = async function (context, req) {
   try {
