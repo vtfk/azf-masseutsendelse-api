@@ -19,9 +19,13 @@ module.exports.validate = async (dispatch, req) => {
     // Validate that the provided archivenumber exists in P360
     if(!dispatch.archivenumber) throw new HTTPError('400', 'No archivenumber has been provided');
     if(dispatch.archivenumber !== dispatch.validatedArchivenumber) {
-      const p360Case = await getCase(dispatch.archivenumber);
-      if(!p360Case) throw new HTTPError('400', 'Could not find a valid case in the archive system');
-      if(p360Case.URL) dispatch.archiveUrl = p360Case.URL;
+      try {
+        const p360Case = await getCase(dispatch.archivenumber);
+        if(!p360Case) throw new HTTPError('400', 'Could not find a valid case in the archive system');
+        if(p360Case.URL) dispatch.archiveUrl = p360Case.URL;
+      } catch (err) {
+        throw new HTTPError(500, `Something went wrong contacting the archive: ${err.message}`, 'Problem contacting the archive');
+      }
     }
 
   } catch (err) {
