@@ -21,11 +21,11 @@ module.exports = async function (context, req) {
     }
 
     // Input validation
-    if(!config.MATRIKKELPROXY_BASEURL) {
+    if(!config.VTFK_MATRIKKELPROXY_BASEURL) {
       logger('error', ['The MatrikkelProxyAPI connection is not configured'])
       throw new HTTPError(400, 'The MatrikkelProxyAPI connection is not configured');
     }
-    if(!config.MATRIKKELPROXY_APIKEY) {
+    if(!config.VTFK_MATRIKKELPROXY_BASEURL) {
       logger('error', ['The MatrikkelProxyAPI connection is missing the APIKey'])
       throw new HTTPError(400, 'The MatrikkelProxyAPI connection is missing the APIKey');
     }
