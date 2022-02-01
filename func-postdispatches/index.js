@@ -15,7 +15,8 @@ module.exports = async function (context, req) {
 
   try {
     // Strip away som fields that should not bed set by the request.
-    req.body = utils.removeKeys(req.body, ['_id', 'validatedArchivenumber', 'createdTimestamp', 'createdBy', 'createdById', 'modifiedTimestamp', 'modifiedBy', 'modifiedById']);
+    req.body = utils.removeKeys(req.body, ['validatedArchivenumber', 'createdTimestamp', 'createdBy', 'createdById', 'modifiedTimestamp', 'modifiedBy', 'modifiedById']);
+    delete req.body._id; // _id must be removed by it self to not remove template _id and other _ids as well
 
     // Authentication / Authorization
     let requestorName = undefined;

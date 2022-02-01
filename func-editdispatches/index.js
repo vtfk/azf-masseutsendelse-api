@@ -13,7 +13,10 @@
     })
 
     // Strip away som fields that should not bed set by the request.
-    req.body = utils.removeKeys(req.body, ['_id', 'validatedArchivenumber', 'createdTimestamp', 'createdBy', 'createdById', 'createdByDepartment', 'modifiedTimestamp', 'modifiedBy', 'modifiedById', 'modifiedByDepartment']);
+    req.body = utils.removeKeys(req.body, ['validatedArchivenumber', 'createdTimestamp', 'createdBy', 'createdById', 'createdByDepartment', 'modifiedTimestamp', 'modifiedBy', 'modifiedById', 'modifiedByDepartment']);
+    delete req.body._id;
+
+    console.log('Request:', req.body);
 
     // Authentication / Authorization
     let requestorName = undefined;
@@ -46,6 +49,7 @@
     // Figure out if any items should be unset
     let unsets = {};
     if(Object.keys(req.body).length === 2 && !req.body.template) unsets.template = 1;
+    if(req.body.attachments && !req.body.template) unsets.template = 1;
 
     // Get the ID from the request 
     const id = context.bindingData.id
@@ -94,8 +98,8 @@
     }
 
     // Validate dispatch against schenarios that cannot be described by schema
-    const toValidate = {...existingDispatch, ...req.body}
-    await validate(toValidate);
+    // const toValidate = {...existingDispatch, ...req.body}
+    await validate(req.body);
     req.body.validatedArchivenumber = req.body.archivenumber;
 
     // Validate attachments
