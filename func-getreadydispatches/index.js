@@ -38,8 +38,10 @@ module.exports = async function (context, req) {
 
       let registrationThreshold = dayjs(dispatch.approvedTimestamp).set('hour', 24).set('minute', 59).set('second', 59).set('millisecond', 0);
       let delaySendUntil = dayjs().add(1, 'day').set('hour', 12).set('minute', 0).set('second', 0).set('millisecond', 0);
-      if(dayjs(new Date()).isBefore(registrationThreshold)) continue;
-
+      if(!config.BYPASS_REGISTRATION_THRESHOLD) {
+        if(dayjs(new Date()).isBefore(registrationThreshold)) continue;
+      }
+      
       // Variables
       let e18Files = [];  // Stores all files that should be registrered to E18
       let e18Job = {
