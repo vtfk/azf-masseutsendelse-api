@@ -79,10 +79,16 @@ module.exports = async function (context, req) {
 
     // Save the new dispatch to the database 
     const results = await dispatch.save()
+    const allowedExtensions = ['pdf', 'xlsx', 'xls', 'rtf', 'msg', 'ppt', 'pptx', 'docx', 'doc', 'png', 'jpg', 'jpeg'];
 
     // Upload files attached to the dispatch object if files exist.
     if (req.body.attachments || Array.isArray(req.body.attachments)) {
       for await (let file of req.body.attachments) {
+        const split = file.name.split('.');
+        if(split.length === 1) throw new HTTPError(400, 'All filenames must have an extension')
+        const extension = split[split.length - 1];
+        if(!allowedExtensions.includes(extension.toLowerCase())) throw new HTTPError(400, `The file extension ${extension} is not allowed`);
+
         if (file.name && file.name.includes('/')) {
           logger('error', ['Illigal character in filname, "/" is not allowed.'])
           throw new HTTPError(400, 'Illigal character in filname, "/" is not allowed.')

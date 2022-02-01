@@ -99,8 +99,13 @@
     req.body.validatedArchivenumber = req.body.archivenumber;
 
     // Validate attachments
+    const allowedExtensions = ['pdf', 'xlsx', 'xls', 'rtf', 'msg', 'ppt', 'pptx', 'docx', 'doc', 'png', 'jpg', 'jpeg'];
     if(req.body.attachments && Array.isArray(req.body.attachments) && req.body.attachments.length > 0) {
       req.body.attachments.forEach((i) => {
+        const split = i.name.split('.');
+        if(split.length === 1) throw new HTTPError(400, 'All filenames must have an extension')
+        const extension = split[split.length - 1];
+        if(!allowedExtensions.includes(extension.toLowerCase())) throw new HTTPError(400, `The file extension ${extension} is not allowed`);
         blobClient.unallowedPathCharacters.forEach((char) => {
           if(i.name.includes(char)) {
             logger('error', [`${i} cannot contain illegal character ${char}`])
