@@ -5,6 +5,7 @@ const blobClient = require('@vtfk/azure-blob-client');
 const axios = require('axios');
 const config = require('../config');
 const { logConfig, logger } = require('@vtfk/logger')
+const dayjs = require('dayjs');
 
 // Arrays
 let e18Jobs = [];
@@ -32,11 +33,20 @@ module.exports = async function (context, req) {
 
     // Loop through all dispatches
     for(const dispatch of dispatches) {
+      // Validate if the dispatch is ready
+      if(!dispatch.approvedTimestamp) continue;
+
+      let registrationThreshold = dayjs(dispatch.approvedTimestamp).set('hour', 24).set('minute', 59).set('second', 59).set('millisecond', 0);
+      let delaySendUntil = dayjs().add(1, 'day').set('hour', 12).set('minute', 0).set('second', 0).set('millisecond', 0);
+      if(dayjs(new Date()).isBefore(registrationThreshold)) continue;
+
+      // Variables
       let e18Files = [];  // Stores all files that should be registrered to E18
       let e18Job = {
         system: 'masseutsendelse', 
         projectId: 30, 
         parallel: true,
+        delayUntil: delaySendUntil.toISOString(),
         tasks: []
       }
 
