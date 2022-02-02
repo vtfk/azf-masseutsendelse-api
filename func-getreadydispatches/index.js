@@ -125,12 +125,14 @@ module.exports = async function (context, req) {
       })
       
       // Create one uploadDocuments-job pr. Attachment
+      let fileIndex = -1;
       for(const file of e18Files) {
+        fileIndex++;
         e18Job.tasks.push({
           system: 'p360',
           method: 'archive',
-          dependencyTag: 'uploadDocuments',
-          dependencies: ['sync'],
+          dependencyTag: `uploadDocuments-${fileIndex}`,
+          dependencies: fileIndex === 0 ? ['sync'] : [`uploadDocuments-${fileIndex - 1}`],
           data: {
             system: 'masseutsendelse',
             template: 'utsendelsesdokument',
@@ -153,7 +155,7 @@ module.exports = async function (context, req) {
       e18Job.tasks.push({
         system: 'p360',
         method: 'archive',
-        dependencies: ['uploadDocuments'],
+        dependencies: [`uploadDocuments-${e18Files.length - 1}`],
         dataMapping: "{\"parameter\": { \"Documents\": [ { \"DocumentNumber\": \"{{DocumentNumber}}\" }]}}",
         data: {
           method: "DispatchDocuments",
