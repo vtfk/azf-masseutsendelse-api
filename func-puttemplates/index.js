@@ -5,50 +5,33 @@ const HTTPError = require('../sharedcode/vtfk-errors/httperror');
 const { logConfig, logger } = require('@vtfk/logger')
 
 module.exports = async function (context, req) {
-  logConfig({
-    azure: { context }
-  })
-
   try {
+    // Configure logger
+    logConfig({
+      azure: { context }
+    })
+
+    // Authentication / Authorization
+    const requestor = await require('../sharedcode/auth/auth').auth(req);
+
     // Strip away som fields that should not bed set by the request.
     req.body = utils.removeKeys(req.body, ['createdTimestamp', 'createdBy', 'createdById', 'modifiedTimestamp', 'modifiedBy', 'modifiedById']);
 
-    // Authentication / Authorization
-    let requestorName = undefined;
-    let requestorId = undefined;
-    if(req.headers.authorization) {
-        token = await require('../sharedcode/auth/azuread').validate(req.headers.authorization);
-        if(token && token.name) requestorName = token.name;
-        if(token && token.oid) requestorId = token.oid;
-        if(token && token.department) requestorDepartment = token.department;
-    } else if(req.headers['x-api-key']) {
-        require('../sharedcode/auth/apikey')(req.headers['x-api-key']);
-        requestorName, requestorId, requestorDepartment = 'apikey';
-    } 
-    else {
-      logger('error', ['No authentication token provided'])
-      throw new HTTPError(401, 'No authentication token provided');
-    }
-
     // Update modified by
-    req.body.modifiedBy = requestorName
-    req.body.modifiedById = requestorId
+    req.body.modifiedBy = requestor.name
+    req.body.modifiedById = requestor.id
     req.body.modifiedTimestamp = new Date();
-    req.body.modifiedByDepartment = requestorDepartment;
+    req.body.modifiedByDepartment = requestor.department;
 
     // Get the ID from the request
     const id = context.bindingData.id
 
     // Await the database
     await getDb()
-    context.log("Mongoose is connected.");
 
     // Get the existing record
     let existingTemplate = await Templates.findById(id).lean();
-    if(!existingTemplate) { 
-      logger('error', [`Template with id ${id} could no be found`])
-      throw new HTTPError(`Template with id ${id} could no be found`) 
-    }
+    if(!existingTemplate) throw new HTTPError(`Template with id ${id} could no be found`) 
 
     // Increment the version number
     req.body.version = existingTemplate.version + 1;
@@ -59,9 +42,8 @@ module.exports = async function (context, req) {
     // Return the updated template
     context.res.status(200).send(updatedTemplate)
   } catch (err) {
-    context.log(err);
     logger('error', [err])
-    context.res.status(400).send(JSON.stringify(err, Object.getOwnPropertyNames(err)))
+    context.res.status(400).send(err)
     throw err;
   }
 }

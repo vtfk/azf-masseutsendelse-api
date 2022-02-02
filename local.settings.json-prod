@@ -1,0 +1,33 @@
+{
+  "IsEncrypted": false,
+  "Values": {
+    "AzureWebJobsStorage": "DefaultEndpointsProtocol=https;AccountName=testfuncmasseutsendelse;AccountKey=tSvRytz5m05tRBTAUENF+fk0hipCGahWSVcN25lWJm1MM3JI9xI3gQjYaQcoHF/lewm0jwelYA3+681VoWZ+8Q==;EndpointSuffix=core.windows.net",
+    "FUNCTIONS_WORKER_RUNTIME": "node",
+    "FUNCTIONS_EXTENSION_VERSION": "~3",
+    "WEBSITE_NODE_DEFAULT_VERSION": "~14",
+    "AzureWebJobsDashboard": "DefaultEndpointsProtocol=https;AccountName=testfuncmasseutsendelse;AccountKey=tSvRytz5m05tRBTAUENF+fk0hipCGahWSVcN25lWJm1MM3JI9xI3gQjYaQcoHF/lewm0jwelYA3+681VoWZ+8Q==;EndpointSuffix=core.windows.net",
+    "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING": "DefaultEndpointsProtocol=https;AccountName=testfuncmasseutsendelse;AccountKey=tSvRytz5m05tRBTAUENF+fk0hipCGahWSVcN25lWJm1MM3JI9xI3gQjYaQcoHF/lewm0jwelYA3+681VoWZ+8Q==;EndpointSuffix=core.windows.net",
+    "WEBSITE_CONTENTSHARE": "test-func-masseutsendelse37218f",
+    "WEBSITE_RUN_FROM_PACKAGE": "1",
+    "APPINSIGHTS_INSTRUMENTATIONKEY": "3e3917e8-c782-4261-9d35-a5d02efefa04",
+    "MONGODB_CONNECTIONSTRING": "mongodb+srv://masseutsendelse:32EgOSiUmXMXjgML87JMDDbFrgyGfFk6O@cluster0.jlu5j.azure.mongodb.net/masseutsendelse?authSource=admin&replicaSet=atlas-llp7dx-shard-0&w=majority&readPreference=primary&appname=MongoDB%20Compass&retryWrites=true&ssl=true",
+    "AZURE_BLOB_CONNECTIONSTRING": "DefaultEndpointsProtocol=https;AccountName=prodblobmasseutsendelse;AccountKey=97mSuPoYQ+AzenSuq8iofXUC1WB5Lozr8upiQ6Zo+xhg50Ac7lbnHozrU8BHMeLKIWVTzV33whUSml0V5zbkyQ==;EndpointSuffix=core.windows.net",
+    "AZURE_BLOB_CONTAINERNAME": "files",
+    "AZUREAD_JWK_URI": "https://login.microsoftonline.com/08f3813c-9f29-482f-9aec-16ef7cbf477a/discovery/v2.0/keys",
+    "AZUREAD_ISSUER_URI": "https://sts.windows.net/08f3813c-9f29-482f-9aec-16ef7cbf477a/",
+    "AZUREAD_CLIENTID": "ffd9d6ce-d313-4d5d-a758-0affa6dadd0a",
+    "AZUREAD_ALLOWEDGROUPS": "38006acd-69e6-4527-a071-b0eee0f209ca",
+    "APIKEYS": "bYNiA=fpf+</BQY4@/NfpYNP,@O$u[$43)mt0CUXkW]!nXxd/",
+    "APIKEYS_MINIMUM_LENGTH": 24,
+    "VTFK_MATRIKKELPROXY_BASEURL": "http://localhost:3000/api/v1/",
+    "VTFK_MATRIKKELPROXY_APIKEY": "DETTEERENTEST",
+    "VTFK_PDFGENERATOR_ENDPOINT": "https://api.vtfk.dev/pdf/v1/generatev2/",
+    "VTFK_P360_ARCHIVE_ENDPOINT": "https://api.vtfk.dev/archive/v1/",
+    "VTFK_P360_ARCHIVE_SUBSCRIPTION_KEY": "ff2415e353a44ba291b69cfe933173a9",
+    "BYPASS_REGISTRATION_THRESHOLD": true
+  },
+  "Host": {
+    "LocalHttpPort": 7071,
+    "CORS": "*"
+  }
+}

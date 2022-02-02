@@ -5,41 +5,33 @@ const HTTPError = require('../sharedcode/vtfk-errors/httperror');
 const { logConfig, logger } = require('@vtfk/logger')
 
 module.exports = async function (context, req) {
+  try {
+    // Configure logger
     logConfig({
-        azure: { context }
-    })
+      azure: { context }
+    })  
 
-    try {
-        // Authentication / Authorization
-        if(req.headers.authorization) await require('../sharedcode/auth/azuread').validate(req.headers.authorization);
-        else if(req.headers['x-api-key']) require('../sharedcode/auth/apikey')(req.headers['x-api-key']);
-        else {
-            logger('error', ['No authentication token provided'])
-            throw new HTTPError(401, 'No authentication token provided');
-        }
-        
-        // Get ID from request
-        const id = context.bindingData.id
+    // Authentication / Authorization
+    await require('../sharedcode/auth/auth').auth(req);
 
-        // Await the database
-        await getDb()
-        context.log("Mongoose is connected.");
+    // Get ID from request
+    const id = context.bindingData.id
+    if(!id) throw new HTTPError(400, 'No dispatch id was provided');
 
-        //Find Dispatch by ID
-        let disptach = await Dispatches.findById(id)
-        if(!disptach) { 
-            logger('error', [`Disptach with id ${id} could no be found`])
-            throw new HTTPError(404, `Disptach with id ${id} could no be found`) 
-        }
-        
-        //Return the dispatch object 
-        let disptachById = await Dispatches.findById(id, req.body, {new: true})
-        context.res.send(disptachById)
+    // Await the database
+    await getDb()
 
-    } catch (err) {
-        context.log(err);
-        logger('error', [err])
-        context.res.status(400).send(JSON.stringify(err, Object.getOwnPropertyNames(err)))
-        throw err;
-    }
+    //Find Dispatch by ID
+    let disptach = await Dispatches.findById(id)
+    if (!disptach) throw new HTTPError(404, `Disptach with id ${id} could no be found`)
+
+    //Return the dispatch object 
+    let disptachById = await Dispatches.findById(id, req.body, { new: true })
+    context.res.send(disptachById)
+  } catch (err) {
+   err;
+    logger('error', [err])
+    context.res.status(400).send(err)
+    throw err;
+  }
 }

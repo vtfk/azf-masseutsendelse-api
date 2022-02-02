@@ -6,9 +6,9 @@
       "direction": "in",
       "name": "req",
       "methods": [
-        "delete"
+        "put"
       ],
-      "route": "blobs/{id}/{fileName}"
+      "route": "dispatches/{id}/complete"
     },
     {
       "type": "http",

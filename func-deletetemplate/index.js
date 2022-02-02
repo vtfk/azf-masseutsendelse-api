@@ -5,18 +5,14 @@ const { logConfig, logger } = require('@vtfk/logger')
 
 
 module.exports = async function (context, req) {
-  logConfig({
-    azure: { context }
-  })
-
   try {
+    // Configure the logger
+    logConfig({
+      azure: { context }
+    })
+
     // Authentication / Authorization
-    if(req.headers.authorization) await require('../sharedcode/auth/azuread').validate(req.headers.authorization);
-    else if(req.headers['x-api-key']) require('../sharedcode/auth/apikey')(req.headers['x-api-key']);
-    else {
-      logger('error', ['No authentication token provided'])
-      throw new HTTPError(401, 'No authentication token provided');
-    }
+    await require('../sharedcode/auth/auth').auth(req);
 
     // Await the database
     await getDb()
@@ -29,9 +25,9 @@ module.exports = async function (context, req) {
     context.res.send();
 
   } catch (err) {
-    context.log(err);
+   err;
     logger('error', [err])
-    context.res.status(400).send(JSON.stringify(err, Object.getOwnPropertyNames(err)))
+    context.res.status(400).send(err)
     throw err;
   }
 }

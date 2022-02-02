@@ -4,39 +4,32 @@ const HTTPError = require('../sharedcode/vtfk-errors/httperror');
 const { logConfig, logger } = require('@vtfk/logger')
 
 module.exports = async function (context, req) {
+  try {
+    // Configure logger
     logConfig({
-        azure: { context }
+      azure: { context }
     })
 
-    try {
-        // Authentication / Authorization
-        if(req.headers.authorization) await require('../sharedcode/auth/azuread').validate(req.headers.authorization);
-        else if(req.headers['x-api-key']) require('../sharedcode/auth/apikey')(req.headers['x-api-key']);
-        else {
-            logger('error', ['No authentication token provided'])
-            throw new HTTPError(401, 'No authentication token provided');
-        }
+    // Authentication / Authorization
+    await require('../sharedcode/auth/auth').auth(req);
 
-        // Await the DB connection 
-        await getDb()
-        context.log("Mongoose is connected")
+    // Await the DB connection 
+    await getDb()
 
-        // Find all disptaches
-        let dispatches = [];
-        if(req.query.full === true || req.query.full === 'true') dispatches = await Dispatches.find({})
-        else dispatches = await Dispatches.find({}).select('-owners -excludedOwners -matrikkelUnitsWithoutOwners')
+    // Find all disptaches
+    let dispatches = [];
+    if (req.query.full === true || req.query.full === 'true') dispatches = await Dispatches.find({})
+    else dispatches = await Dispatches.find({}).select('-owners -excludedOwners -matrikkelUnitsWithoutOwners')
 
-        if(!dispatches) {
-            logger('error', ['No dispatches found in the database.']) 
-            throw new HTTPError(404, 'No dispatches found in the database.') 
-        }
+    // If no dispatches was found
+    if (!dispatches) dispatches = [];
 
-        // Return the disptaches
-        context.res.send(dispatches)
-    } catch (err) {
-        context.log(err)
-        logger('error', [err])
-        context.res.status(400).send(JSON.stringify(err, Object.getOwnPropertyNames(err)))
-        throw err
-    }
+    // Return the disptaches
+    context.res.send(dispatches)
+  } catch (err) {
+   err
+    logger('error', [err])
+    context.res.status(400).send(err)
+    throw err
+  }
 }

@@ -19,38 +19,20 @@ module.exports = async function (context, req) {
     delete req.body._id; // _id must be removed by it self to not remove template _id and other _ids as well
 
     // Authentication / Authorization
-    let requestorName = undefined;
-    let requestorId = undefined;
-    if (req.headers.authorization) {
-      token = await require('../sharedcode/auth/azuread').validate(req.headers.authorization);
-      if (token && token.name) requestorName = token.name;
-      if (token && token.oid) requestorId = token.oid;
-      if (token && token.department) requestorDepartment = token.department;
-      if (token && token.upn) requestorEmail = token.upn;
-    } else if (req.headers['x-api-key']) {
-      require('../sharedcode/auth/apikey')(req.headers['x-api-key']);
-      requestorName = 'apikey';
-      requestorId = 'apikey';
-      requestorDepartment = 'apikey';
-      requestorEmail = 'apikey@vtfk.no'
-    }
-    else {
-      logger('error', ['No authentication token provided'])
-      throw new HTTPError(401, 'No authentication token provided');
-    }
+    const requestor = await require('../sharedcode/auth/auth').auth(req);
 
     // Set values
     req.body._id = new ObjectID()
     req.body.status = "notapproved"
 
-    req.body.createdBy = requestorName
-    req.body.createdById = requestorId
-    req.body.createdByEmail = requestorEmail;
-    req.body.createdByDepartment = requestorDepartment
-    req.body.modifiedById = requestorId
-    req.body.modifiedBy = requestorName
-    req.body.modifiedByEmail = requestorEmail;
-    req.body.modifiedByDepartment = requestorDepartment
+    req.body.createdBy = requestor.name
+    req.body.createdById = requestor.id
+    req.body.createdByEmail = requestor.email;
+    req.body.createdByDepartment = requestor.department
+    req.body.modifiedById = requestor.id
+    req.body.modifiedBy = requestor.name
+    req.body.modifiedByEmail = requestor.email;
+    req.body.modifiedByDepartment = requestor.department
 
     // Validate dispatch against schenarios that cannot be described by schema
     await validate(req.body);
@@ -58,20 +40,15 @@ module.exports = async function (context, req) {
 
     // Await the DB connection
     await getDb()
-    context.log("Mongoose is connected.")
 
     // Check if the attachments contains any invalid characters
     if (req.body.attachments && Array.isArray(req.body.attachments) && req.body.attachments.length > 0) {
       if (!config.AZURE_BLOB_CONNECTIONSTRING || !config.AZURE_BLOB_CONTAINERNAME) {
-        logger('error', ['Cannot upload attachments when azure blob storage is not configured']) 
         throw new HTTPError(500, 'Cannot upload attachments when azure blob storage is not configured'); 
       }
       for (const blob of req.body.attachments) {
         for (const char of blobClient.unallowedPathCharacters) {
-          if (blob.name.includes(char)) {
-            logger('error', [`${blob.name} contains the illegal character ${char}`])
-            throw new HTTPError(400, `${blob.name} contains the illegal character ${char}`)}
-        }
+          if (blob.name.includes(char)) throw new HTTPError(400, `${blob.name} contains the illegal character ${char}`)}
       }
     }
 
@@ -90,10 +67,7 @@ module.exports = async function (context, req) {
         const extension = split[split.length - 1];
         if(!allowedExtensions.includes(extension.toLowerCase())) throw new HTTPError(400, `The file extension ${extension} is not allowed`);
 
-        if (file.name && file.name.includes('/')) {
-          logger('error', ['Illigal character in filname, "/" is not allowed.'])
-          throw new HTTPError(400, 'Illigal character in filname, "/" is not allowed.')
-        }
+        if (file.name && file.name.includes('/')) throw new HTTPError(400, 'Illigal character in filname, "/" is not allowed.')
         if (!file.name) file.name = file._id;
 
         await blobClient.save(`${req.body._id}/${file.name}`, file.data)
@@ -103,9 +77,8 @@ module.exports = async function (context, req) {
     // Return the results
     context.res.status(201).send(results)
   } catch (err) {
-    context.log.error('ERROR', err)
     logger('error', [err])
-    context.res.status(400).send(JSON.stringify(err, Object.getOwnPropertyNames(err)))
+    context.res.status(400).send(err)
     throw err
   }
 }

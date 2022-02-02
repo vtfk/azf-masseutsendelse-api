@@ -4,41 +4,33 @@ const HTTPError = require('../sharedcode/vtfk-errors/httperror');
 const { logConfig, logger } = require('@vtfk/logger')
 
 module.exports = async function (context, req) {
+  try {
+    // Configure logger
     logConfig({
-        azure: { context }
+      azure: { context }
     })
 
-    try {
-        // Authentication / Authorization
-        if(req.headers.authorization) await require('../sharedcode/auth/azuread').validate(req.headers.authorization);
-        else if(req.headers['x-api-key']) require('../sharedcode/auth/apikey')(req.headers['x-api-key']);
-        else {
-            logger('error', ['No authentication token provided'])
-            throw new HTTPError(401, 'No authentication token provided');
-        }
+    // Authentication / Authorization
+    await require('../sharedcode/auth/auth').auth(req);
 
-        // Get ID from request
-        const id = context.bindingData.id
+    // Get ID from request
+    const id = context.bindingData.id
+    if(!id) throw new HTTPError('400', 'No dispatch id was provided');
 
-        // Await the database
-        await getDb()
-        context.log("Mongoose is connected.");
+    // Await the database
+    await getDb()
 
-        //Find Template by ID
-        let template = await Templates.findById(id)
-        if(!template) {
-            logger('error', [`Template with id ${id} could no be found`]) 
-            throw new HTTPError(`Template with id ${id} could no be found`) 
-        }
+    //Find Template by ID
+    let template = await Templates.findById(id)
+    if (!template) throw new HTTPError(`Template with id ${id} could no be found`)
 
-        //Return the template object 
-        let templateById = await Templates.findById(id, req.body, {new: true})
-        context.res.send(templateById)
+    //Return the template object 
+    let templateById = await Templates.findById(id, req.body, { new: true })
+    context.res.send(templateById)
 
-    }catch (err) {
-        context.log(err);
-        logger('error', [err])
-        context.res.status(400).send(JSON.stringify(err, Object.getOwnPropertyNames(err)))
-        throw err;
-    }
+  } catch (err) {
+    logger('error', [err])
+    context.res.status(400).send(err)
+    throw err;
+  }
 }

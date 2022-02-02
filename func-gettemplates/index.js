@@ -4,39 +4,30 @@ const HTTPError = require('../sharedcode/vtfk-errors/httperror');
 const { logConfig, logger } = require('@vtfk/logger')
 
 module.exports = async function (context, req) {
+  try {
+    // Configure the logger
     logConfig({
-        azure: { context }
+      azure: { context }
     })
 
-    try {
-        // Authentication / Authorization
-        if(req.headers.authorization) await require('../sharedcode/auth/azuread').validate(req.headers.authorization);
-        else if(req.headers['x-api-key']) require('../sharedcode/auth/apikey')(req.headers['x-api-key']);
-        else {
-            logger('error', ['No authentication token provided'])
-            throw new HTTPError(401, 'No authentication token provided');
-        }
+    // Authentication / Authorization
+    await require('../sharedcode/auth/auth').auth(req);
 
-        // Await the db connection.
-        await getDb()
-        context.log("Mongoose is connected")
+    // Await the db connection.
+    await getDb()
 
-        // Find all the templates
-        let templates = await Templates.find({})
-        if(!templates) { 
-            logger('error', ['No templates found in the databases'])
-            throw new HTTPError(404, 'No templates found in the databases') 
-        }
+    // Find all the templates
+    let templates = await Templates.find({})
+    if (!templates) throw new HTTPError(404, 'No templates found in the databases')
 
-        //Return the Templates
-        context.res.send(templates)
+    //Return the Templates
+    context.res.send(templates)
 
-    } catch (err) {
-        context.log(err)
-        logger('error', [err])
-        context.res.status(400).send(JSON.stringify(err, Object.getOwnPropertyNames(err)))
-        throw err
-    }
+  } catch (err) {
+    logger('error', [err])
+    context.res.status(400).send(err)
+    throw err
+  }
 }
 
 

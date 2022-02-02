@@ -7,28 +7,18 @@ const config = require('../config');
 const { logConfig, logger } = require('@vtfk/logger')
 
 module.exports = async function (context, req) {
-  logConfig({
-    azure: { context }
-  })
-
   try {
+    // Configure the logger
+    logConfig({
+      azure: { context }
+    })
+
     // Authentication / Authorization
-    if(req.headers.authorization) await require('../sharedcode/auth/azuread').validate(req.headers.authorization);
-    else if(req.headers['x-api-key']) require('../sharedcode/auth/apikey')(req.headers['x-api-key']);
-    else {
-      logger('error', ['No authentication token provided'])
-      throw new HTTPError(401, 'No authentication token provided');
-    }
+    await require('../sharedcode/auth/auth').auth(req);
 
     // Input validation
-    if(!config.VTFK_MATRIKKELPROXY_BASEURL) {
-      logger('error', ['The MatrikkelProxyAPI connection is not configured'])
-      throw new HTTPError(400, 'The MatrikkelProxyAPI connection is not configured');
-    }
-    if(!config.VTFK_MATRIKKELPROXY_BASEURL) {
-      logger('error', ['The MatrikkelProxyAPI connection is missing the APIKey'])
-      throw new HTTPError(400, 'The MatrikkelProxyAPI connection is missing the APIKey');
-    }
+    if(!config.VTFK_MATRIKKELPROXY_BASEURL) throw new HTTPError(400, 'The MatrikkelProxyAPI connection is not configured');
+    if(!config.VTFK_MATRIKKELPROXY_BASEURL) throw new HTTPError(400, 'The MatrikkelProxyAPI connection is missing the APIKey');
     
     // Get ID from request
     const endpoint = decodeURIComponent(context.bindingData.endpoint);
@@ -45,9 +35,8 @@ module.exports = async function (context, req) {
     response = await axios.request(request);
     context.res.send(response.data);
   } catch (err) {
-    context.log(err);
     logger('error', [err])
-    context.res.status(400).send(JSON.stringify(err, Object.getOwnPropertyNames(err)))
+    context.res.status(400).send(err)
     throw err;
   }
 }

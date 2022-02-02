@@ -8,6 +8,7 @@
 
   module.exports = async function (context, req) {
   try {
+    // Configure the logging
     logConfig({
       azure: { context }
     })
@@ -16,35 +17,15 @@
     req.body = utils.removeKeys(req.body, ['validatedArchivenumber', 'createdTimestamp', 'createdBy', 'createdById', 'createdByDepartment', 'modifiedTimestamp', 'modifiedBy', 'modifiedById', 'modifiedByDepartment']);
     delete req.body._id;
 
-    console.log('Request:', req.body);
-
     // Authentication / Authorization
-    let requestorName = undefined;
-    let requestorId = undefined;
-    if(req.headers.authorization) {
-        token = await require('../sharedcode/auth/azuread').validate(req.headers.authorization);
-        if(token && token.name) requestorName = token.name;
-        if(token && token.oid) requestorId = token.oid;
-        if(token && token.department) requestorDepartment = token.department;
-        if(token && token.upn) requestorEmail = token.upn;
-    } else if(req.headers['x-api-key']) {
-        require('../sharedcode/auth/apikey')(req.headers['x-api-key']);
-        requestorName = 'apikey';
-        requestorId = 'apikey';
-        requestorDepartment = 'apikey';
-        requestorEmail = 'apikey@vtfk.no';
-    } 
-    else {
-      logger('error', ['No authentication token provided'])
-      throw new HTTPError(401, 'No authentication token provided');
-    }
+    const requestor = await require('../sharedcode/auth/auth').auth(req);
 
     // Update modified by
-    req.body.modifiedBy = requestorName
-    req.body.modifiedById = requestorId
+    req.body.modifiedBy = requestor.name;
+    req.body.modifiedById = requestor.id;
     req.body.modifiedTimestamp = new Date();
-    req.body.modifiedByEmail = requestorEmail;
-    req.body.modifiedByDepartment = requestorDepartment
+    req.body.modifiedByEmail = requestor.email;
+    req.body.modifiedByDepartment = requestor.department;
 
     // Figure out if any items should be unset
     let unsets = {};
@@ -59,36 +40,25 @@
 
     // Get the existing disptach object 
     let existingDispatch = await Dispatches.findById(id).lean()
-    if(!existingDispatch) { 
-      logger('error', [`Dispatch with id ${id} could not be found`]) 
-      throw new HTTPError(404, `Dispatch with id ${id} could not be found` )
-    }
+    if(!existingDispatch) throw new HTTPError(404, `Dispatch with id ${id} could not be found` )
+
     // If the status is running or completed, only status is allowed to be updated
-    if(existingDispatch.status === 'inprogress' && req.body.status !== 'completed') {
-      logger('error', ['No changes can be done to a running dispatch except setting it to completed']) 
-      throw new HTTPError(400, 'No changes can be done to a running dispatch except setting it to completed');
-    }
+    if(existingDispatch.status === 'inprogress' && req.body.status !== 'completed') throw new HTTPError(400, 'No changes can be done to a running dispatch except setting it to completed');
     if(existingDispatch.status === 'inprogress' && req.body.status === 'completed') {
       const result = await Dispatches.findByIdAndUpdate(id, { status: 'completed' }, { new: true});
       return context.res.status(201).send(result)
     }
     // Failsafe
-    if(existingDispatch.status === 'inprogress' || existingDispatch.status === 'completed') {
-      logger('error', ['No changes can be done to a running dispatch except setting it to completed'])
-      throw new HTTPError(400, 'No changes can be done to running or completed dispatches');
-    }
+    if(existingDispatch.status === 'inprogress' || existingDispatch.status === 'completed') throw new HTTPError(400, 'No changes can be done to running or completed dispatches');
 
     // Update fields
-    req.body.modifiedBy = requestorName;
-    req.body.modifiedById = requestorId
-    req.body.modifiedTimestamp = new Date();
     req.body.validatedArchivenumber = existingDispatch.validatedArchivenumber;
 
     // Set approval information
     if(existingDispatch.status === 'notapproved' && req.body.status === 'approved') {
-      req.body.approvedBy = requestorName;
-      req.body.approvedById = requestorId;
-      req.body.approvedByEmail = requestorEmail;
+      req.body.approvedBy = requestor.name;
+      req.body.approvedById = requestor.id;
+      req.body.approvedByEmail = requestor.email;
       req.body.approvedTimestamp = new Date();
     }
     if(req.body.status === 'notapproved') {
@@ -111,10 +81,7 @@
         const extension = split[split.length - 1];
         if(!allowedExtensions.includes(extension.toLowerCase())) throw new HTTPError(400, `The file extension ${extension} is not allowed`);
         blobClient.unallowedPathCharacters.forEach((char) => {
-          if(i.name.includes(char)) {
-            logger('error', [`${i} cannot contain illegal character ${char}`])
-            throw new HTTPError(400, `${i} cannot contain illegal character ${char}`);
-          }
+          if(i.name.includes(char)) throw new HTTPError(400, `${i} cannot contain illegal character ${char}`);
         })
       })
     }
@@ -141,8 +108,8 @@
     return context.res.status(201).send(updatedDispatch)
 
   } catch (err) {
-    context.log(err)
+   err
     logger('error', [err])
-    context.res.status(400).send(JSON.stringify(err, Object.getOwnPropertyNames(err)))
+    context.res.status(400).send(err)
   }
 }
