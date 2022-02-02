@@ -124,28 +124,30 @@ module.exports = async function (context, req) {
         });
       })
       
-      // Upload attachments to the archive document
-      e18Job.tasks.push({
-        system: 'p360',
-        method: 'archive',
-        dependencyTag: 'uploadDocuments',
-        dependencies: ['sync'],
-        data: {
-          system: 'masseutsendelse',
-          template: 'utsendelsesdokument',
-          parameter: {
-            title: dispatch.title,
-            caseNumber: dispatch.archivenumber,
-            date: new Date().toISOString(),
-            contacts: dispatch.owners.map((o) => {return { ssn: o.nummer, role: 'Mottaker' }}),
-            attachments: e18Files,
-            accessCode: "U",                    // U = Alle
-            accessGroup: "Alle",                // No access restriction
-            paragraph: "",                      // No paragraph
-            responsiblePersonEmail: dispatch.createdByEmail
+      // Create one uploadDocuments-job pr. Attachment
+      for(const file of e18Files) {
+        e18Job.tasks.push({
+          system: 'p360',
+          method: 'archive',
+          dependencyTag: 'uploadDocuments',
+          dependencies: ['sync'],
+          data: {
+            system: 'masseutsendelse',
+            template: 'utsendelsesdokument',
+            parameter: {
+              title: dispatch.title,
+              caseNumber: dispatch.archivenumber,
+              date: new Date().toISOString(),
+              contacts: dispatch.owners.map((o) => {return { ssn: o.nummer, role: 'Mottaker' }}),
+              attachments: [file],
+              accessCode: "U",                    // U = Alle
+              accessGroup: "Alle",                // No access restriction
+              paragraph: "",                      // No paragraph
+              responsiblePersonEmail: dispatch.createdByEmail
+            }
           }
-        }
-      });
+        });
+      }
 
       // Create task to sendt to each contact
       e18Job.tasks.push({
