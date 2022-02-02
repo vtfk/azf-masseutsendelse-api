@@ -159,13 +159,13 @@ module.exports = async function (context, req) {
             method: 'archive',
             dependencyTag: `uploadAttachment-${fileIndex}`,
             dependencies: fileIndex === 1 ? ['createCaseDocument'] : [`uploadAttachment-${fileIndex - 1}`],
-            dataMapping: "parameters.documentNumber=DocumentNumber",
+            dataMapping: "parameter.documentNumber=DocumentNumber",
             data: {
               system: 'archive',
               template: 'add-attachment',
               parameter: {
                 secure: false,
-                title: file.name,
+                title: file.title,
                 format: file.format,
                 base64: file.base64,
                 versionFormat: 'P'
