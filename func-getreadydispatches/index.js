@@ -124,38 +124,63 @@ module.exports = async function (context, req) {
         });
       })
       
-      // Create one uploadDocuments-job pr. Attachment
-      let fileIndex = -1;
-      for(const file of e18Files) {
-        fileIndex++;
-        e18Job.tasks.push({
-          system: 'p360',
-          method: 'archive',
-          dependencyTag: `uploadDocuments-${fileIndex}`,
-          dependencies: fileIndex === 0 ? ['sync'] : [`uploadDocuments-${fileIndex - 1}`],
-          data: {
-            system: 'masseutsendelse',
-            template: 'utsendelsesdokument',
-            parameter: {
-              title: dispatch.title,
-              caseNumber: dispatch.archivenumber,
-              date: new Date().toISOString(),
-              contacts: dispatch.owners.map((o) => {return { ssn: o.nummer, role: 'Mottaker' }}),
-              attachments: [file],
-              accessCode: "U",                    // U = Alle
-              accessGroup: "Alle",                // No access restriction
-              paragraph: "",                      // No paragraph
-              responsiblePersonEmail: dispatch.createdByEmail
-            }
+      // Create the p360 caseDocument
+      e18Job.tasks.push({
+        system: 'p360',
+        method: 'archive',
+        dependencyTag: `createCaseDocument`,
+        dependencies: ['sync'],
+        data: {
+          system: 'masseutsendelse',
+          template: 'utsendelsesdokument',
+          parameter: {
+            title: dispatch.title,
+            caseNumber: dispatch.archivenumber,
+            date: new Date().toISOString(),
+            contacts: dispatch.owners.map((o) => {return { ssn: o.nummer, role: 'Mottaker' }}),
+            attachments: [e18Files[0]],
+            accessCode: "U",                    // U = Alle
+            accessGroup: "Alle",                // No access restriction
+            paragraph: "",                      // No paragraph
+            responsiblePersonEmail: dispatch.createdByEmail
           }
-        });
+        }
+      })
+
+      if(e18Files.length > 1) {
+        // Create one uploadDocuments-job pr. Attachment
+        let fileIndex = -1;
+        for(const file of e18Files) {
+          fileIndex++;
+          if(fileIndex === 0) continue;
+
+          e18Job.tasks.push({
+            system: 'p360',
+            method: 'archive',
+            dependencyTag: `uploadAttachment-${fileIndex}`,
+            dependencies: fileIndex === 1 ? ['createCaseDocument'] : [`uploadAttachment-${fileIndex - 1}`],
+            dataMapping: "parameters.documentNumber=DocumentNumber",
+            data: {
+              system: 'archive',
+              template: 'add-attachment',
+              parameter: {
+                secure: false,
+                title: file.name,
+                format: file.format,
+                base64: file.base64,
+                versionFormat: 'P'
+              }
+            }
+          });
+        }
       }
+
 
       // Create task to sendt to each contact
       e18Job.tasks.push({
         system: 'p360',
         method: 'archive',
-        dependencies: [`uploadDocuments-${e18Files.length - 1}`],
+        dependencies: [`uploadAttachment-${e18Files.length - 1}`],
         dataMapping: "{\"parameter\": { \"Documents\": [ { \"DocumentNumber\": \"{{DocumentNumber}}\" }]}}",
         data: {
           method: "DispatchDocuments",
