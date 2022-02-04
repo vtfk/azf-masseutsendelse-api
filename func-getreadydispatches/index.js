@@ -44,7 +44,6 @@ module.exports = async function (context, req) {
       let e18Job = {
         system: 'masseutsendelse', 
         projectId: 30, 
-        parallel: true,
         delayUntil: delaySendUntil.toISOString(),
         tasks: []
       }
