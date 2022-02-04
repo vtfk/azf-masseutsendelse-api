@@ -148,7 +148,7 @@ module.exports = async function (context, req) {
         let fileIndex = -1;
         for(const file of e18Files) {
           fileIndex++;
-          if(fileIndex === 0) return;
+          if(fileIndex === 0) continue;
           e18Job.tasks.push({
             system: 'p360',
             method: 'archive',
