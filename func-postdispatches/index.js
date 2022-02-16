@@ -42,13 +42,27 @@ module.exports = async function (context, req) {
     await getDb()
 
     // Check if the attachments contains any invalid characters
-    if (req.body.attachments && Array.isArray(req.body.attachments) && req.body.attachments.length > 0) {
-      if (!config.AZURE_BLOB_CONNECTIONSTRING || !config.AZURE_BLOB_CONTAINERNAME) {
-        throw new HTTPError(500, 'Cannot upload attachments when azure blob storage is not configured'); 
-      }
-      for (const blob of req.body.attachments) {
-        for (const char of blobClient.unallowedPathCharacters) {
-          if (blob.name.includes(char)) throw new HTTPError(400, `${blob.name} contains the illegal character ${char}`)}
+    if(process.env.APIKEYS_TEST) { 
+      console.log('This is a test, uploading to blob is skipped. Any code inside the else statement will not be tested!')
+      if (req.body.attachments && Array.isArray(req.body.attachments) && req.body.attachments.length > 0) {
+        if (!process.env.AZURE_BLOB_CONNECTIONSTRING_TEST || !process.env.AZURE_BLOB_CONTAINERNAME_TEST) {
+          throw new HTTPError(500, 'Cannot upload attachments when azure blob storage is not configured'); 
+        }
+        for (const blob of req.body.attachments) {
+          for (const char of blobClient.unallowedPathCharacters) {
+            if (blob.name.includes(char)) throw new HTTPError(400, `${blob.name} contains the illegal character ${char}`)}
+        }
+      } 
+    }
+    else {
+      if (req.body.attachments && Array.isArray(req.body.attachments) && req.body.attachments.length > 0) {
+        if (!config.AZURE_BLOB_CONNECTIONSTRING || !config.AZURE_BLOB_CONTAINERNAME) {
+          throw new HTTPError(500, 'Cannot upload attachments when azure blob storage is not configured'); 
+        }
+        for (const blob of req.body.attachments) {
+          for (const char of blobClient.unallowedPathCharacters) {
+            if (blob.name.includes(char)) throw new HTTPError(400, `${blob.name} contains the illegal character ${char}`)}
+        }
       }
     }
 
@@ -69,16 +83,17 @@ module.exports = async function (context, req) {
 
         if (file.name && file.name.includes('/')) throw new HTTPError(400, 'Illigal character in filname, "/" is not allowed.')
         if (!file.name) file.name = file._id;
-
-        await blobClient.save(`${req.body._id}/${file.name}`, file.data)
+        
+        if(!process.env.NODE_ENV === 'test') await blobClient.save(`${req.body._id}/${file.name}`, file.data)
       }
     }
 
     // Return the results
-    context.res.status(201).send(results)
+    return {body: results, headers: {'Content-Type': 'application/json'}, status: 201}
+    // context.res.status(201).send(results)
   } catch (err) {
     logger('error', [err])
-    context.res.status(400).send(err)
-    throw err
+    return {body: err, headers: {'Content-Type': 'application/json'}, status: 400}
+    // context.res.status(400).send(err)
   }
 }

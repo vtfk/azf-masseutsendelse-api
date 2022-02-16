@@ -9,7 +9,8 @@ const dayjs = require('dayjs');
 
 // Arrays
 let e18Jobs = [];
-
+// Clear the e18Jobs Array
+e18Jobs = []
 module.exports = async function (context, req) {
   try {
     // Configure the logger
@@ -77,16 +78,20 @@ module.exports = async function (context, req) {
       }
 
       // Retreive any attachments if applicable
-      if (dispatch.attachments && Array.isArray(dispatch.attachments) && dispatch.attachments.length > 0) {
-        for(const attachment of dispatch.attachments) {
-          let file = await blobClient.get(`${dispatch._id}/${attachment.name}`)
-          // Validate the files
-          if (!file) throw new HTTPError(404, 'No files found, check if you passed the right filename and/or the right dispatchId')
-          if(file.data.startsWith('data:') && file.data.includes(',')) file.data = file.data.substring(file.data.indexOf(',') + 1);
-          if(file.name.includes('.')) file.name = file.name.substring(0, file.name.indexOf('.'));
-          // Push it to the files array
-          e18Files.push({title: file.name, format: file.extension, base64: file.data});
+      if(!process.env.NODE_ENV === 'test'){
+        if (dispatch.attachments && Array.isArray(dispatch.attachments) && dispatch.attachments.length > 0) {
+          for(const attachment of dispatch.attachments) {
+            let file = await blobClient.get(`${dispatch._id}/${attachment.name}`)
+            // Validate the files
+            if (!file) throw new HTTPError(404, 'No files found, check if you passed the right filename and/or the right dispatchId')
+            if(file.data.startsWith('data:') && file.data.includes(',')) file.data = file.data.substring(file.data.indexOf(',') + 1);
+            if(file.name.includes('.')) file.name = file.name.substring(0, file.name.indexOf('.'));
+            // Push it to the files array
+            e18Files.push({title: file.name, format: file.extension, base64: file.data});
+          }
         }
+      } else {
+        e18Files.push({title: 'test', format: '.txt' , base64: 'base64'});
       }
 
       // Create the archive task
@@ -192,12 +197,11 @@ module.exports = async function (context, req) {
       e18Jobs.push({_id: dispatch._id, e18Job });
     }
 
-    context.res.send(e18Jobs)
-    // Clear the e18Jobs Array
-    e18Jobs = []
+    // context.res.send(e18Jobs)
+    return {body: e18Jobs, headers: {'Content-Type': 'application/json'}, status: 200}
   } catch (err) {
     logger('error', [err])
-    context.res.status(400).send(err)
-    throw err
+    return {body: err, headers: {'Content-Type': 'application/json'}, status: 400}
+    // context.res.status(400).send(err)
   }
 }

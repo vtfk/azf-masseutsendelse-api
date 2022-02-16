@@ -18,18 +18,20 @@ module.exports = async function (context, req) {
 
     // Find all disptaches
     let dispatches = [];
-    if (req.query.full === true || req.query.full === 'true') dispatches = await Dispatches.find({})
+    if (req.query?.full === true || req.query?.full === 'true') dispatches = await Dispatches.find({})
     else dispatches = await Dispatches.find({}).select('-owners -excludedOwners -matrikkelUnitsWithoutOwners')
 
     // If no dispatches was found
     if (!dispatches) dispatches = [];
 
     // Return the disptaches
-    context.res.send(dispatches)
+    // context.res.send(dispatches)
+    return {body: dispatches, headers: {'Content-Type': 'application/json'}, status: 200}
   } catch (err) {
    err
     logger('error', [err])
-    context.res.status(400).send(err)
-    throw err
+    // context.res.status(400).send(err)
+    return {body: err, headers: {'Content-Type': 'application/json'}, status: 400}
+
   }
 }

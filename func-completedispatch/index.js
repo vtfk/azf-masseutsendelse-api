@@ -10,8 +10,9 @@ module.exports = async function (context, req) {
       azure: { context }
     })
 
-    // Get the ID from the request 
+    // Get ID from request
     const id = context.bindingData.id
+
     if(!id) throw new HTTPError(400, 'You cannot complete a dispatch without providing an id');
 
     // Authentication / Authorization
@@ -42,9 +43,12 @@ module.exports = async function (context, req) {
     // Update the dispatch 
     const updatedDispatch = await Dispatches.findByIdAndUpdate(id, completedData, { new: true})
     
-    return context.res.status(201).send(updatedDispatch)
+    // return context.res.status(201).send(updatedDispatch)
+    return {body: updatedDispatch, headers: {'Content-Type': 'application/json'}, status: 201}
   } catch (err) {
     logger('error', [err])
-    context.res.status(400).send(err);
+    // context.res.status(400).send(err);
+    return {body: err, headers: {'Content-Type': 'application/json'}, status: 400}
+
   }
 }

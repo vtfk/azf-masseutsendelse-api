@@ -12,7 +12,7 @@ module.exports.connect = async () => {
     const mongooseOpts = {
         useNewUrlParser: true,
     };
-
+    process.env.URI = uri
     await mongoose.connect(uri, mongooseOpts);
 }
 /**

@@ -21,12 +21,13 @@ module.exports = async function (context, req) {
     if (!templates) throw new HTTPError(404, 'No templates found in the databases')
 
     //Return the Templates
-    context.res.send(templates)
+    // context.res.send(templates)
+    return {body: templates, headers: {'Content-Type': 'application/json'}, status: 200}
 
   } catch (err) {
     logger('error', [err])
-    context.res.status(400).send(err)
-    throw err
+    // context.res.status(400).send(err)
+    return {body: err, headers: {'Content-Type': 'application/json'}, status: 400}
   }
 }
 
