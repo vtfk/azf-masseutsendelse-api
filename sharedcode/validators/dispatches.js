@@ -31,4 +31,8 @@ module.exports.validate = async (dispatch, req) => {
   } catch (err) {
     throw err;
   }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> 9d0bbd179416c03b9ac677ab9694ccc4ad0977da

@@ -16,7 +16,10 @@ module.exports = async function (context, req) {
 
     // Get ID from request
     const id = context.bindingData.id
+<<<<<<< HEAD
 
+=======
+>>>>>>> 9d0bbd179416c03b9ac677ab9694ccc4ad0977da
     if(!id) throw new HTTPError(400, 'No dispatch id was provided');
 
     // Await the database
@@ -28,6 +31,7 @@ module.exports = async function (context, req) {
 
     //Return the dispatch object 
     let disptachById = await Dispatches.findById(id, req.body, { new: true })
+<<<<<<< HEAD
     return {body: disptachById, headers: {'Content-Type': 'application/json'}, status: 200}
     // context.res.send(disptachById)
   } catch (err) {
@@ -35,5 +39,13 @@ module.exports = async function (context, req) {
     logger('error', [err])
     return {body: err, headers: {'Content-Type': 'application/json'}, status: 400}
     // context.res.status(400).send(err)
+=======
+    context.res.send(disptachById)
+  } catch (err) {
+   err;
+    logger('error', [err])
+    context.res.status(400).send(err)
+    throw err;
+>>>>>>> 9d0bbd179416c03b9ac677ab9694ccc4ad0977da
   }
 }
