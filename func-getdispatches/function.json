@@ -14,11 +14,7 @@
     {
       "type": "http",
       "direction": "out",
-<<<<<<< HEAD
       "name": "$return"
-=======
-      "name": "res"
->>>>>>> 9d0bbd179416c03b9ac677ab9694ccc4ad0977da
     }
   ]
 }

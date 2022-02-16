@@ -15,17 +15,10 @@ module.exports = async function (context, req) {
 
     // Authentication / Authorization
     await require('../sharedcode/auth/auth').auth(req);
-<<<<<<< HEAD
    
     // Input validation
     if(!config.VTFK_MATRIKKELPROXY_BASEURL) throw new HTTPError(400, 'The MatrikkelProxyAPI connection is not configured');
     if(!config.VTFK_MATRIKKELPROXY_APIKEY) throw new HTTPError(400, 'The MatrikkelProxyAPI connection is missing the APIKey');
-=======
-
-    // Input validation
-    if(!config.VTFK_MATRIKKELPROXY_BASEURL) throw new HTTPError(400, 'The MatrikkelProxyAPI connection is not configured');
-    if(!config.VTFK_MATRIKKELPROXY_BASEURL) throw new HTTPError(400, 'The MatrikkelProxyAPI connection is missing the APIKey');
->>>>>>> 9d0bbd179416c03b9ac677ab9694ccc4ad0977da
     
     // Get ID from request
     const endpoint = decodeURIComponent(context.bindingData.endpoint);
@@ -40,19 +33,11 @@ module.exports = async function (context, req) {
     }
 
     response = await axios.request(request);
-<<<<<<< HEAD
     // context.res.send(response.data);
     return {body: response.data, headers: {'Content-Type': 'application/json'}, status: 200}
   } catch (err) {
     logger('error', [err])
     // context.res.status(400).send(err)
     return {body: err, headers: {'Content-Type': 'application/json'}, status: 400}
-=======
-    context.res.send(response.data);
-  } catch (err) {
-    logger('error', [err])
-    context.res.status(400).send(err)
-    throw err;
->>>>>>> 9d0bbd179416c03b9ac677ab9694ccc4ad0977da
   }
 }

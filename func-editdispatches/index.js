@@ -32,11 +32,7 @@
     if(Object.keys(req.body).length === 2 && !req.body.template) unsets.template = 1;
     if(req.body.attachments && !req.body.template) unsets.template = 1;
 
-<<<<<<< HEAD
     // Get ID from request
-=======
-    // Get the ID from the request 
->>>>>>> 9d0bbd179416c03b9ac677ab9694ccc4ad0977da
     const id = context.bindingData.id
     
     // Await the Db conection 
@@ -103,7 +99,6 @@
       const attachmentsToRemove = existingNames.filter((i) => !requestNames.includes(i));
     
       // Upload attachments if applicable
-<<<<<<< HEAD
       if(!process.env.NODE_ENV === 'test') attachmentsToAdd.forEach(async (i) => { await blobClient.save(`${id}/${i.name}`, i.data); })
       // Remove attachments if applicable
       if(!process.env.NODE_ENV === 'test') attachmentsToRemove.forEach(async (i) => { await blobClient.remove(`${id}/${i}`); })
@@ -116,19 +111,5 @@
    err
     logger('error', [err])
     return {body: err, headers: {'Content-Type': 'application/json'}, status: 400}
-=======
-      attachmentsToAdd.forEach(async (i) => { await blobClient.save(`${id}/${i.name}`, i.data); })
-      // Remove attachments if applicable
-      attachmentsToRemove.forEach(async (i) => { await blobClient.remove(`${id}/${i}`); })
-    }
-
-    // Return the dispatch
-    return context.res.status(201).send(updatedDispatch)
-
-  } catch (err) {
-   err
-    logger('error', [err])
-    context.res.status(400).send(err)
->>>>>>> 9d0bbd179416c03b9ac677ab9694ccc4ad0977da
   }
 }

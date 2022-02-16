@@ -20,12 +20,8 @@
   },
   "devDependencies": {
     "jest": "27.4.7",
-<<<<<<< HEAD
     "mongodb-memory-server": "8.2.0",
     "msw": "^0.36.8"
-=======
-    "mongodb-memory-server": "8.2.1"
->>>>>>> 9d0bbd179416c03b9ac677ab9694ccc4ad0977da
   },
   "config": {
     "mongodbMemoryServer": {

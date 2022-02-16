@@ -35,7 +35,6 @@ module.exports = async function (context, req) {
       const result = await template.save();
 
       // Return the result
-<<<<<<< HEAD
       return {body: result, headers: {'Content-Type': 'application/json'}, status: 201}
       // context.res.status(201).send(result);
 
@@ -44,14 +43,6 @@ module.exports = async function (context, req) {
       return {body: err, headers: {'Content-Type': 'application/json'}, status: 400}
       // context.res.status(400).send(err)
       // throw err
-=======
-      context.res.status(201).send(result);
-
-    } catch (err) {
-      logger('error', [err])
-      context.res.status(400).send(err)
-      throw err
->>>>>>> 9d0bbd179416c03b9ac677ab9694ccc4ad0977da
     };
     
 }

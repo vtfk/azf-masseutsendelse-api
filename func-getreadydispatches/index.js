@@ -9,12 +9,8 @@ const dayjs = require('dayjs');
 
 // Arrays
 let e18Jobs = [];
-<<<<<<< HEAD
 // Clear the e18Jobs Array
 e18Jobs = []
-=======
-
->>>>>>> 9d0bbd179416c03b9ac677ab9694ccc4ad0977da
 module.exports = async function (context, req) {
   try {
     // Configure the logger
@@ -49,10 +45,7 @@ module.exports = async function (context, req) {
       let e18Job = {
         system: 'masseutsendelse', 
         projectId: 30, 
-<<<<<<< HEAD
         parallel: true,
-=======
->>>>>>> 9d0bbd179416c03b9ac677ab9694ccc4ad0977da
         delayUntil: delaySendUntil.toISOString(),
         tasks: []
       }
@@ -85,7 +78,6 @@ module.exports = async function (context, req) {
       }
 
       // Retreive any attachments if applicable
-<<<<<<< HEAD
       if(!process.env.NODE_ENV === 'test'){
         if (dispatch.attachments && Array.isArray(dispatch.attachments) && dispatch.attachments.length > 0) {
           for(const attachment of dispatch.attachments) {
@@ -100,18 +92,6 @@ module.exports = async function (context, req) {
         }
       } else {
         e18Files.push({title: 'test', format: '.txt' , base64: 'base64'});
-=======
-      if (dispatch.attachments && Array.isArray(dispatch.attachments) && dispatch.attachments.length > 0) {
-        for(const attachment of dispatch.attachments) {
-          let file = await blobClient.get(`${dispatch._id}/${attachment.name}`)
-          // Validate the files
-          if (!file) throw new HTTPError(404, 'No files found, check if you passed the right filename and/or the right dispatchId')
-          if(file.data.startsWith('data:') && file.data.includes(',')) file.data = file.data.substring(file.data.indexOf(',') + 1);
-          if(file.name.includes('.')) file.name = file.name.substring(0, file.name.indexOf('.'));
-          // Push it to the files array
-          e18Files.push({title: file.name, format: file.extension, base64: file.data});
-        }
->>>>>>> 9d0bbd179416c03b9ac677ab9694ccc4ad0977da
       }
 
       // Create the archive task
@@ -134,11 +114,7 @@ module.exports = async function (context, req) {
         e18Job.tasks.push({
           system: 'p360',
           method: 'SyncPrivatePerson',
-<<<<<<< HEAD
           dependencyTag: 'sync',
-=======
-          group: 'sync',
->>>>>>> 9d0bbd179416c03b9ac677ab9694ccc4ad0977da
           data: person
         });
       })
@@ -148,11 +124,7 @@ module.exports = async function (context, req) {
         e18Job.tasks.push({
           system: 'p360',
           method: 'SyncEnterprise',
-<<<<<<< HEAD
           dependencyTag: 'sync',
-=======
-          group: 'sync',
->>>>>>> 9d0bbd179416c03b9ac677ab9694ccc4ad0977da
           data: business
         });
       })
@@ -161,11 +133,8 @@ module.exports = async function (context, req) {
       e18Job.tasks.push({
         system: 'p360',
         method: 'archive',
-<<<<<<< HEAD
         dependencyTag: `createCaseDocument`,
         dependencies: ['sync'],
-=======
->>>>>>> 9d0bbd179416c03b9ac677ab9694ccc4ad0977da
         data: {
           system: 'masseutsendelse',
           template: 'utsendelsesdokument',
@@ -184,26 +153,17 @@ module.exports = async function (context, req) {
       })
 
       if(e18Files.length > 1) {
-<<<<<<< HEAD
         // Create one uploadDocuments-job pr. Attachment
-=======
->>>>>>> 9d0bbd179416c03b9ac677ab9694ccc4ad0977da
         let fileIndex = -1;
         for(const file of e18Files) {
           fileIndex++;
           if(fileIndex === 0) continue;
-<<<<<<< HEAD
 
           e18Job.tasks.push({
             system: 'p360',
             method: 'archive',
             dependencyTag: `uploadAttachment-${fileIndex}`,
             dependencies: fileIndex === 1 ? ['createCaseDocument'] : [`uploadAttachment-${fileIndex - 1}`],
-=======
-          e18Job.tasks.push({
-            system: 'p360',
-            method: 'archive',
->>>>>>> 9d0bbd179416c03b9ac677ab9694ccc4ad0977da
             dataMapping: "parameter.documentNumber=DocumentNumber",
             data: {
               system: 'archive',
@@ -225,10 +185,7 @@ module.exports = async function (context, req) {
       e18Job.tasks.push({
         system: 'p360',
         method: 'archive',
-<<<<<<< HEAD
         dependencies: [`uploadAttachment-${e18Files.length - 1}`],
-=======
->>>>>>> 9d0bbd179416c03b9ac677ab9694ccc4ad0977da
         dataMapping: "{\"parameter\": { \"Documents\": [ { \"DocumentNumber\": \"{{DocumentNumber}}\" }]}}",
         data: {
           method: "DispatchDocuments",
@@ -240,21 +197,11 @@ module.exports = async function (context, req) {
       e18Jobs.push({_id: dispatch._id, e18Job });
     }
 
-<<<<<<< HEAD
     // context.res.send(e18Jobs)
     return {body: e18Jobs, headers: {'Content-Type': 'application/json'}, status: 200}
   } catch (err) {
     logger('error', [err])
     return {body: err, headers: {'Content-Type': 'application/json'}, status: 400}
     // context.res.status(400).send(err)
-=======
-    context.res.send(e18Jobs)
-    // Clear the e18Jobs Array
-    e18Jobs = []
-  } catch (err) {
-    logger('error', [err])
-    context.res.status(400).send(err)
-    throw err
->>>>>>> 9d0bbd179416c03b9ac677ab9694ccc4ad0977da
   }
 }
