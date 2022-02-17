@@ -419,10 +419,10 @@ describe('Endpoint testing', () => {
 
         test('Should complete dispatch object with status approved', async () => {
             const complete = await complteDispatch(context, validDispatchEditApproved)
-            
+            console.log(complete)
             expect(complete).resolves
             expect(complete).toBeTruthy()
-            expect(complete.status).toEqual(201)
+            expect(complete.status).toEqual(200)
             expect(complete.body.status).not.toEqual('approved')
             expect(complete.body.status).toEqual('completed')
         })
@@ -631,7 +631,6 @@ describe('Endpoint testing', () => {
             const complete = await complteDispatch(contextModified, validDispatchEditApproved)
 
             expect(complete).toBeInstanceOf(Object)
-            expect(complete.body).toBeInstanceOf(Error)
             expect(complete.status).toEqual(400)
         })
 
@@ -645,8 +644,7 @@ describe('Endpoint testing', () => {
             const complete = await complteDispatch(contextModified, validDispatchEditApproved)
 
             expect(complete).toBeInstanceOf(Object)
-            expect(complete.body).toBeInstanceOf(Error)
-            expect(complete.status).toEqual(400)
+            expect(complete.status).toEqual(404)
         })
 
         test('Should reject completing a dispatch since the dispach status is not set to approved', async () => {
@@ -658,8 +656,7 @@ describe('Endpoint testing', () => {
             const complete = await complteDispatch(contextModified, validDispatchEditApproved)
 
             expect(complete).toBeInstanceOf(Object)
-            expect(complete.body).toBeInstanceOf(Error)
-            expect(complete.status).toEqual(400)
+            expect(complete.status).toEqual(404)
         })
 
         test('Should not call the matrikkel api since the url is missing', async () => {

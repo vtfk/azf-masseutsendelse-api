@@ -45,6 +45,7 @@ module.exports = async function (context, req) {
       let e18Job = {
         system: 'masseutsendelse', 
         projectId: 30, 
+        type: 'Archive & SvarUT',
         parallel: true,
         delayUntil: delaySendUntil.toISOString(),
         tasks: []
@@ -59,6 +60,8 @@ module.exports = async function (context, req) {
           'our-reference': dispatch.archivenumber,
           'our-caseworker': dispatch.createdBy
         }
+
+        console.log(config.VTFK_PDFGENERATOR_ENDPOINT)
 
         const generatePDFRequest = {
           url: config.VTFK_PDFGENERATOR_ENDPOINT,

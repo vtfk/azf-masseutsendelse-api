@@ -2,6 +2,7 @@ const Dispatches = require('../sharedcode/models/dispatches.js')
 const getDb = require('../sharedcode/connections/masseutsendelseDB.js');
 const HTTPError = require('../sharedcode/vtfk-errors/httperror');
 const { logConfig, logger } = require('@vtfk/logger');
+const { azfHandleResponse, azfHandleError } = require('@vtfk/responsehandlers');
 
 module.exports = async function (context, req) {
   try {
@@ -43,11 +44,12 @@ module.exports = async function (context, req) {
     const updatedDispatch = await Dispatches.findByIdAndUpdate(id, completedData, { new: true})
     
     // return context.res.status(201).send(updatedDispatch)
-    return {body: updatedDispatch, headers: {'Content-Type': 'application/json'}, status: 201}
+    return await azfHandleResponse(updatedDispatch, context, req)
+    // return {body: updatedDispatch, headers: {'Content-Type': 'application/json'}, status: 201}
   } catch (err) {
     logger('error', [err])
     // context.res.status(400).send(err);
-    return {body: err, headers: {'Content-Type': 'application/json'}, status: 400}
-
+    // return {body: err, headers: {'Content-Type': 'application/json'}, status: 400}
+    return await azfHandleError(err, context, req)
   }
 }
