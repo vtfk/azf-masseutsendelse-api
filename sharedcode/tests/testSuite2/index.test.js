@@ -27,6 +27,7 @@ const invalidDispatch = require('../testCases/invalidCases/post_dispatch_missing
 const invalidDispatchArchiveNumber = require('../testCases/invalidCases/post_dispatch_missing_archivenumber')
 const invalidDispatchMissingFileExtension = require('../testCases/invalidCases/post_dispatch_missing_extension')
 const invalidDispatchIllegalFileExtension = require('../testCases/invalidCases/post_dispatch_illegal_extension')
+const invalidDispatchIllegalCharacter = require ('../testCases/invalidCases/post_dispatch_illegal_character')
 
 //MSW 
 const { rest } = require('msw')
@@ -41,18 +42,58 @@ jest.setTimeout(15000)
 
 //Tests
 describe('Endpoint testing', () => {
+    //MSW
+    const server = setupServer(
+        //getReadyDispatches, Generate PDF from template mock
+        rest.post('https://api.vtfk.no/pdf/v1/jestTest', (req, res, ctx) => {
+            return res(ctx.status(201), ctx.json({
+                body: {
+                    data: {
+                        "tittel": "Parallel test",
+                        "beskrivelse av prosjekte": "Parallel test",
+                        "fremdrift": "Parallel test",
+                        "Regelverk": "Parallel test"
+                    },
+                    base64: {"pdfBase64": "En pdfbase64"}
+                  }
+            }))
+        }),
+        //getMatrikkel, mock
+        rest.post('https://api.vtfk.no/matrikkel/v1/jestTestjestTest', (req, res, ctx) => {
+            return res(ctx.status(200), ctx.json({
+                msg: 'Matrikkel api successfully connected'                      
+            }))
+        }),
+        //Validate archivenumber, mock
+        rest.post('https://api.vtfk.dev/archive/v1/jestTestarchive', (req, res, ctx) => {
+            return res(ctx.status(200), ctx.json({
+                msg: 'Archive api successfully connected'                      
+            }))
+        })
+    )
+    
+    // beforeAll(() => server.listen())
+    // afterAll(() => server.close())
+    // afterEach(() => server.resetHandlers())
+    
     const OLD_ENV_VAR = process.env
 
     beforeAll(() => {
         // jest.resetModules() // Clears the cache, remove the // if you want trouble :)
-        process.env = {...OLD_ENV_VAR}
+        process.env = {...OLD_ENV_VAR},
+        server.listen()
     })
 
     afterAll(() => {
-        process.env = OLD_ENV_VAR
+        process.env = OLD_ENV_VAR,
+        server.close()
     })
 
-    let apikeyHeader = {
+    afterEach(() => {
+        server.resetHandlers()
+    })
+    
+        let apikeyHeader = {
         headers: {
             'x-api-key': process.env.APIKEYS_TEST
         }
@@ -68,40 +109,6 @@ describe('Endpoint testing', () => {
 
     //Valid cases
     describe('Testing validcases', () => {
-        //MSW
-        const server = setupServer(
-            //getReadyDispatches, Generate PDF from template mock
-            rest.post('https://api.vtfk.no/pdf/v1/jestTest', (req, res, ctx) => {
-                return res(ctx.status(201), ctx.json({
-                    body: {
-                        data: {
-                            "tittel": "Parallel test",
-                            "beskrivelse av prosjekte": "Parallel test",
-                            "fremdrift": "Parallel test",
-                            "Regelverk": "Parallel test"
-                        },
-                        base64: {"pdfBase64": "En pdfbase64"}
-                      }
-                }))
-            }),
-            //getMatrikkel, mock
-            rest.post('https://api.vtfk.no/matrikkel/v1/jestTestjestTest', (req, res, ctx) => {
-                return res(ctx.status(200), ctx.json({
-                    msg: 'Matrikkel api successfully connected'                      
-                }))
-            }),
-            //Validate archivenumber, mock
-            rest.post('https://api.vtfk.dev/archive/v1/jestTestarchive', (req, res, ctx) => {
-                return res(ctx.status(200), ctx.json({
-                    msg: 'Archive api successfully connected'                      
-                }))
-            })
-        )
-        
-        beforeAll(() => server.listen())
-        afterAll(() => server.close())
-        afterEach(() => server.resetHandlers())
-
         //Template tests
         test('Should post a template to the db', async () => {
             const post = await postTemplate(context, validTemplate)
@@ -516,6 +523,14 @@ describe('Endpoint testing', () => {
         test('Should reject posting a dispatch with attachments because a file got an illegal file extension', async () => {
             const post = await postDispatches(context, invalidDispatchIllegalFileExtension)
 
+            expect(post).toBeInstanceOf(Object)
+            expect(post.body.message).toBeDefined()
+            expect(post.status).toEqual(500)
+        })
+
+        test('Should reject posting a dispatch with attachments becasue a file got an illegal character in the filename', async () => {
+            const post = await postDispatches(context, invalidDispatchIllegalCharacter)
+        
             expect(post).toBeInstanceOf(Object)
             expect(post.body.message).toBeDefined()
             expect(post.status).toEqual(500)

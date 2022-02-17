@@ -38,7 +38,7 @@ module.exports = async function (context, req) {
     await getDb()
 
     // Check if the attachments contains any invalid characters
-    if(process.env.APIKEYS_TEST) { 
+    if(process.env.NODE_ENV === 'test') { 
       console.log('This is a test, uploading to blob is skipped. Any code inside the else statement will not be tested!')
       if (req.body.attachments && Array.isArray(req.body.attachments) && req.body.attachments.length > 0) {
         if (!process.env.AZURE_BLOB_CONNECTIONSTRING_TEST || !process.env.AZURE_BLOB_CONTAINERNAME_TEST) {
