@@ -111,7 +111,7 @@ describe('Endpoint testing', () => {
 
             expect(post).resolves
             expect(post.body).toBeTruthy()
-            expect(post.status).toEqual(201)
+            expect(post.status).toEqual(200)
             expect(post.body.name).toBe('Jest Test Template')
             expect(post.body.createdBy).toBe('apikey')
             expect(post.body.template).toBe('Et eller annet')
@@ -163,7 +163,7 @@ describe('Endpoint testing', () => {
 
             expect(edit).resolves
             expect(edit).toBeTruthy()
-            expect(edit.status).toEqual(201)
+            expect(edit.status).toEqual(200)
             expect(edit.body.name).not.toEqual("Jest Test Template")
             expect(edit.body.template).not.toEqual("Et eller annet")
             expect(edit.body.name).toEqual("Jeg er redigert")
@@ -178,7 +178,7 @@ describe('Endpoint testing', () => {
 
             expect(post).resolves
             expect(post.body).toBeTruthy()
-            expect(post.status).toEqual(201)
+            expect(post.status).toEqual(200)
             expect(post.body.title).toBe('Parallel test')
             expect(post.body._id).toBe(idDispatch)
             expect.objectContaining(post.body.template)
@@ -192,7 +192,7 @@ describe('Endpoint testing', () => {
             
             expect(post).resolves
             expect(post.body).toBeTruthy()
-            expect(post.status).toEqual(201)
+            expect(post.status).toEqual(200)
             expect(post.body.title).toBe('Parallel test')
             expect(post.body._id).toBe(idDispatchAttachments)
             expect.not.objectContaining(post.body.template)
@@ -206,7 +206,7 @@ describe('Endpoint testing', () => {
 
             expect(post).resolves
             expect(post.body).toBeTruthy()
-            expect(post.status).toEqual(201)
+            expect(post.status).toEqual(200)
             expect(post.body.title).toBe('Parallel test')
             expect(post.body._id).toBe(idDispatchOnlyTemplate)
             expect.objectContaining(post.body.template)
@@ -252,7 +252,7 @@ describe('Endpoint testing', () => {
 
             expect(edit).resolves
             expect(edit).toBeTruthy()
-            expect(edit.status).toEqual(201)
+            expect(edit.status).toEqual(200)
             expect(edit.body.status).not.toEqual('notapproved')
             expect(edit.body.status).toEqual('approved')
         })
@@ -267,7 +267,7 @@ describe('Endpoint testing', () => {
 
             expect(edit).resolves
             expect(edit).toBeTruthy()
-            expect(edit.status).toEqual(201)
+            expect(edit.status).toEqual(200)
             expect(edit.body.status).not.toEqual('notapproved')
             expect(edit.body.status).toEqual('inprogress')
         })
@@ -282,7 +282,7 @@ describe('Endpoint testing', () => {
             
             expect(edit).resolves
             expect(edit).toBeTruthy()
-            expect(edit.status).toEqual(201)
+            expect(edit.status).toEqual(200)
             expect(edit.body.status).not.toEqual('notapproved')
             expect(edit.body.status).toEqual('approved')
             expect(edit.body.approvedBy).toEqual('apikey')
@@ -309,7 +309,7 @@ describe('Endpoint testing', () => {
 
             expect(edit).resolves
             expect(edit).toBeTruthy()
-            expect(edit.status).toEqual(201)
+            expect(edit.status).toEqual(200)
             expect(edit.body.status).toEqual('approved')
             // Denne testen fungerer lokalt, ikke på github pga tidsoner osv.
             // expect(edit.body.approvedTimestamp.toString()).toMatch('Thu Feb 03 2022 10:52:23 GMT+0100 (sentraleuropeisk normaltid)')
@@ -465,7 +465,7 @@ describe('Endpoint testing', () => {
             const post = await postDispatches(context, invalidDispatch)
 
             expect(post).toBeInstanceOf(Object)
-            expect(post.body).toBeInstanceOf(Error)
+            expect(post.body.message).toBeDefined()
             expect(post.status).toEqual(400)
         })
 
@@ -473,7 +473,7 @@ describe('Endpoint testing', () => {
             const post = await postDispatches(context, apikeyHeader)
 
             expect(post).toBeInstanceOf(Object)
-            expect(post.body).toBeInstanceOf(Error)
+            expect(post.body.message).toBeDefined()
             expect(post.status).toEqual(400)
         })
 
@@ -481,7 +481,7 @@ describe('Endpoint testing', () => {
             const post = await postDispatches(context, invalidDispatchArchiveNumber)
 
             expect(post).toBeInstanceOf(Object)
-            expect(post.body).toBeInstanceOf(Error)
+            expect(post.body.message).toBeDefined()
             expect(post.status).toEqual(400)
         })
 
@@ -491,8 +491,8 @@ describe('Endpoint testing', () => {
             const post = await postDispatches(context, validDispatchAttachments)
 
             expect(post).toBeInstanceOf(Object)
-            expect(post.body).toBeInstanceOf(Error)
-            expect(post.status).toEqual(400)
+            expect(post.body.message).toBeDefined()
+            expect(post.status).toEqual(500)
         })
 
         test('Should reject posting a dispatch with only attachments because the "AZURE_BLOB_CONTAINERNAME_TEST" is missing', async () => {
@@ -501,24 +501,24 @@ describe('Endpoint testing', () => {
             const post = await postDispatches(context, validDispatchAttachments)
 
             expect(post).toBeInstanceOf(Object)
-            expect(post.body).toBeInstanceOf(Error)
-            expect(post.status).toEqual(400)
+            expect(post.body.message).toBeDefined()
+            expect(post.status).toEqual(500)
         })
 
         test('Should reject posting a dispatch with attachments because a file is missing file extension', async () => {
             const post = await postDispatches(context, invalidDispatchMissingFileExtension)
 
             expect(post).toBeInstanceOf(Object)
-            expect(post.body).toBeInstanceOf(Error)
-            expect(post.status).toEqual(400)
+            expect(post.body.message).toBeDefined()
+            expect(post.status).toEqual(500)
         })
 
         test('Should reject posting a dispatch with attachments because a file got an illegal file extension', async () => {
             const post = await postDispatches(context, invalidDispatchIllegalFileExtension)
 
             expect(post).toBeInstanceOf(Object)
-            expect(post.body).toBeInstanceOf(Error)
-            expect(post.status).toEqual(400)
+            expect(post.body.message).toBeDefined()
+            expect(post.status).toEqual(500)
         })
 
         test('Should not get a dispatch object from the db since theres no id provided', async () => {
@@ -531,7 +531,7 @@ describe('Endpoint testing', () => {
             const get = await getDispachesById(contextModified, apikeyHeader)
 
             expect(get).toBeInstanceOf(Object)
-            expect(get.body).toBeInstanceOf(Error)
+            expect(get.body.message).toBeDefined()
             expect(get.status).toEqual(400)
         })
 
@@ -544,8 +544,8 @@ describe('Endpoint testing', () => {
             const get = await getDispachesById(contextModified, apikeyHeader)
 
             expect(get).toBeInstanceOf(Object)
-            expect(get.body).toBeInstanceOf(Error)
-            expect(get.status).toEqual(400)
+            expect(get.body.message).toBeDefined()
+            expect(get.status).toEqual(404)
         })
 
         test('Should not edit a dispatch object since the id provided dose not exist', async () => {
@@ -566,8 +566,8 @@ describe('Endpoint testing', () => {
             const edit = await editDispatches(contextModified, request)
 
             expect(edit).toBeInstanceOf(Object)
-            expect(edit.body).toBeInstanceOf(Error)
-            expect(edit.status).toEqual(400)
+            expect(edit.body.message).toBeDefined()
+            expect(edit.status).toEqual(404)
         })
 
         test('Should not edit the given dispatch object since the status is inprogress. Running dispatch should only be set to completed', async () => {
@@ -579,7 +579,7 @@ describe('Endpoint testing', () => {
             const edit = await editDispatches(contextModified, validDispatchAttachments)
 
             expect(edit).toBeInstanceOf(Object)
-            expect(edit.body).toBeInstanceOf(Error)
+            expect(edit.body.message).toBeDefined()
             expect(edit.status).toEqual(400)
         })
 
@@ -592,7 +592,7 @@ describe('Endpoint testing', () => {
             const edit = await editDispatches(contextModified, validDispatchEditInprogress)
 
             expect(edit).toBeInstanceOf(Object)
-            expect(edit.body).toBeInstanceOf(Error)
+            expect(edit.body.message).toBeDefined()
             expect(edit.status).toEqual(400)
         })
 
@@ -605,7 +605,7 @@ describe('Endpoint testing', () => {
             const edit = await editDispatches(contextModified, invalidDispatchMissingFileExtension)
 
             expect(edit).toBeInstanceOf(Object)
-            expect(edit.body).toBeInstanceOf(Error)
+            expect(edit.body.message).toBeDefined()
             expect(edit.status).toEqual(400)
         })
 
@@ -618,7 +618,7 @@ describe('Endpoint testing', () => {
             const edit = await editDispatches(contextModified, invalidDispatchIllegalFileExtension)
 
             expect(edit).toBeInstanceOf(Object)
-            expect(edit.body).toBeInstanceOf(Error)
+            expect(edit.body.message).toBeDefined()
             expect(edit.status).toEqual(400)
         })
 
@@ -631,6 +631,7 @@ describe('Endpoint testing', () => {
             const complete = await complteDispatch(contextModified, validDispatchEditApproved)
 
             expect(complete).toBeInstanceOf(Object)
+            expect(complete.body.message).toBeDefined()
             expect(complete.status).toEqual(400)
         })
 
@@ -644,6 +645,7 @@ describe('Endpoint testing', () => {
             const complete = await complteDispatch(contextModified, validDispatchEditApproved)
 
             expect(complete).toBeInstanceOf(Object)
+            expect(complete.body.message).toBeDefined()
             expect(complete.status).toEqual(404)
         })
 
@@ -656,6 +658,7 @@ describe('Endpoint testing', () => {
             const complete = await complteDispatch(contextModified, validDispatchEditApproved)
 
             expect(complete).toBeInstanceOf(Object)
+            expect(complete.body.message).toBeDefined()
             expect(complete.status).toEqual(404)
         })
 
@@ -665,8 +668,8 @@ describe('Endpoint testing', () => {
             const get = await getMatrikkel(context, apikeyHeader)
 
             expect(get).toBeInstanceOf(Object)
-            expect(get.body).toBeInstanceOf(Error)
-            expect(get.status).toEqual(400)
+            expect(get.body.message).toBeDefined()
+            expect(get.status).toEqual(404)
         })
 
         test('Should not call the matrikkel api since the apikey is missing', async () => {
@@ -675,8 +678,8 @@ describe('Endpoint testing', () => {
             const get = await getMatrikkel(context, apikeyHeader)
 
             expect(get).toBeInstanceOf(Object)
-            expect(get.body).toBeInstanceOf(Error)
-            expect(get.status).toEqual(400)
+            expect(get.body.message).toBeDefined()
+            expect(get.status).toEqual(404)
         })
 
         test('Should reject the get blob endpoint request since the id is missing', async () => {
@@ -690,7 +693,7 @@ describe('Endpoint testing', () => {
             const get = await getBlob(contextModified, apikeyHeader)
 
             expect(get).toBeInstanceOf(Object)
-            expect(get.body).toBeInstanceOf(Error)
+            expect(get.body.message).toBeDefined()
             expect(get.status).toEqual(400)
         })
 
@@ -705,7 +708,7 @@ describe('Endpoint testing', () => {
             const get = await getBlob(contextModified, apikeyHeader)
 
             expect(get).toBeInstanceOf(Object)
-            expect(get.body).toBeInstanceOf(Error)
+            expect(get.body.message).toBeDefined()
             expect(get.status).toEqual(400)
         })
 
@@ -720,7 +723,7 @@ describe('Endpoint testing', () => {
             const get = await getBlob(contextModified, apikeyHeader)
 
             expect(get).toBeInstanceOf(Object)
-            expect(get.body).toBeInstanceOf(Error)
+            expect(get.body.message).toBeDefined()
             expect(get.status).toEqual(400)
         })
 
@@ -730,8 +733,8 @@ describe('Endpoint testing', () => {
             const post = await postDispatches(context, validDispatchBoth)
 
             expect(post).toBeInstanceOf(Object)
-            expect(post.body).toBeInstanceOf(Error)
-            expect(post.status).toEqual(400)
+            expect(post.body.message).toBeDefined()
+            expect(post.status).toEqual(500)
         })
 
         test('Should reject the archive endpoint request since the endpoint key is missing', async () => {
@@ -740,8 +743,8 @@ describe('Endpoint testing', () => {
             const post = await postDispatches(context, validDispatchBoth)
 
             expect(post).toBeInstanceOf(Object)
-            expect(post.body).toBeInstanceOf(Error)
-            expect(post.status).toEqual(400)
+            expect(post.body.message).toBeDefined()
+            expect(post.status).toEqual(500)
         })
 
         //Template tests
@@ -753,8 +756,8 @@ describe('Endpoint testing', () => {
             
             const get = await getTemplateById(contextModified, apikeyHeader)
 
-            expect(get.body).toBeInstanceOf(Error)
             expect(get).toBeInstanceOf(Object)
+            expect(get.body.message).toBeDefined()
             expect(get.status).toEqual(400)
         })
 
@@ -766,8 +769,8 @@ describe('Endpoint testing', () => {
             
             const get = await getTemplateById(contextModified, apikeyHeader)
 
-            expect(get.body).toBeInstanceOf(Error)
             expect(get).toBeInstanceOf(Object)
+            expect(get.body.message).toBeDefined()
             expect(get.status).toEqual(400)
         })
 
@@ -789,8 +792,8 @@ describe('Endpoint testing', () => {
 
             const edit = await editTemplate(contextModified, request)
 
-            expect(edit.body).toBeInstanceOf(Error)
             expect(edit).toBeInstanceOf(Object)
+            expect(edit.body.message).toBeDefined()
             expect(edit.status).toEqual(400)
         })
 
@@ -811,8 +814,9 @@ describe('Endpoint testing', () => {
             }
 
             const edit = await editTemplate(contextModified, request)
-            expect(edit.body).toBeInstanceOf(Error)
+
             expect(edit).toBeInstanceOf(Object)
+            expect(edit.body.message).toBeDefined()
             expect(edit.status).toEqual(400)
         })
     })

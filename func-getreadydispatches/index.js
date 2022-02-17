@@ -4,8 +4,8 @@ const HTTPError = require('../sharedcode/vtfk-errors/httperror');
 const blobClient = require('@vtfk/azure-blob-client');
 const axios = require('axios');
 const config = require('../config');
-const { logConfig, logger } = require('@vtfk/logger')
 const dayjs = require('dayjs');
+const { azfHandleResponse, azfHandleError } = require('@vtfk/responsehandlers');
 
 // Arrays
 let e18Jobs = [];
@@ -13,11 +13,6 @@ let e18Jobs = [];
 e18Jobs = []
 module.exports = async function (context, req) {
   try {
-    // Configure the logger
-    logConfig({
-      azure: { context }
-    })
-
     // Authentication / Authorization
     await require('../sharedcode/auth/auth').auth(req);
 
@@ -45,7 +40,7 @@ module.exports = async function (context, req) {
       let e18Job = {
         system: 'masseutsendelse', 
         projectId: 30, 
-        type: 'Archive & SvarUT',
+        type: 'masseutsendelse',
         parallel: true,
         delayUntil: delaySendUntil.toISOString(),
         tasks: []
@@ -199,12 +194,8 @@ module.exports = async function (context, req) {
       // Add the job to the e18 jobs array
       e18Jobs.push({_id: dispatch._id, e18Job });
     }
-
-    // context.res.send(e18Jobs)
-    return {body: e18Jobs, headers: {'Content-Type': 'application/json'}, status: 200}
+    return await azfHandleResponse(e18Jobs, context, req)
   } catch (err) {
-    logger('error', [err])
-    return {body: err, headers: {'Content-Type': 'application/json'}, status: 400}
-    // context.res.status(400).send(err)
+    return await azfHandleError(err, context, req)
   }
 }

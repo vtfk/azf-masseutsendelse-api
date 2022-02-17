@@ -1,15 +1,9 @@
 const Dispatches = require('../sharedcode/models/dispatches.js')
 const getDb = require('../sharedcode/connections/masseutsendelseDB.js')
-const HTTPError = require('../sharedcode/vtfk-errors/httperror');
-const { logConfig, logger } = require('@vtfk/logger')
+const { azfHandleResponse, azfHandleError } = require('@vtfk/responsehandlers');
 
 module.exports = async function (context, req) {
   try {
-    // Configure logger
-    logConfig({
-      azure: { context }
-    })
-
     // Authentication / Authorization
     await require('../sharedcode/auth/auth').auth(req);
 
@@ -25,13 +19,8 @@ module.exports = async function (context, req) {
     if (!dispatches) dispatches = [];
 
     // Return the disptaches
-    // context.res.send(dispatches)
-    return {body: dispatches, headers: {'Content-Type': 'application/json'}, status: 200}
+    return await azfHandleResponse(dispatches, context, req)
   } catch (err) {
-   err
-    logger('error', [err])
-    // context.res.status(400).send(err)
-    return {body: err, headers: {'Content-Type': 'application/json'}, status: 400}
-
+    return await azfHandleError(err, context, req)
   }
 }

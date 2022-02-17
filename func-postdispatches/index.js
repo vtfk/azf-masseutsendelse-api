@@ -6,13 +6,9 @@ const HTTPError = require('../sharedcode/vtfk-errors/httperror.js');
 const validate = require('../sharedcode/validators/dispatches').validate;
 const blobClient = require('@vtfk/azure-blob-client');
 const config = require('../config');
-const { logConfig, logger } = require('@vtfk/logger')
+const { azfHandleResponse, azfHandleError } = require('@vtfk/responsehandlers');
 
 module.exports = async function (context, req) {
-  logConfig({
-    azure: { context }
-  })
-
   try {
     // Strip away som fields that should not bed set by the request.
     req.body = utils.removeKeys(req.body, ['validatedArchivenumber', 'createdTimestamp', 'createdBy', 'createdById', 'modifiedTimestamp', 'modifiedBy', 'modifiedById']);
@@ -88,12 +84,8 @@ module.exports = async function (context, req) {
       }
     }
 
-    // Return the results
-    return {body: results, headers: {'Content-Type': 'application/json'}, status: 201}
-    // context.res.status(201).send(results)
+    return await azfHandleResponse(results, context, req)
   } catch (err) {
-    logger('error', [err])
-    return {body: err, headers: {'Content-Type': 'application/json'}, status: 400}
-    // context.res.status(400).send(err)
+    return await azfHandleError(err, context, req)
   }
 }

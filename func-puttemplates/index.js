@@ -2,15 +2,10 @@ const Templates = require('../sharedcode/models/templates.js')
 const getDb = require('../sharedcode/connections/masseutsendelseDB.js');
 const utils = require('@vtfk/utilities');
 const HTTPError = require('../sharedcode/vtfk-errors/httperror');
-const { logConfig, logger } = require('@vtfk/logger')
+const { azfHandleResponse, azfHandleError } = require('@vtfk/responsehandlers');
 
 module.exports = async function (context, req) {
   try {
-    // Configure logger
-    logConfig({
-      azure: { context }
-    })
-
     // Authentication / Authorization
     const requestor = await require('../sharedcode/auth/auth').auth(req);
 
@@ -41,11 +36,8 @@ module.exports = async function (context, req) {
     // Update the template
     const updatedTemplate = await Templates.findByIdAndUpdate(id, req.body, {new: true})
 
-    // Return the updated template
-    // context.res.status(200).send(updatedTemplate)
-    return {body: updatedTemplate, headers: {'Content-Type': 'application/json'}, status: 201}
+    return await azfHandleResponse(updatedTemplate, context, req)
   } catch (err) {
-    logger('error', [err])
-    return {body: err, headers: {'Content-Type': 'application/json'}, status: 400}
+    return await azfHandleError(err, context, req)
   }
 }

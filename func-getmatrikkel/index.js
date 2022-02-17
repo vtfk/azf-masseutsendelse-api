@@ -4,15 +4,10 @@
 const axios = require('axios');
 const HTTPError = require('../sharedcode/vtfk-errors/httperror');
 const config = require('../config');
-const { logConfig, logger } = require('@vtfk/logger')
+const { azfHandleResponse, azfHandleError } = require('@vtfk/responsehandlers');
 
 module.exports = async function (context, req) {
   try {
-    // Configure the logger
-    logConfig({
-      azure: { context }
-    })
-
     // Authentication / Authorization
     await require('../sharedcode/auth/auth').auth(req);
    
@@ -33,11 +28,9 @@ module.exports = async function (context, req) {
     }
 
     response = await axios.request(request);
-    // context.res.send(response.data);
-    return {body: response.data, headers: {'Content-Type': 'application/json'}, status: 200}
+
+    return await azfHandleResponse(response.data, context, req)
   } catch (err) {
-    logger('error', [err])
-    // context.res.status(400).send(err)
-    return {body: err, headers: {'Content-Type': 'application/json'}, status: 400}
+    return await azfHandleError(err, context, req)
   }
 }

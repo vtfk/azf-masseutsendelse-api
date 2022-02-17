@@ -1,15 +1,10 @@
 const Templates = require('../sharedcode/models/templates.js')
 const getDb = require('../sharedcode/connections/masseutsendelseDB.js')
 const utils = require('@vtfk/utilities');
-const { logConfig, logger } = require('@vtfk/logger')
+const { azfHandleResponse, azfHandleError } = require('@vtfk/responsehandlers');
 
 module.exports = async function (context, req) {
   try {
-      // Configure the logger
-      logConfig({
-        azure: { context }
-      })
-
       // Authentication / Authorization
       const requestor = await require('../sharedcode/auth/auth').auth(req);
 
@@ -35,14 +30,10 @@ module.exports = async function (context, req) {
       const result = await template.save();
 
       // Return the result
-      return {body: result, headers: {'Content-Type': 'application/json'}, status: 201}
-      // context.res.status(201).send(result);
-
+      return await azfHandleResponse(result, context, req)
     } catch (err) {
       logger('error', [err])
-      return {body: err, headers: {'Content-Type': 'application/json'}, status: 400}
-      // context.res.status(400).send(err)
-      // throw err
+      return await azfHandleError(err, context, req)
     };
     
 }
