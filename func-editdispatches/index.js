@@ -94,9 +94,9 @@
       const attachmentsToRemove = existingNames.filter((i) => !requestNames.includes(i));
     
       // Upload attachments if applicable
-      if(!process.env.NODE_ENV === 'test') attachmentsToAdd.forEach(async (i) => { await blobClient.save(`${id}/${i.name}`, i.data); })
+      if(process.env.NODE_ENV !== 'test') attachmentsToAdd.forEach(async (i) => { await blobClient.save(`${id}/${i.name}`, i.data); })
       // Remove attachments if applicable
-      if(!process.env.NODE_ENV === 'test') attachmentsToRemove.forEach(async (i) => { await blobClient.remove(`${id}/${i}`); })
+      if(process.env.NODE_ENV !== 'test') attachmentsToRemove.forEach(async (i) => { await blobClient.remove(`${id}/${i}`); })
     }
 
     // Return the dispatch
