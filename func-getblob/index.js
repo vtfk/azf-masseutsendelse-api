@@ -13,9 +13,9 @@ module.exports = async function (context, req) {
 
     // Retreive the file
     let file = ''
-    if(!process.env.NODE_ENV === 'test') {
+    if(process.env.NODE_ENV !== 'test') {
       file = await blobClient.get(`${context.bindingData.id}/${context.bindingData.name}`)
-      if (!file) throw new HTTPError(404, 'No files found, check if you passed the right filename and/or the right dispatchId')
+      if (!file || !file.data) throw new HTTPError(404, 'No files found, check if you passed the right filename and/or the right dispatchId')
     } else {
       file = context.bindingData.file
       if(!context.bindingData.file) throw new HTTPError(400, 'No Files found')
