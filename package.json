@@ -16,7 +16,7 @@
     "axios": "0.24.0",
     "azure-ad-verify-token": "1.1.2",
     "dayjs": "^1.10.7",
-    "express": "4.17.2",
+    "express": "4.17.3",
     "mongoose": "6.1.8"
   },
   "devDependencies": {
