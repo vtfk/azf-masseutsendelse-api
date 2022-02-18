@@ -56,8 +56,6 @@ module.exports = async function (context, req) {
           'our-caseworker': dispatch.createdBy
         }
 
-        console.log(config.VTFK_PDFGENERATOR_ENDPOINT)
-
         const generatePDFRequest = {
           url: config.VTFK_PDFGENERATOR_ENDPOINT,
           method: 'post',
@@ -81,7 +79,7 @@ module.exports = async function (context, req) {
           for(const attachment of dispatch.attachments) {
             let file = await blobClient.get(`${dispatch._id}/${attachment.name}`)
             // Validate the files
-            if (!file) throw new HTTPError(404, 'No files found, check if you passed the right filename and/or the right dispatchId')
+            if (!file || !file.data || file.data.length === 0) throw new HTTPError(404, 'No files found, check if you passed the right filename and/or the right dispatchId')
             if(file.data.startsWith('data:') && file.data.includes(',')) file.data = file.data.substring(file.data.indexOf(',') + 1);
             if(file.name.includes('.')) file.name = file.name.substring(0, file.name.indexOf('.'));
             // Push it to the files array
