@@ -80,7 +80,7 @@ module.exports = async function (context, req) {
         if (file.name && file.name.includes('/')) throw new HTTPError(400, 'Illigal character in filname, "/" is not allowed.')
         if (!file.name) file.name = file._id;
         
-        if(!process.env.NODE_ENV === 'test') await blobClient.save(`${req.body._id}/${file.name}`, file.data)
+        if(process.env.NODE_ENV !== 'test') await blobClient.save(`${req.body._id}/${file.name}`, file.data)
       }
     }
 
