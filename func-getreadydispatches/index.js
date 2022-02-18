@@ -74,7 +74,7 @@ module.exports = async function (context, req) {
       }
 
       // Retreive any attachments if applicable
-      if(!process.env.NODE_ENV === 'test'){
+      if(process.env.NODE_ENV !== 'test'){
         if (dispatch.attachments && Array.isArray(dispatch.attachments) && dispatch.attachments.length > 0) {
           for(const attachment of dispatch.attachments) {
             let file = await blobClient.get(`${dispatch._id}/${attachment.name}`)

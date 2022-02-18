@@ -9,7 +9,7 @@ const config = require('../../../config');
 */
 module.exports = (key) => {
   // Validation
-  if(!process.env.NODE_ENV === 'test'){
+  if(process.env.NODE_ENV !== 'test'){
       if(!key) throw new HTTPError(401, 'No apikey provided');
       if(!config.APIKEYS) throw new HTTPError(401, 'The provided apikey is invalid');
     
