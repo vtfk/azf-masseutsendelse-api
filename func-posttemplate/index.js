@@ -32,7 +32,6 @@ module.exports = async function (context, req) {
       // Return the result
       return await azfHandleResponse(result, context, req)
     } catch (err) {
-      logger('error', [err])
       return await azfHandleError(err, context, req)
     };
     
