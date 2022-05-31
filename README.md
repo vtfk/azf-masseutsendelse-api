@@ -2,13 +2,18 @@
 API used to by masseutsendelse-web to communicate with various systems and APIs.
 
 # Usage
-
-1. Clone/Fork the project.
-2. npm i
-3. Setup the environment variables.
-4. npm test
-5. func start
-6. Import to Azure. 
+## Setup dependencies
+1. Create an Azure App Registration
+1. Add custom claim for **department** attribute for the app registration
+   https://docs.microsoft.com/en-us/azure/active-directory/develop/active-directory-claims-mapping#include-the-employeeid-and-tenantcountry-as-claims-in-tokens
+1. Create an MongoDB database
+## Setup project
+1. Clone/Fork the project
+2. run **npm i** to install project dependencies
+3. Setup the environment variables in **local.settings.json**
+4. run **npm test** to test the code
+5. run **func start** to start dev environment locally
+6. Deploy to Azure
 
 ## Environment variables
 
