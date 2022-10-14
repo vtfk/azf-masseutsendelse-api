@@ -12,7 +12,7 @@
     "@vtfk/azure-blob-client": "0.0.4",
     "@vtfk/logger": "4.1.2",
     "@vtfk/responsehandlers": "1.0.25",
-    "@vtfk/utilities": "1.0.0",
+    "@vtfk/utilities": "1.4.0",
     "axios": "0.24.0",
     "azure-ad-verify-token": "1.1.2",
     "dayjs": "1.10.8",
