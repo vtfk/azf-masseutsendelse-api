@@ -41,7 +41,7 @@ module.exports = async function (context, req) {
         system: 'masseutsendelse', 
         projectId: 30, 
         type: 'masseutsendelse',
-        parallel: false,
+        parallel: true,
         delayUntil: delaySendUntil.toISOString(),
         tasks: []
       }
