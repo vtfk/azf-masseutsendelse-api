@@ -338,24 +338,28 @@ describe('Endpoint testing', () => {
                 {
                     system: 'p360',
                     method: 'SyncPrivatePerson',
+                    group: "group2",
                     dependencyTag: 'sync',
                     data: { ssn: '13374201337' }
                   },
                   {
                     system: 'p360',
                     method: 'SyncPrivatePerson',
+                    group: "group2",
                     dependencyTag: 'sync',
                     data: { ssn: '13374201337' }
                   },
                   {
                     system: 'p360',
                     method: 'SyncEnterprise',
+                    group: "group2",
                     dependencyTag: 'sync',
                     data: { orgnr: '13374201337' }
                   },
                   {
                     system: 'p360',
                     method: 'archive',
+                    group: "group1",
                     dependencyTag: 'createCaseDocument',
                     dependencies: [ 'sync' ],
                     data: {
@@ -397,6 +401,7 @@ describe('Endpoint testing', () => {
                   {
                     system: 'p360',
                     method: 'archive',
+                    group: "group3",
                     dependencyTag: 'uploadAttachment-1',
                     dependencies: [ 'createCaseDocument' ],
                     dataMapping: 'parameter.documentNumber=DocumentNumber',
@@ -415,6 +420,7 @@ describe('Endpoint testing', () => {
                   {
                     system: 'p360',
                     method: 'archive',
+                    group: "group4",
                     dependencies: [ 'uploadAttachment-1' ],
                     dataMapping: '{"parameter": { "Documents": [ { "DocumentNumber": "{{DocumentNumber}}" }]}}',
                     data: { method: 'DispatchDocuments', service: 'DocumentService' }

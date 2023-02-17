@@ -41,7 +41,7 @@ module.exports = async function (context, req) {
         system: 'masseutsendelse', 
         projectId: 30, 
         type: 'masseutsendelse',
-        parallel: true,
+        parallel: false,
         delayUntil: delaySendUntil.toISOString(),
         tasks: []
       }
@@ -113,6 +113,7 @@ module.exports = async function (context, req) {
         e18Job.tasks.push({
           system: 'p360',
           method: 'SyncPrivatePerson',
+          group: 'group2',
           dependencyTag: 'sync',
           data: person
         });
@@ -123,6 +124,7 @@ module.exports = async function (context, req) {
         e18Job.tasks.push({
           system: 'p360',
           method: 'SyncEnterprise',
+          group: 'group2',
           dependencyTag: 'sync',
           data: business
         });
@@ -133,6 +135,7 @@ module.exports = async function (context, req) {
         system: 'p360',
         method: 'archive',
         dependencyTag: `createCaseDocument`,
+        group: 'group1',
         dependencies: ['sync'],
         data: {
           system: 'masseutsendelse',
@@ -161,6 +164,7 @@ module.exports = async function (context, req) {
           e18Job.tasks.push({
             system: 'p360',
             method: 'archive',
+            group: 'group3',
             dependencyTag: `uploadAttachment-${fileIndex}`,
             dependencies: fileIndex === 1 ? ['createCaseDocument'] : [`uploadAttachment-${fileIndex - 1}`],
             dataMapping: "parameter.documentNumber=DocumentNumber",
@@ -184,6 +188,7 @@ module.exports = async function (context, req) {
       e18Job.tasks.push({
         system: 'p360',
         method: 'archive',
+        group: 'group4',
         dependencies: [`uploadAttachment-${e18Files.length - 1}`],
         dataMapping: "{\"parameter\": { \"Documents\": [ { \"DocumentNumber\": \"{{DocumentNumber}}\" }]}}",
         data: {
