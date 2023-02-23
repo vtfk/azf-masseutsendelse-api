@@ -30,7 +30,7 @@ module.exports = async function (context, req) {
 
       // Check if the dispatch has passed the registration threshold
       let registrationThreshold = dayjs(dispatch.approvedTimestamp).set('hour', 23).set('minute', 59).set('second', 59).set('millisecond', 0);
-      let delaySendUntil = dayjs().add(1, 'day').set('hour', 11).set('minute', 0).set('second', 0).set('millisecond', 0);
+      let delaySendUntil = dayjs().set('hour', 11).set('minute', 0).set('second', 0).set('millisecond', 0);
       if(!config.BYPASS_REGISTRATION_THRESHOLD) {
         if(dayjs(new Date()).isBefore(registrationThreshold)) continue;
       }
@@ -42,7 +42,7 @@ module.exports = async function (context, req) {
         projectId: 30, 
         type: 'masseutsendelse',
         parallel: false,
-        // delayUntil: delaySendUntil.toISOString(),
+        delayUntil: delaySendUntil.toISOString(),
         tasks: []
       }
 
