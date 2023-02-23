@@ -42,7 +42,7 @@ module.exports = async function (context, req) {
         projectId: 30, 
         type: 'masseutsendelse',
         parallel: false,
-        delayUntil: delaySendUntil.toISOString(),
+        // delayUntil: delaySendUntil.toISOString(),
         tasks: []
       }
 
