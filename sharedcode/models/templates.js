@@ -1,11 +1,11 @@
 const mongoose = require('mongoose')
 
-const templateSchema = new mongoose.Schema ({
+const templateSchema = new mongoose.Schema({
   _Id: {
     type: mongoose.Schema.Types.ObjectId
   },
   name: {
-    type: String, 
+    type: String,
     unique: true,
     required: true
   },
@@ -27,7 +27,7 @@ const templateSchema = new mongoose.Schema ({
     required: true
   },
   documentData: {
-    type: Object,
+    type: Object
   },
   template: {
     type: String,
@@ -35,40 +35,40 @@ const templateSchema = new mongoose.Schema ({
   },
   language: {
     type: String,
-    default: "nb"
+    default: 'nb'
   },
   createdTimestamp: {
     type: Date,
-    default: new Date,
+    default: new Date(),
     required: true
   },
   createdBy: {
-      type: String,
-      default: "unknown",
-      required: true
+    type: String,
+    default: 'unknown',
+    required: true
   },
   createdById: {
-      type: String,
-      default: "00000000-0000-0000-0000-000000000000",
-      required: true
+    type: String,
+    default: '00000000-0000-0000-0000-000000000000',
+    required: true
   },
   createdByDepartment: {
     type: String
   },
   modifiedTimestamp: {
-      type: Date,
-      default: new Date,
-      required: true
+    type: Date,
+    default: new Date(),
+    required: true
   },
   modifiedBy: {
-      type: String,
-      default: "unknown",
-      required: true
+    type: String,
+    default: 'unknown',
+    required: true
   },
   modifiedById: {
-      type: String,
-      default: "00000000-0000-0000-0000-000000000000",
-      required: true
+    type: String,
+    default: '00000000-0000-0000-0000-000000000000',
+    required: true
   },
   modifiedByDepartment: {
     type: String
