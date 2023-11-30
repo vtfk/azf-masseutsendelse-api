@@ -151,7 +151,6 @@ const createCaseDocument = async (method, title, caseNumber, date, contacts, att
 
 const dispatchDocuments = async (documents, method) => {
   // Input validation
-  console.log(documents[0])
   if (!documents) throw new Error('Documents cannot be empty')
   // if(typeof(documents) !== Array) throw new Error('Documents must be of type array')
   if (documents.length < 0) throw new Error('Documents array must contain minimum one document')
