@@ -15,8 +15,8 @@ logConfig({
 
 module.exports = async function (context, req) {
   try {
-    logger('info', 'Checking AUTH')
-    await require('../sharedcode/auth/auth.js').auth(req)
+    // logger('info', 'Checking AUTH')
+    // await require('../sharedcode/auth/auth.js').auth(req)
     // Await the DB connection
     logger('info', 'Connecting to DB')
     await getDb()

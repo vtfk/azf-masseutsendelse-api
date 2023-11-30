@@ -20,9 +20,9 @@ module.exports = async function (context, req) {
     let dispatchJobs = []
     // Clear the dispatchJobs Array
     dispatchJobs = []
-    // Authentication / Authorization
-    logger('info', 'Checking AUTH')
-    await require('../sharedcode/auth/auth.js').auth(req)
+    // // Authentication / Authorization
+    // logger('info', 'Checking AUTH')
+    // await require('../sharedcode/auth/auth.js').auth(req)
 
     // Await the DB connection
     logger('info', 'Connecting to DB')
