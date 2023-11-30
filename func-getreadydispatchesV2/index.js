@@ -44,7 +44,6 @@ module.exports = async function (context, req) {
       // Validate if the dispatch is ready
       logger('info', 'Found a job to handle, checking if it has passed the registration threshold')
       if (!dispatch.approvedTimestamp) continue
-      console.log(dispatch.approvedTimestamp)
 
       // Check if the dispatch has passed the registration threshold
       const registrationThreshold = dayjs(dispatch.approvedTimestamp).set('hour', 23).set('minute', 59).set('second', 59).set('millisecond', 0)
