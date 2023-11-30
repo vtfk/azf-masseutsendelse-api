@@ -17,7 +17,7 @@
     "azure-ad-verify-token": "1.1.2",
     "dayjs": "1.10.8",
     "express": "4.17.3",
-    "mongoose": "6.1.8"
+    "mongoose": "6.11.3"
   },
   "devDependencies": {
     "jest": "27.5.1",
