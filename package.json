@@ -15,7 +15,7 @@
     "@vtfk/utilities": "1.0.0",
     "axios": "0.24.0",
     "azure-ad-verify-token": "1.1.2",
-    "dayjs": "1.10.8",
+    "dayjs": "1.11.10",
     "express": "4.17.3",
     "mongoose": "6.1.8"
   },
