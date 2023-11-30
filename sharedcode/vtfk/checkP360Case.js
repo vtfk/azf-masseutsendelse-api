@@ -1,8 +1,8 @@
 /*
   Import dependencies
 */
-const config = require('../../config');
-const axios = require('axios');
+const config = require('../../config')
+const axios = require('axios')
 
 /**
  * Attempt to get a case from P360
@@ -10,9 +10,9 @@ const axios = require('axios');
  */
 module.exports.getCase = async function getCase (casenumber) {
   // Input validation
-  if(!casenumber) throw new Error('Archive casenumber cannot be empty');
-  if(!config.VTFK_P360_ARCHIVE_ENDPOINT) throw new Error('VTFK_P360_ARCHIVE_ENDPOINT environment variable cannot be empty');
-  if(!config.VTFK_P360_ARCHIVE_SUBSCRIPTION_KEY) throw new Error('VTFK_P360_ARCHIVE_SUBSCRIPTION_KEY environment variable cannot be empty');
+  if (!casenumber) throw new Error('Archive casenumber cannot be empty')
+  if (!config.VTFK_P360_ARCHIVE_ENDPOINT) throw new Error('VTFK_P360_ARCHIVE_ENDPOINT environment variable cannot be empty')
+  if (!config.VTFK_P360_ARCHIVE_SUBSCRIPTION_KEY) throw new Error('VTFK_P360_ARCHIVE_SUBSCRIPTION_KEY environment variable cannot be empty')
 
   // Build the request
   const request = {
@@ -22,8 +22,8 @@ module.exports.getCase = async function getCase (casenumber) {
       'Ocp-Apim-Subscription-Key': config.VTFK_P360_ARCHIVE_SUBSCRIPTION_KEY
     },
     data: {
-      service: "CaseService",
-      method: "GetCases",
+      service: 'CaseService',
+      method: 'GetCases',
       parameter: {
         CaseNumber: casenumber
       },
@@ -34,14 +34,14 @@ module.exports.getCase = async function getCase (casenumber) {
   }
 
   // Make the request
-  const response = await axios.request(request);
+  const response = await axios.request(request)
 
   // Handle and return the response
-  if(!response || !response.data) return undefined;
-  if(Array.isArray(response.data)) {
-    if(response.data.length === 0) return undefined;
-    if(response.data.length > 1) throw new Error(`The casenumber ${casenumber} matched ${response.data.length} it must only match one`);
-    response.data = response.data[0];
+  if (!response || !response.data) return undefined
+  if (Array.isArray(response.data)) {
+    if (response.data.length === 0) return undefined
+    if (response.data.length > 1) throw new Error(`The casenumber ${casenumber} matched ${response.data.length} it must only match one`)
+    response.data = response.data[0]
   }
-  return response.data;
+  return response.data
 }
