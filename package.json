@@ -21,7 +21,7 @@
   },
   "devDependencies": {
     "jest": "27.5.1",
-    "mongodb-memory-server": "8.2.0",
+    "mongodb-memory-server": "8.2.1",
     "msw": "^0.36.8"
   },
   "config": {
